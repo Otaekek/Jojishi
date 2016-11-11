@@ -1,5 +1,5 @@
 NAME = jojishiEngine
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -std=c++11
 
 # Debug
 ifeq ($(DEBUG),yes)
@@ -27,13 +27,17 @@ endif
 #SOURCES += readline.c
 
 # main
-SOURCES += main.c
+SOURCES += main.cpp
+
+# memory allocator
+SRC_SUBDIR += memory_allocator
+SOURCES += stackAllocator.class.cpp
 
 # Generation
 INC_PATH = inc 
 SRC_PATH = src
 CFLAGS += $(addprefix -I,$(INC_PATH))
-vpath %.c $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
+vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 
 # Lib tierces
 #LIB42_PATH = lib42
@@ -43,7 +47,7 @@ vpath %.c $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 
 # Object files
 OBJ_PATH = .obj
-OBJECTS = $(SOURCES:%.c=$(OBJ_PATH)/%.o)
+OBJECTS = $(SOURCES:%.cpp=$(OBJ_PATH)/%.o)
 
 BUILD_DIR = $(OBJ_PATH) $(DEP_PATH)
 
@@ -60,7 +64,7 @@ $(NAME): $(OBJECTS) | $(LIB42)
 $(LIB42):
 	$(MAKE) -C $(LIB42_PATH) all
 
-$(OBJECTS): $(OBJ_PATH)/%.o: %.c | $(OBJ_PATH)
+$(OBJECTS): $(OBJ_PATH)/%.o: %.cpp | $(OBJ_PATH)
 	g++ $(CFLAGS) -o $@ -c $<
 
 $(BUILD_DIR):
