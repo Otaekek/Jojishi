@@ -1,5 +1,5 @@
 NAME = jojishiEngine
-CFLAGS = -Wall -Werror -Wextra -std=c++11
+CFLAGS = -Werror   -std=c++11
 
 # Debug
 ifeq ($(DEBUG),yes)
@@ -32,6 +32,11 @@ SOURCES += main.cpp
 # memory allocator
 SRC_SUBDIR += memory_allocator
 SOURCES += stackAllocator.class.cpp
+
+# asset_db_system
+SRC_SUBDIR += asset_database_system
+SOURCES += assetSystem.class.cpp
+SOURCES += assetSystemWorker.class.cpp
 
 # Generation
 INC_PATH = inc 
