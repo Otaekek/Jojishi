@@ -8,7 +8,7 @@ assetSystem::assetSystem(): workers_index(0), referencer(0)
 
 assetSystem::~assetSystem()
 {
-	free_all();
+
 }
 
 uint64_t assetSystem::load_asset(t_job job)

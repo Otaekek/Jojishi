@@ -1,5 +1,6 @@
 
 #include "stackAllocator.class.hpp"
+#include <cstdio>
 
 stackAllocator::stackAllocator()
 {
@@ -12,12 +13,12 @@ stackAllocator::stackAllocator(uint32_t _size)
 {
 	size = _size;
 	index = 0;
-	data = new char(_size);
+	data = new char[_size];
 }
 
 stackAllocator::~stackAllocator()
 {
-	delete(data);
+	delete [] data;
 }
 
 void stackAllocator::all_mem_free()
@@ -25,15 +26,15 @@ void stackAllocator::all_mem_free()
 	index = 0;
 }
 
-void *stackAllocator::mem_alloc(uint32_t size)
+void *stackAllocator::mem_alloc(uint32_t _size)
 {
-	index += size;
-	return (index + data - size);
+	index += _size;
+	return (&data[index - _size]);
 }
 
-void stackAllocator::mem_free(uint32_t size)
+void stackAllocator::mem_free(uint32_t _size)
 {
-	index -= size;
+	index -= _size;
 }
 
 void *stackAllocator::get_data_pointer()

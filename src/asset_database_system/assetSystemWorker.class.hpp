@@ -5,7 +5,7 @@
 #include "../job_system/jobSystem.hpp"
 #include <string>
 
-#define ALLOC_SIZE 4096
+#define ALLOC_SIZE 65536
 #define MAX_LOADING 4096
 
 typedef struct 			s_loadHeader {
