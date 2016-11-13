@@ -35,6 +35,7 @@ void 			assetSystem::create_job()
 			job = workers[i].get_job();
 			header = (t_loadHeader*)job.data;
 			ref_to_ptr[header->ref] = workers[i].get_working_on();
+			data_status[header->ref] = assetSystem::E_LOADING;
 			job.fptr(job.data);
 		}
 }
