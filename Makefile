@@ -38,8 +38,13 @@ SRC_SUBDIR += asset_database_system
 SOURCES += assetSystem.class.cpp
 SOURCES += assetSystemWorker.class.cpp
 
+# generic parser
+SRC_SUBDIR += parser
+SOURCES += genericParser.class.cpp
+
 # Generation
-INC_PATH = inc 
+INC_PATH = inc
+INC_PATH += assimp/include
 SRC_PATH = src
 CFLAGS += $(addprefix -I,$(INC_PATH))
 vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
