@@ -14,8 +14,13 @@ public:
 	stackAllocator(uint32_t size);
 	~stackAllocator();
 
+	void *get_data_pointer();
+	void *get_offset();
+
 	void *mem_alloc(uint32_t size);
 	void mem_free(uint32_t size);
+
+	void all_mem_free();
 
 private:
 
