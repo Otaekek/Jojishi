@@ -40,7 +40,7 @@ void 			assetSystem::create_job()
 		}
 }
 	
-bool			assetSystem::asset_ready(void *ptr)
+bool			assetSystem::asset_ready()
 {
 	bool all_ready = true;
 	for (uint8_t i = 0; i < WORKER_NUMBER; i++)

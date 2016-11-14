@@ -28,7 +28,7 @@ public:
 
 	void 						create_job();
 
-	bool						asset_ready(void *ptr);
+	bool						asset_ready();
 
 	void 						set_asset_state(assetSystem::e_asset_state state, uint64_t ref);
 	assetSystem::e_asset_state	get_asset_state(uint64_t ref);

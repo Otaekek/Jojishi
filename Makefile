@@ -1,5 +1,5 @@
 NAME = jojishiEngine
-CFLAGS = -Werror   -std=c++11
+CFLAGS = -Wall -Werror -Wextra  -std=c++11
 
 # Debug
 ifeq ($(DEBUG),yes)
