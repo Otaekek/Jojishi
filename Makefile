@@ -55,6 +55,11 @@ vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 #CFLAGS += -I $(LIB42_PATH)/inc
 #LDFLAGS += -L $(LIB42_PATH) -l42
 
+# Lib tierces
+LIB_ASSIMP_PATH = assimp
+CFLAGS += -I $(LIB_ASSIMP_PATH)/include
+LDFLAGS += -L $(LIB_ASSIMP_PATH)/lib/ -lassimp
+
 # Object files
 OBJ_PATH = .obj
 OBJECTS = $(SOURCES:%.cpp=$(OBJ_PATH)/%.o)
@@ -70,6 +75,8 @@ all: $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
+	@sleep 0.8
+	aplay makefile_asset/oe.wav&
 
 $(LIB42):
 	$(MAKE) -C $(LIB42_PATH) all
@@ -89,7 +96,10 @@ fclean: clean
 	$(RM) $(NAME)
 	$(RM) -rf $(DEP_PATH)
 
-re: fclean all
+sound: 
+	aplay makefile_asset/roll.wav&
+
+re: sound fclean all
 
 sanitize:
 	$(MAKE) -C ./ re SAN=yes DEBUG=yes
