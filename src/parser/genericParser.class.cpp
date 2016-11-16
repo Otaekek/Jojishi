@@ -39,7 +39,10 @@ void 	genericParser::load_file(void *data)
 		extenstion[strlen(extenstion) - i] = c;
 	}
 	if (extension_to_function[extenstion] == NULL)
+	{
+		//set_asset_state(assetSystem::E_ERR, loadHeader->ref);
 		return ;
+	}
 	extension_to_function[extenstion](loadHeader->allocator, scene);
 }
 

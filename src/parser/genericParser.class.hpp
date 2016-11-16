@@ -12,15 +12,9 @@
 #include "../renderer/renderDataSys.class.hpp"
 
 #include "../job_system/jobSystem.hpp"
-#include "../asset_database_system/assetSystemWorker.class.hpp"
+#include "../asset_database_system/assetSystem.class.hpp"
 #include <map>
 #include <string>
-
-typedef struct 			s_parserHeader {
-	stackAllocator 		*allocator;
-	uint64_t 			ref;
-	char 				*path;
-}						t_parserHeader;
 
 class genericParser {
 

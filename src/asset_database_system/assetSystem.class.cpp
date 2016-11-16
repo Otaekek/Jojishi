@@ -18,17 +18,6 @@ uint64_t 		assetSystem::load_asset(t_job job)
 	return(referencer++);
 }
 
-uint64_t		assetSystem::get_fs_asset_by_path(std::string path)
-{
-	t_job job;
-	t_parserHeader parserHeader;
-
-	parserHeader.path = (char*)path.c_str();
-	job.fptr = genericParser::load_file;
-	load_asset(job);
-	return (referencer++);
-}
-
 void 			assetSystem::free_all()
 {
 	for (uint8_t i = 0; i < WORKER_NUMBER; i++)
