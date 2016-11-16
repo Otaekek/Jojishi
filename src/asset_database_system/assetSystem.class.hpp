@@ -6,7 +6,7 @@
 # include <string>
 #include <map>
 #include "assetSystemWorker.class.hpp"
-
+#include "../parser/genericParser.class.hpp"
 # define WORKER_NUMBER 4
 
 class assetSystem {
@@ -24,6 +24,9 @@ public:
 	~assetSystem();
 
 	uint64_t					load_asset(t_job job);
+
+	uint64_t					get_fs_asset_by_path(std::string path);
+
 	void 						free_all();
 
 	void 						create_job();
@@ -41,6 +44,7 @@ private:
 	uint8_t												workers_index;
 	std::map<uint64_t, assetSystem::e_asset_state>		data_status;
 	std::map<uint64_t, void*>							ref_to_ptr;
+	std::map<std::string, uint64_t>						path_to_ref;
 	uint64_t	 										referencer;
 
 };

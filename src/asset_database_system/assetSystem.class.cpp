@@ -11,11 +11,22 @@ assetSystem::~assetSystem()
 
 }
 
-uint64_t assetSystem::load_asset(t_job job)
+uint64_t 		assetSystem::load_asset(t_job job)
 {
 	(++workers_index) %= WORKER_NUMBER;
 	workers[workers_index].load_asset(job, referencer);
 	return(referencer++);
+}
+
+uint64_t		assetSystem::get_fs_asset_by_path(std::string path)
+{
+	t_job job;
+	t_parserHeader parserHeader;
+
+	parserHeader.path = (char*)path.c_str();
+	job.fptr = genericParser::load_file;
+	load_asset(job);
+	return (referencer++);
 }
 
 void 			assetSystem::free_all()

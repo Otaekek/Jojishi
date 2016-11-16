@@ -9,7 +9,7 @@ assetSystemWorker::assetSystemWorker(): allocator(ALLOC_SIZE),
 
 assetSystemWorker::~assetSystemWorker()
 {
-
+	
 }
 
 void assetSystemWorker::load_asset(t_job job, uint64_t ref)

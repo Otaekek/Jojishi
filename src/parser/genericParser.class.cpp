@@ -1,10 +1,10 @@
 #include "genericParser.class.hpp"
 
-#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+std::map<std::string, void (*)(stackAllocator *, const aiScene *)>  genericParser::extension_to_function;
 
 genericParser::genericParser()
 {
-	extension_to_function["obj"] = &genericParser::obj_scene_to_memory_as_mesh;
+	extension_to_function["obj"] = &renderDataSys::obj_scene_to_memory_as_mesh;
 }
 
 genericParser::~genericParser()
@@ -40,35 +40,7 @@ void 	genericParser::load_file(void *data)
 	}
 	if (extension_to_function[extenstion] == NULL)
 		return ;
-	CALL_MEMBER_FN(*this, extension_to_function[extenstion])(loadHeader->allocator, scene);
+	extension_to_function[extenstion](loadHeader->allocator, scene);
 }
 
-void genericParser::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
-{
-	t_meshData 					*meshData;
-	aiNode 						*node;
-	aiMesh						*mesh;
-	uint32_t					indices_size;
-	uint32_t					vertex_size;
-
-	meshData = (t_meshData*)allocator->mem_alloc(sizeof(t_meshData));
-	node = scene->mRootNode;
-	mesh = scene->mMeshes[node->mMeshes[0]];
-	indices_size = mesh->mNumFaces;
-	vertex_size = mesh->mNumVertices;
-	meshData->vertex = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 3);
-	meshData->uv = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 2);
-	meshData->normal = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 3);
-	meshData->indice = (uint32_t*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));
-	meshData->vertex_size = vertex_size;
-	meshData->indices_size = indices_size * 3;
-	for (uint32_t i = 0; i < indices_size; i++)
-	{
-		for (uint8_t j = 0; j < 3; j++)
-		{
-			uint32_t indice = mesh->mFaces[i][j];
-			meshData->vertex[3 * indice] = mesh->mVertices[];
-		}
-	}
-}
 

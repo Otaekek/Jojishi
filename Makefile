@@ -1,5 +1,6 @@
 NAME = jojishiEngine
-CFLAGS = -Wall -Werror -Wextra  -std=c++11
+CFLAGS = -std=c++11
+# CFLAGS += -Wall -Werror -Wextra  
 
 # Debug
 ifeq ($(DEBUG),yes)
@@ -31,16 +32,24 @@ SOURCES += main.cpp
 
 # memory allocator
 SRC_SUBDIR += memory_allocator
+CFLAGS += -I memory_allocator/
 SOURCES += stackAllocator.class.cpp
 
 # asset_db_system
 SRC_SUBDIR += asset_database_system
+CFLAGS += -I asset_database_system
 SOURCES += assetSystem.class.cpp
 SOURCES += assetSystemWorker.class.cpp
 
 # generic parser
 SRC_SUBDIR += parser
+CFLAGS += -I parser
 SOURCES += genericParser.class.cpp
+
+#	renderer
+SRC_SUBDIR += renderer
+CFLAGS += -I renderer
+SOURCES += renderDataSys.class.cpp
 
 # Generation
 INC_PATH = inc
@@ -75,7 +84,7 @@ all: $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
-	@sleep 0.8
+	@sleep 0.2
 	aplay makefile_asset/oe.wav&
 
 $(LIB42):
