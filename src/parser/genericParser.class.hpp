@@ -8,7 +8,7 @@
 #include "../../assimp/include/assimp/scene.h"
 #include "../../assimp/include/assimp/postprocess.h"
 
-
+#include "../../inc/jojishi.hpp"
 #include "../renderer/renderDataSys.class.hpp"
 
 #include "../job_system/jobSystem.hpp"
@@ -24,10 +24,12 @@ public:
 	~genericParser();
 
 	static void load_file(void *data);
-	
-	static void 	parse_path_and_handle_scene(std::string path);
 
-	static std::map<std::string, void (*)(stackAllocator *, const aiScene *)> extension_to_function;
+private :
+
+	static std::map<std::string, void (*)(void*)> extension_to_function;
+	static const aiScene 		*assimp_load(char *path, Assimp::Importer importer);
+	static void 				load_obj(void *data);
 };
 
 #endif
