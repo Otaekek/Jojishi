@@ -1,6 +1,5 @@
 #include "fileLoader.class.hpp"
 
-extern assetSystem g_asset_db;
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
 std::map<std::string, void (*)(void*)>  	fileLoader::extension_to_function;
@@ -22,7 +21,7 @@ fileLoader::~fileLoader()
 
 }
 
-uint64_t fileLoader::get_fs_asset(std::string path, assetSystemWorker::E_ASSET_TYPE type)
+uint64_t fileLoader::get_fs_asset(std::string path)
 {
 	t_job			job;
 	char 			*job_path;
@@ -33,8 +32,9 @@ uint64_t fileLoader::get_fs_asset(std::string path, assetSystemWorker::E_ASSET_T
 	job_path = job.data + sizeof(t_loadHeader);
 	memcpy(job_path, path.c_str(), strlen(path.c_str()));
 	job.fptr = load_file;
-	ref = (g_asset_db.load_asset(job, type));
+	ref = (staticMemoryManager::load_asset(job.data));
 	path_as_guid[path] = ref;
+	job.fptr(job.data);
 	return (ref);
 }
 
@@ -43,7 +43,10 @@ const aiScene 	*fileLoader::assimp_load(char *path, Assimp::Importer *importer)
 	const					aiScene *scene;
 
   	scene = importer->ReadFile( std::string(path), 
-	0);
+	aiProcess_CalcTangentSpace | 
+	aiProcess_Triangulate |
+	aiProcess_JoinIdenticalVertices |
+	aiProcess_SortByPType);
 	return (scene);
 }
 
@@ -59,11 +62,11 @@ void 			fileLoader::load_obj(void *data)
 	scene = assimp_load(path, &importer);
 	if (scene == NULL)
 	{
-		g_asset_db.set_asset_state(assetSystem::E_ERR, loadHeader->ref);
+		staticMemoryManager::set_asset_state(staticMemoryManager::E_ERR, loadHeader->ref);
 		return ;
 	}
 	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene);
-	g_asset_db.set_asset_state(assetSystem::E_LOADED, loadHeader->ref);
+	staticMemoryManager::asset_loaded(staticMemoryManager::E_OBJ_FILE, *loadHeader);
 }
 
 void 			fileLoader::load_file(void *data)
@@ -86,7 +89,7 @@ void 			fileLoader::load_file(void *data)
 	}
 	if (extension_to_function[extenstion] == NULL)
 	{
-		g_asset_db.set_asset_state(assetSystem::E_ERR, loadHeader->ref);
+		staticMemoryManager::set_asset_state(staticMemoryManager::E_ERR, loadHeader->ref);
 		return ;
 	}
 	extension_to_function[extenstion](data);

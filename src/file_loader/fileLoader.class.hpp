@@ -12,7 +12,7 @@
 #include "../renderer/renderDataSys.class.hpp"
 
 #include "../job_system/jobSystem.hpp"
-#include "../asset_database_system/assetSystem.class.hpp"
+#include "../static_memory_manager/staticMemoryManager.class.hpp"
 #include <map>
 #include "../../inc/jojishi.hpp"
 #include <string>
@@ -24,7 +24,7 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint64_t get_fs_asset(std::string path, assetSystemWorker::E_ASSET_TYPE type);
+	static uint64_t get_fs_asset(std::string path);
 	static void init();
 private :
 	

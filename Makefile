@@ -40,10 +40,8 @@ CFLAGS += -I memory_allocator/
 SOURCES += stackAllocator.class.cpp
 
 # asset_db_system
-SRC_SUBDIR += asset_database_system
-CFLAGS += -I asset_database_system
-SOURCES += assetSystem.class.cpp
-SOURCES += assetSystemWorker.class.cpp
+SRC_SUBDIR += static_memory_manager
+SOURCES += staticMemoryManager.class.cpp
 
 # file loader
 SRC_SUBDIR += file_loader
