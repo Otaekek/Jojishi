@@ -34,7 +34,6 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
 {
 	t_renderMeshData 			*meshData;
-	//aiNode 						*node;
 	aiMesh						*mesh;
 	float 						*vertices;
 	uint32_t					*indices;
@@ -44,7 +43,6 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 
 
 	meshData = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
-	//node = scene->mRootNode;
 	
 	mesh = scene->mMeshes[0];
 	indices_size = mesh->mNumFaces;
@@ -56,23 +54,25 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	indices = (uint32_t*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));
 
 	aiFace a = mesh->mFaces[0];
-	for (uint32_t i = 0; i < 1; i++)
+	for (uint32_t i = 0; i < vertex_size; i++)
 	{
-		for (uint32_t j = 0; j < 1; j++)
+		vertices[i * 8] = mesh->mVertices[i].x;
+		vertices[i * 8 + 1] = mesh->mVertices[i].y;
+		vertices[i * 8 + 2] = mesh->mVertices[i].z;
+
+		vertices[i * 8 + 3] = mesh->mNormals[i].x;
+		vertices[i * 8 + 4] = mesh->mNormals[i].y;
+		vertices[i * 8 + 5] = mesh->mNormals[i].z;
+
+		vertices[i * 8 + 6] = mesh->mTextureCoords[0][i].x;
+		vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
+	}
+	for (uint32_t i = 0; i < indices_size; i++)
+	{
+		for (uint32_t j = 0; j < 3; j++)
 		{
 			uint32_t indice = mesh->mFaces[i].mIndices[j];
-
-			vertices[24 * i + 8 * j] = mesh->mVertices[indice].x;
-			vertices[24 * i + 8 * j + 1] = mesh->mVertices[indice].y;
-			vertices[24 * i + 8 * j + 2] = mesh->mVertices[indice].z;
-	
-			vertices[24 * i + 8 * j + 3] = mesh->mNormals[indice].x;
-			vertices[24 * i + 8 * j + 4] = mesh->mNormals[indice].y;
-			vertices[24 * i + 8 * j + 5] = mesh->mNormals[indice].z;
-	
-			vertices[24 * i + 8 * j + 6] = mesh->mTextureCoords[0][indice].x;
-			vertices[24 * i + 8 * j + 7] = mesh->mTextureCoords[0][indice].y;
-			indice = (uint32_t)indice;
+			indices[i * 3 + j] = indice;
 		}
 	}
 	meshData->vaoId = renderDataSys::createVAO();

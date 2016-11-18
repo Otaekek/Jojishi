@@ -1,7 +1,7 @@
 #ifndef STATICMEMORYMANAGER_CLASS_HPP
 #define STATICMEMORYMANAGER_CLASS_HPP
 
-#define NUMCLUSTER 12
+#define NUMCLUSTER 1
 #define MAXREF 4096
 
 #include <cstdint>
