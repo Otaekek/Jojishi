@@ -3,6 +3,6 @@
 
 #include "../src/asset_database_system/assetSystem.class.hpp"
 
-assetSystem g_graphic_asset_db;
+assetSystem g_asset_db;
 
 #endif

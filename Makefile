@@ -41,10 +41,10 @@ CFLAGS += -I asset_database_system
 SOURCES += assetSystem.class.cpp
 SOURCES += assetSystemWorker.class.cpp
 
-# generic parser
-SRC_SUBDIR += parser
-CFLAGS += -I parser
-SOURCES += genericParser.class.cpp
+# file loader
+SRC_SUBDIR += file_loader
+CFLAGS += -I file_loader
+SOURCES += fileLoader.class.cpp
 
 #	renderer
 SRC_SUBDIR += renderer

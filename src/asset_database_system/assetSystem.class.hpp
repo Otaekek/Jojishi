@@ -23,7 +23,7 @@ public:
 	assetSystem();
 	~assetSystem();
 
-	uint64_t					load_asset(t_job job);
+	uint64_t					load_asset(t_job job, assetSystemWorker::E_ASSET_TYPE type);
 
 	void 						free_all();
 
@@ -42,7 +42,6 @@ private:
 	uint8_t												workers_index;
 	std::map<uint64_t, assetSystem::e_asset_state>		data_status;
 	void												*ref_to_ptr[4096];
-	std::map<std::string, uint64_t>						path_to_ref;
 	uint64_t	 										referencer;
 
 };

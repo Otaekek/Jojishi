@@ -17,6 +17,11 @@ class assetSystemWorker {
 
 public:
 
+	enum E_ASSET_TYPE {
+		E_OBJ_FILE = 0,
+		E_ENUM_SIZE,
+	};
+
 	assetSystemWorker();
 	~assetSystemWorker();
 

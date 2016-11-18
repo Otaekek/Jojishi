@@ -11,10 +11,9 @@ assetSystem::~assetSystem()
 
 }
 
-uint64_t 		assetSystem::load_asset(t_job job)
+uint64_t 		assetSystem::load_asset(t_job job, assetSystemWorker::E_ASSET_TYPE type)
 {
-	(++workers_index) %= WORKER_NUMBER;
-	workers[workers_index].load_asset(job, referencer);
+	workers[type].load_asset(job, referencer);
 	return(referencer++);
 }
 
