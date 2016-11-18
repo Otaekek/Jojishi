@@ -13,8 +13,9 @@ assetSystem::~assetSystem()
 
 uint64_t 		assetSystem::load_asset(t_job job, assetSystemWorker::E_ASSET_TYPE type)
 {
+	referencer++;
 	workers[type].load_asset(job, referencer);
-	return(referencer++);
+	return(referencer);
 }
 
 void 			assetSystem::free_all()
@@ -23,20 +24,22 @@ void 			assetSystem::free_all()
 		workers[i].free_all();
 }
 
-void 			assetSystem::create_job()
+t_job 			*assetSystem::create_job(t_job *job)
 {
 	t_loadHeader *header;
 
-	t_job job;
 	for (uint8_t i = 0; i < WORKER_NUMBER; i++)
 		if (!workers[i].busy() && workers[i].job_waiting())
 		{
-			job = workers[i].get_job();
-			header = (t_loadHeader*)job.data;
+			*job = workers[i].get_job();
+			header = (t_loadHeader*)((*job).data);
 			ref_to_ptr[header->ref] = workers[i].get_working_on();
+			if (data_status[header->ref])
+				continue ;
 			data_status[header->ref] = assetSystem::E_LOADING;
-			job.fptr(job.data);
+			return (job);
 		}
+		return (NULL);
 }
 	
 bool			assetSystem::asset_ready()
@@ -52,7 +55,9 @@ void 			assetSystem::set_asset_state(e_asset_state state, uint64_t ref)
 	if (state == assetSystem::E_LOADED)
 	for (uint8_t i = 0; i < WORKER_NUMBER; i++)
 		if (ref_to_ptr[ref] == workers[i].get_working_on())
+		{
 			workers[i].set_working_on(NULL);
+		}
 	data_status[ref] = state;
 }
 

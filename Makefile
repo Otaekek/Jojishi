@@ -1,10 +1,14 @@
 NAME = jojishiEngine
 CFLAGS = -std=c++11
-# CFLAGS += -Wall -Werror -Wextra  
+#CFLAGS += -Wall -Werror -Wextra
+CFLAGS += -pedantic -pedantic-errors
+ifeq ($(shell basename $(CC)),clang) # Need autoconf
+CFLAGS += -Weverything
+endif
 
 # Debug
 ifeq ($(DEBUG),yes)
-	CFLAGS += -g3 -O0 -fno-inline
+	CFLAGS += -g3 -O0 
 endif
 
 # Profile

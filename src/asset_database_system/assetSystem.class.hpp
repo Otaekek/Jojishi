@@ -27,7 +27,7 @@ public:
 
 	void 						free_all();
 
-	void 						create_job();
+	t_job 						*create_job(t_job *job);
 
 	bool						asset_ready();
 

@@ -15,7 +15,6 @@ assetSystemWorker::~assetSystemWorker()
 void assetSystemWorker::load_asset(t_job job, uint64_t ref)
 {
 	t_loadHeader *header;
-
 	header = (t_loadHeader*)job.data;
 	header->ref = ref;
 	queue[q_index] = job;
