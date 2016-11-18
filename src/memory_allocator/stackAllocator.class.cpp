@@ -46,3 +46,8 @@ void *stackAllocator::get_offset()
 {
 	return (index + data);
 }
+
+uint32_t	stackAllocator::get_size()
+{
+	return (size);
+}
