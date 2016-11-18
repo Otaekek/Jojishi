@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#define DEFAULT_ALLOC_SIZE 4096
+#define DEFAULT_ALLOC_SIZE 134217728
 
 class stackAllocator {
 
@@ -21,6 +21,8 @@ public:
 	void mem_free(uint32_t size);
 
 	void all_mem_free();
+
+	uint32_t	get_size();
 
 private:
 

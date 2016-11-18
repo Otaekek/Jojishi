@@ -1,9 +1,14 @@
 NAME = jojishiEngine
-CFLAGS = -Wall -Werror -Wextra  -std=c++11
+CFLAGS = -std=c++11
+#CFLAGS += -Wall -Werror -Wextra
+CFLAGS += -pedantic -pedantic-errors
+ifeq ($(shell basename $(CC)),clang) # Need autoconf
+CFLAGS += -Weverything
+endif
 
 # Debug
 ifeq ($(DEBUG),yes)
-	CFLAGS += -g3 -O0 -fno-inline
+	CFLAGS += -g3 -O0 
 endif
 
 # Profile
@@ -31,15 +36,26 @@ SOURCES += main.cpp
 
 # memory allocator
 SRC_SUBDIR += memory_allocator
+CFLAGS += -I memory_allocator/
 SOURCES += stackAllocator.class.cpp
 
 # asset_db_system
-SRC_SUBDIR += asset_database_system
-SOURCES += assetSystem.class.cpp
-SOURCES += assetSystemWorker.class.cpp
+SRC_SUBDIR += static_memory_manager
+SOURCES += staticMemoryManager.class.cpp
+
+# file loader
+SRC_SUBDIR += file_loader
+CFLAGS += -I file_loader
+SOURCES += fileLoader.class.cpp
+
+#	renderer
+SRC_SUBDIR += renderer
+CFLAGS += -I renderer
+SOURCES += renderDataSys.class.cpp
 
 # Generation
-INC_PATH = inc 
+INC_PATH = inc
+INC_PATH += assimp/include
 SRC_PATH = src
 CFLAGS += $(addprefix -I,$(INC_PATH))
 vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
@@ -49,6 +65,11 @@ vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 #LIB42 = $(LIB42_PATH)/lib42.a
 #CFLAGS += -I $(LIB42_PATH)/inc
 #LDFLAGS += -L $(LIB42_PATH) -l42
+
+# Lib tierces
+LIB_ASSIMP_PATH = assimp
+CFLAGS += -I $(LIB_ASSIMP_PATH)/include
+LDFLAGS += -L $(LIB_ASSIMP_PATH)/lib/ -lassimp
 
 # Object files
 OBJ_PATH = .obj
@@ -65,6 +86,8 @@ all: $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
+	@sleep 0.2
+	aplay makefile_asset/oe.wav&
 
 $(LIB42):
 	$(MAKE) -C $(LIB42_PATH) all
@@ -84,7 +107,10 @@ fclean: clean
 	$(RM) $(NAME)
 	$(RM) -rf $(DEP_PATH)
 
-re: fclean all
+sound: 
+	aplay makefile_asset/roll.wav&
+
+re: sound fclean all
 
 sanitize:
 	$(MAKE) -C ./ re SAN=yes DEBUG=yes
