@@ -15,12 +15,12 @@ int main()
 	t_job job;
 	uint32_t ref;
 
-	for (int i = 0; i < 200; i++)
-		ref = fileLoader::get_fs_asset_sync(std::string("assets/graphic/mesh/castle/castle.obj"));
+	for (int i = 0; i < 20; i++)
+		ref = fileLoader::get_fs_asset_assync(std::string("assets/graphic/mesh/mercedes/mercedes.obj"));
 	while (!staticMemoryManager::all_read())
 		usleep(5000);
-	for (int i = 0; i < 200; i++)
-		printf("%d\n", staticMemoryManager::get_asset_state(i));
+	//for (int i = 0; i < 200; i++)
+		//printf("%d\n", staticMemoryManager::get_asset_state(i));
 	jobHandler::shutdown();
 	return (ref);
 }
