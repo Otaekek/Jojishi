@@ -5,26 +5,31 @@
 
 #include <unistd.h>
 #include <thread>
+#include <mutex>
 
 #define NUMTHREAD 8
-#define MAXJOB 256
+#define MAXJOB 4096
 
 class jobHandler {
 
 public:
 
-	jobHandler();
-	~jobHandler();
+	static void init();
+	static void shutdown();
 
-	void push_job(t_job job);
+	static void 	push_job(t_job job);
+	static t_job 	grab_job();
 
 	static void job_worker(t_job queue[MAXJOB]);
 
 private:
+	
 
-	t_job 				queue[NUMTHREAD][MAXJOB];
-	std::thread			slaves[NUMTHREAD];
-
+	static t_job 				queue[MAXJOB];
+	static std::thread			slaves[NUMTHREAD];
+	static uint32_t				q_top;
+	static std::mutex 			mut;
+	static int					must_leave;
 };
 
 #endif

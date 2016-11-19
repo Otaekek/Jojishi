@@ -7,6 +7,7 @@
 #include "../../assimp/include/assimp/Importer.hpp"
 #include "../../assimp/include/assimp/scene.h"
 #include "../../assimp/include/assimp/postprocess.h"
+#include "../job_system/jobHandler.class.hpp"
 
 #include "../../inc/jojishi.hpp"
 #include "../renderer/renderDataSys.class.hpp"
@@ -24,8 +25,10 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint64_t get_fs_asset(std::string path);
+	static uint64_t get_fs_asset_assync(std::string path);
+	static uint64_t get_fs_asset_sync(std::string path);
 	static void init();
+
 private :
 	
 	static void load_file(void *data);

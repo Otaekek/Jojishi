@@ -1,29 +1,62 @@
 #include "jobHandler.class.hpp"
 
-jobHandler::jobHandler(): slaves({std::thread(jobHandler::job_worker, queue[0]),
- std::thread(jobHandler::job_worker, queue[1]),
- std::thread(jobHandler::job_worker, queue[2]),
- std::thread(jobHandler::job_worker, queue[3]),
- std::thread(jobHandler::job_worker, queue[4]),
- std::thread(jobHandler::job_worker, queue[5]),
- std::thread(jobHandler::job_worker, queue[6]),
- std::thread(jobHandler::job_worker, queue[7])})
+int					jobHandler::must_leave = 0;
+uint32_t			jobHandler::q_top = 0;
+t_job 				jobHandler::queue[MAXJOB];
+std::mutex 			jobHandler::mut;
+
+std::thread			jobHandler::slaves[NUMTHREAD] = 
+{std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue),
+ std::thread(jobHandler::job_worker, queue)};
+
+void jobHandler::init()
 {
 
 }
 
-jobHandler::~jobHandler()
+void 	jobHandler::shutdown()
 {
+	must_leave = 1;
 	for (uint8_t i = 0; i < NUMTHREAD; i++)
 		slaves[i].join();
-}
-
-void jobHandler::push_job(t_job job)
-{
 
 }
 
-void jobHandler::job_worker(t_job queue[MAXJOB])
+void 	jobHandler::push_job(t_job job)
 {
+	mut.lock();
+	queue[q_top] = job;
+	q_top++;
+	mut.unlock();
+}
 
+t_job 	jobHandler::grab_job()
+{
+	t_job job;
+	mut.lock();
+	job = (queue[q_top-- - 1]);
+	mut.unlock();
+	return (job);
+}
+
+void 	jobHandler::job_worker(t_job queue[MAXJOB])
+{
+	t_job job;
+
+	while (!must_leave)
+	{
+		if (q_top == 0)
+		{
+			usleep(1000);
+			continue ;
+		}
+		job = grab_job();
+		job.fptr(job.data);
+	}
 }
