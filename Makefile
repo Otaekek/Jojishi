@@ -1,5 +1,5 @@
 NAME = jojishiEngine
-CFLAGS = -std=c++11
+CFLAGS = -pthread -std=c++11
 #CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -pedantic -pedantic-errors
 ifeq ($(shell basename $(CC)),clang) # Need autoconf
@@ -27,6 +27,7 @@ ifeq ($(SAN),yes)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 endif
 
+LDFLAGS += -pthread 
 # Input
 #SRC_SUBDIR += input
 #SOURCES += readline.c
@@ -52,6 +53,11 @@ SOURCES += fileLoader.class.cpp
 SRC_SUBDIR += renderer
 CFLAGS += -I renderer
 SOURCES += renderDataSys.class.cpp
+
+# jb system
+SRC_SUBDIR += job_system
+CFLAGS += -I job_system
+SOURCES += jobHandler.class.cpp
 
 # Generation
 INC_PATH = inc

@@ -7,6 +7,7 @@
 #include <cstdint>
 #include "../memory_allocator/stackAllocator.class.hpp"
 #include <cstring>
+#include <mutex>
 
 typedef struct 			s_loadHeader {
 	stackAllocator 		*allocator;
@@ -48,6 +49,7 @@ private:
 	static void										*ref_to_ptr[MAXREF];
 	static uint64_t	 								referencer;
 	static uint32_t									count;
+	static std::mutex								mutexes[NUMCLUSTER];
 };
 
 #endif

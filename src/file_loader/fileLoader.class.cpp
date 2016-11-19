@@ -31,6 +31,7 @@ uint64_t fileLoader::get_fs_asset(std::string path)
 		return (path_as_guid[path]);
 	job_path = job.data + sizeof(t_loadHeader);
 	memcpy(job_path, path.c_str(), strlen(path.c_str()));
+	job_path[strlen(path.c_str())] = 0;
 	job.fptr = load_file;
 	ref = (staticMemoryManager::load_asset(job.data));
 	path_as_guid[path] = ref;
@@ -73,7 +74,7 @@ void 			fileLoader::load_file(void *data)
 {
 	t_loadHeader 			*loadHeader;
 	char 					*path;
-	char 					extenstion[10] = {0};
+	char 					extenstion[100] = {0};
 	uint32_t				j;
 
 	loadHeader = (t_loadHeader*)data;
