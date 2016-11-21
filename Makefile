@@ -45,6 +45,10 @@ SOURCES += poolAllocator.class.cpp
 SRC_SUBDIR += static_memory_manager
 SOURCES += staticMemoryManager.class.cpp
 
+# dynamic memory manager
+SRC_SUBDIR += dynamic_memory_manager
+SOURCES += dynamicMemoryManager.class.cpp
+
 # file loader
 SRC_SUBDIR += file_loader
 CFLAGS += -I file_loader

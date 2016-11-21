@@ -47,6 +47,28 @@ poolAllocator::poolAllocator(uint32_t bloc_size, uint32_t bloc_num)
 	bloc->next_elem = nullptr;
 }
 
+void 		poolAllocator::modifySize(uint32_t bloc_size, uint32_t bloc_num)
+{
+	poolAllocator::t_bloc *bloc;
+	poolAllocator::t_bloc *last;
+
+	delete [] data;
+	data = new char[(bloc_size + sizeof(t_bloc)) * (bloc_num + 1)];
+	free_list = (poolAllocator::t_bloc*)data;
+	bloc = free_list;
+	for (uint32_t i = 0; i < bloc_num; i++)
+	{
+		last = bloc;
+		bloc->mem = (char*)(bloc) + sizeof(t_bloc);
+		bloc->size = bloc_size;
+		bloc->next_elem = (t_bloc*)(data + ((bloc_size + sizeof(t_bloc)) * (i + 1)));
+		bloc = bloc->next_elem;
+	}
+	free_list_last = last;
+	free_list_last->next_elem = nullptr;
+	bloc->next_elem = nullptr;
+}
+
 poolAllocator::~poolAllocator()
 {
 	delete [] data;

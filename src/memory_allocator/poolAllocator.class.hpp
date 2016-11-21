@@ -1,8 +1,8 @@
 #ifndef POOLALLOCATOR_CLASS_HPP
 #define POOLALLOCATOR_CLASS_HPP
 
-#define DEFAULT_BLOC_SIZE 256
-#define DEFAULT_BLOC_NUMBER 1024
+#define DEFAULT_BLOC_SIZE 1024
+#define DEFAULT_BLOC_NUMBER 2048
 
 #include <cstdint>
 
@@ -20,8 +20,9 @@ public:
 	poolAllocator(uint32_t bloc_size, uint32_t bloc_num);
 	~poolAllocator();
 
+	void 						modifySize(uint32_t bloc_size, uint32_t bloc_num);
 	poolAllocator::t_bloc 		*mem_alloc(void);
-	void 		mem_free(t_bloc *bloc);
+	void 						mem_free(t_bloc *bloc);
 
 private:
 
