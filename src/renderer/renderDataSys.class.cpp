@@ -48,7 +48,6 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
 
-	
 	to_free = allocator->get_offset();
 	vertices = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 8);
 	indices = (uint32_t*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));

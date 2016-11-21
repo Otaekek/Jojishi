@@ -82,6 +82,7 @@ void 			fileLoader::load_obj(void *data)
 	if (scene == NULL)
 	{
 		staticMemoryManager::set_asset_state(staticMemoryManager::E_ERR, loadHeader->ref);
+		printf("Error when loading %s: File not found.\n", path);
 		return ;
 	}
 	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene);
@@ -109,6 +110,7 @@ void 			fileLoader::load_file(void *data)
 	if (extension_to_function[extenstion] == NULL)
 	{
 		staticMemoryManager::set_asset_state(staticMemoryManager::E_ERR, loadHeader->ref);
+		printf("Error when loading %s: File type not handled.\n", path);
 		return ;
 	}
 	extension_to_function[extenstion](data);

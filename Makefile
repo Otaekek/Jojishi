@@ -39,6 +39,7 @@ SOURCES += main.cpp
 SRC_SUBDIR += memory_allocator
 CFLAGS += -I memory_allocator/
 SOURCES += stackAllocator.class.cpp
+SOURCES += poolAllocator.class.cpp
 
 # asset_db_system
 SRC_SUBDIR += static_memory_manager
