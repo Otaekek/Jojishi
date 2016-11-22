@@ -8,6 +8,7 @@
 #include "../assimp/include/assimp/Importer.hpp"
 #include <unistd.h>
 #include "memory_allocator/poolAllocator.class.hpp"
+#include "dynamic_memory_manager/dynamicMemoryManager.class.hpp"
 
 int main()
 {
