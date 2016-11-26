@@ -14,7 +14,14 @@ void transformBuiltin::shutdown()
 
 uint32_t transformBuiltin::create()
 {
-	return (dynamicMemoryManager::create_slot(cluster_id));
+	t_transform *transform;
+	uint32_t ref = (dynamicMemoryManager::create_slot(cluster_id));
+
+	transform = get_transform(ref);
+	memset(transform, 0, sizeof(t_transform));
+	scale(ref, 1, 1, 1);
+	transform->rotation = glm::angleAxis(0.0f, glm::vec3{0.0f, 1.0f, 0.0f});
+	return (ref);
 }
 
 void transformBuiltin::destroy(uint32_t handler)
@@ -24,63 +31,72 @@ void transformBuiltin::destroy(uint32_t handler)
 
 glm::vec3 transformBuiltin::get_direction(uint32_t handler)
 {
-	t_transform transform;
+
+	t_transform *transform;
 	glm::vec3 axis = {0, 0, 1};
 
 	transform = get_transform(handler);
-	axis = axis * transform.rotation;
+	axis = transform->rotation * axis;
 	return (axis);
-}
-
-void transformBuiltin::rotate(uint32_t handler, glm::vec3 axis, float angle)
-{
-	t_transform transform;
-
-	transform = get_transform(handler);
-	transform.rotation = glm::rotate(transform.rotation, angle, axis);
 }
 
 void transformBuiltin::rotate_model(uint32_t handler, glm::vec3 axis, float angle)
 {
-	t_transform transform;
+	t_transform *transform;
 
 	transform = get_transform(handler);
-	axis = axis * transform.rotation;
-	transform.rotation = glm::rotate(transform.rotation, angle, axis);
+	transform->rotation = glm::rotate(transform->rotation, angle, axis);
 }
 
-void transformBuiltin::translate(uint32_t handler, float &x, float &y, float & z)
+void transformBuiltin::rotate(uint32_t handler, glm::vec3 axis, float angle)
 {
-	t_transform transform;
+	t_transform *transform;
 
 	transform = get_transform(handler);
-	transform.position.x += x;
-	transform.position.y += y;
-	transform.position.z += z;
+	axis = transform->rotation * axis;
+	transform->rotation = glm::rotate(transform->rotation, angle, axis);
 }
 
-void transformBuiltin::scale(uint32_t handler, float &x, float &y, float & z)
+void transformBuiltin::translate(uint32_t handler, float x, float y, float z)
 {
-	t_transform transform;
+	t_transform *transform;
 
 	transform = get_transform(handler);
-	transform.scale.x *= x;
-	transform.scale.y *= y;
-	transform.scale.z *= z;
+	transform->position.x += x;
+	transform->position.y += y;
+	transform->position.z += z;
 }
 
-t_transform transformBuiltin::get_transform(uint32_t h)
+void transformBuiltin::scale(uint32_t handler, float x, float y, float  z)
+{
+	t_transform *transform;
+
+	transform = get_transform(handler);
+	transform->scale.x = x;
+	transform->scale.y = y;
+	transform->scale.z = z;
+}
+
+t_transform *transformBuiltin::get_transform(uint32_t h)
 {
 	t_transform *ret;
 
 	ret = (t_transform*)dynamicMemoryManager::get_ptr(h);
-	return (*ret);
+	return (ret);
 }
 
 glm::mat4 transformBuiltin::to_mat(uint32_t handler)
 {
-	t_transform transform;
+	t_transform *transform;
+	glm::mat4 ret;
 
 	transform = get_transform(handler);
-	return (glm::mat4_cast(transform.rotation));
+	ret = (glm::mat4_cast(transform->rotation));
+	ret[3][0] = transform->position.x;
+	ret[3][1] = transform->position.y;
+	ret[3][2] = transform->position.z;
+	ret[0][3] = transform->scale.x;
+	ret[1][3] = transform->scale.y;
+	ret[2][3] = transform->scale.z;
+	return (ret);
 }
