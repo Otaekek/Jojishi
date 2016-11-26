@@ -47,6 +47,7 @@ SOURCES += staticMemoryManager.class.cpp
 
 # dynamic memory manager
 SRC_SUBDIR += dynamic_memory_manager
+CFLAGS += -Isrc/dynamic_memory_manager
 SOURCES += dynamicMemoryManager.class.cpp
 
 # file loader
@@ -64,6 +65,11 @@ SRC_SUBDIR += job_system
 CFLAGS += -I job_system
 SOURCES += jobHandler.class.cpp
 
+# transform
+SRC_SUBDIR += transform
+CFLAGS += -Isrc/transform
+SOURCES += transform.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
@@ -78,9 +84,16 @@ vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 #LDFLAGS += -L $(LIB42_PATH) -l42
 
 # Lib tierces
+
+#  assimp
 LIB_ASSIMP_PATH = assimp
-CFLAGS += -I $(LIB_ASSIMP_PATH)/include
-LDFLAGS += -L $(LIB_ASSIMP_PATH)/lib/ -lassimp
+CFLAGS += -I$(LIB_ASSIMP_PATH)/include
+LDFLAGS += -L$(LIB_ASSIMP_PATH)/lib/ -lassimp
+
+#  glm
+LIB_GLM_PATH = glm/glm/
+CFLAGS += -I$(LIB_GLM_PATH)
+
 
 # Object files
 OBJ_PATH = .obj

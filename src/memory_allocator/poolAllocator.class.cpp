@@ -74,7 +74,7 @@ poolAllocator::~poolAllocator()
 	delete [] data;
 }
 
-poolAllocator::t_bloc 		*poolAllocator::mem_alloc(void)
+void 		*poolAllocator::mem_alloc(void)
 {
 	t_bloc *ret;
 
@@ -82,13 +82,14 @@ poolAllocator::t_bloc 		*poolAllocator::mem_alloc(void)
 	{
 		return free_list;
 	}
-	ret = free_list;
+	ret = (t_bloc*)free_list->mem;
 	free_list = free_list->next_elem;
 	return (ret);
 }
 
-void 		poolAllocator::mem_free(poolAllocator::t_bloc *bloc)
+void 		poolAllocator::mem_free(void *mem)
 {
+	t_bloc *bloc = (t_bloc*)((char*)mem - sizeof(t_bloc));
 	if (free_list == nullptr)
 	{
 		free_list = bloc;

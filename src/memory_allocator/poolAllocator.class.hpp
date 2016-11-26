@@ -21,8 +21,8 @@ public:
 	~poolAllocator();
 
 	void 						modifySize(uint32_t bloc_size, uint32_t bloc_num);
-	poolAllocator::t_bloc 		*mem_alloc(void);
-	void 						mem_free(t_bloc *bloc);
+	void						*mem_alloc(void);
+	void 						mem_free(void *bloc);
 
 private:
 
