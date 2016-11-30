@@ -5,19 +5,12 @@ uint32_t			jobHandler::q_top = 0;
 t_job 				jobHandler::queue[MAXJOB];
 std::mutex 			jobHandler::mut;
 
-std::thread			jobHandler::slaves[NUMTHREAD] = 
-{std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue),
- std::thread(jobHandler::job_worker, queue)};
+std::thread			jobHandler::slaves[NUMTHREAD];
 
 void jobHandler::init()
 {
-
+	for (uint32_t i = 0; i < NUMTHREAD; i++)
+		jobHandler::slaves[i] = std::thread(jobHandler::job_worker, queue);
 }
 
 void 	jobHandler::shutdown()

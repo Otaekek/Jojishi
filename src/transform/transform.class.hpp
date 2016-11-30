@@ -43,7 +43,7 @@ public:
 
 
 private:
-	static uint32_t cluster_id;
+	static uint32_t 	cluster_id;
 };
 
 #endif

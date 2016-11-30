@@ -1,4 +1,7 @@
 #include "fileLoader.class.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
@@ -19,6 +22,26 @@ void fileLoader::init()
 fileLoader::~fileLoader()
 {
 
+}
+
+char 		*fileLoader::readfile(std::string path)
+{
+	std::string line;
+	std::string file;
+	std::ifstream myfile(path);
+	if (myfile.is_open())
+	{
+		while ( getline (myfile, line) )
+			file += line + '\n';
+		myfile.close();
+	}
+	else
+	{ 
+		std::cout << "Unable to open file";
+		exit(0);
+	}
+	printf("%s\n", file.c_str());
+	return ((char*)file.c_str());
 }
 
 uint64_t fileLoader::get_fs_asset_assync(std::string path)

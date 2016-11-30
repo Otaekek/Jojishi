@@ -37,12 +37,13 @@ SOURCES += main.cpp
 
 # memory allocator
 SRC_SUBDIR += memory_allocator
-CFLAGS += -I memory_allocator/
+CFLAGS += -Isrc/memory_allocator/
 SOURCES += stackAllocator.class.cpp
 SOURCES += poolAllocator.class.cpp
 
 # asset_db_system
 SRC_SUBDIR += static_memory_manager
+CFLAGS += -Isrc/static_memory_manager
 SOURCES += staticMemoryManager.class.cpp
 
 # dynamic memory manager
@@ -52,17 +53,18 @@ SOURCES += dynamicMemoryManager.class.cpp
 
 # file loader
 SRC_SUBDIR += file_loader
-CFLAGS += -I file_loader
+CFLAGS += -Isrc/file_loader
 SOURCES += fileLoader.class.cpp
 
 #	renderer
 SRC_SUBDIR += renderer
-CFLAGS += -I renderer
+CFLAGS += -Isrc/renderer
 SOURCES += renderDataSys.class.cpp
+SOURCES += renderBuiltIn.class.cpp
 
 # jb system
 SRC_SUBDIR += job_system
-CFLAGS += -I job_system
+CFLAGS += -Isrc/job_system
 SOURCES += jobHandler.class.cpp
 
 # transform
@@ -87,13 +89,22 @@ vpath %.cpp $(SRC_PATH) $(addprefix $(SRC_PATH)/,$(SRC_SUBDIR))
 
 #  assimp
 LIB_ASSIMP_PATH = assimp
+
 CFLAGS += -I$(LIB_ASSIMP_PATH)/include
-LDFLAGS += -L$(LIB_ASSIMP_PATH)/lib/ -lassimp
+LDFLAGS += -L./$(LIB_ASSIMP_PATH)/lib/ -lassimp
 
 #  glm
 LIB_GLM_PATH = glm/glm/
 CFLAGS += -I$(LIB_GLM_PATH)
 
+# glfw
+CFLAGS += -I./glfw-3.2.1/include/GLFW/  -DGL_GLEXT_PROTOTYPES 
+LDFLAGS += -L/usr/local/lib -lglfw3 -lrt -lm -ldl -lXrandr \
+	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
+	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES 
+
+#  opengl 
+LDFLAGS += -lGL -lGLU
 
 # Object files
 OBJ_PATH = .obj
@@ -110,7 +121,6 @@ all: $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
-	@sleep 0.2
 	aplay makefile_asset/oe.wav&
 
 $(LIB42):

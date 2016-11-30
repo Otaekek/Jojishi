@@ -17,6 +17,8 @@
 #include <map>
 #include "../../inc/jojishi.hpp"
 #include <string>
+#include <iostream>
+#include <fstream>
 
 class fileLoader {
 
@@ -28,14 +30,15 @@ public:
 	static uint64_t get_fs_asset_assync(std::string path);
 	static uint64_t get_fs_asset_sync(std::string path);
 	static void init();
+	static void load_file(void *data);
 
+	static char 									*readfile(std::string path);
 private :
 	
-	static void load_file(void *data);
-	static std::map<std::string, void (*)(void*)> extension_to_function;
-	static const aiScene 		*assimp_load(char *path, Assimp::Importer *importer);
-	static void 				load_obj(void *data);
-	static std::map<std::string, uint64_t> path_as_guid;
+	static std::map<std::string, void (*)(void*)> 	extension_to_function;
+	static const aiScene 							*assimp_load(char *path, Assimp::Importer *importer);
+	static void 									load_obj(void *data);
+	static std::map<std::string, uint64_t> 			path_as_guid;
 };
 
 #endif
