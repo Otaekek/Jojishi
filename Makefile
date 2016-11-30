@@ -1,5 +1,6 @@
 NAME = jojishiEngine
 CFLAGS = -pthread -std=c++11
+UNAME_S := $(shell uname -s)
 #CFLAGS += -Wall -Werror -Wextra
 #CFLAGS += -pedantic -pedantic-errors
 #ifeq ($(shell basename $(CC)),clang) # Need autoconf
@@ -98,15 +99,23 @@ LIB_GLM_PATH = glm/glm/
 CFLAGS += -I$(LIB_GLM_PATH)
 
 # glfw
-CFLAGS += -I./glfw-3.2.1/include/GLFW/  -DGL_GLEXT_PROTOTYPES
-LDFLAGS += -L/usr/local/lib -L/Users/rcargou/.brew/lib -lglfw3
-# -lglfw3 -lrt -lm -ldl -lXrandr \
-#	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
-#	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES
+CFLAGS += -I./glfw-3.2.1/include/GLFW/ -DGL_GLEXT_PROTOTYPES
+ifeq ($(UNAME_S),Linux)
+	LDFLAGS +=  -lglfw3 -lrt -lm -ldl -lXrandr \
+	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
+	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES
+endif
+ifeq ($(UNAME_S),Darwin)
+	LDFLAGS += -L/usr/local/lib -L$(HOME)/.brew/lib -lglfw3
+endif
 
 #  opengl
-#LDFLAGS += -lGL -GLU
-LDFLAGS += -framework opengl
+ifeq ($(UNAME_S),Linux)
+	LDFLAGS += -lGL -lGLU
+endif
+ifeq ($(UNAME_S),Darwin)
+	LDFALGS += -framework opengl
+endif
 
 # Object files
 OBJ_PATH = .obj
