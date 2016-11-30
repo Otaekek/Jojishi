@@ -103,12 +103,12 @@ std::string 		readfile(std::string path)
 
 uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::string fragPath)
 {
-	GLchar 		*vertexCode;
-	GLchar 		*fragCode;
-	GLuint 			vertexShaderObject;
-	GLuint 			fragmentShaderObject;
-	GLint 			flength, vlength;
-	GLint 			compiled;
+	GLchar			*vertexCode;
+	GLchar			*fragCode;
+	GLuint			vertexShaderObject;
+	GLuint			fragmentShaderObject;
+	GLint			flength, vlength;
+	GLint			compiled;
 	char			log[4096];
 	GLint			slen, blen;
 	std::string 	file;

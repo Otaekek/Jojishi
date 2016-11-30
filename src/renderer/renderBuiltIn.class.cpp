@@ -28,11 +28,12 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	window = glfwCreateWindow(1200, 800, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
-	glViewport(0, 0, 1200, 800);
+	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
+	glViewport(0, 0, mode->width,  mode->height);
 	glfwMakeContextCurrent(window);
-	glClearColor(0, 1, 0, 0);
+	glClearColor(1, 0, 1, 0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glfwSwapInterval(1);
 }
 
 void 			renderBuiltIn::shutdown()
@@ -63,6 +64,7 @@ void 			renderBuiltIn::unsubscribe(uint32_t dataHandler)
 void			renderBuiltIn::update()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glfwPollEvents();
 	/*
 	glm::mat4 proj = glm::perspective(45.0f, (float)mode->width/ (float)mode->height, 1.0f, 100.0f);
 	GLint uniProj = glGetUniformLocation(program, "proj");

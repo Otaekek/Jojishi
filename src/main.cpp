@@ -28,7 +28,7 @@ int main()
 	{
 		//return 1;
 		renderBuiltIn::update();
-	//	sleep(1);
+		usleep(50000);
 	}
 	transformBuiltin::shutdown();
 	jobHandler::shutdown();
