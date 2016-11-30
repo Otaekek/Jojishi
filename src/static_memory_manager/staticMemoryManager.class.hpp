@@ -30,7 +30,7 @@ public:
 		E_ENUM_SIZE,
 	};
 
-	static uint64_t									load_asset(void *loadData);
+	static uint64_t									load_asset(void *loadData, E_ASSET_TYPE type);
 
 	static staticMemoryManager::e_asset_state		get_asset_state(uint64_t ref);
 

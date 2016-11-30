@@ -12,23 +12,43 @@ renderDataSys::~renderDataSys()
 
 uint32_t renderDataSys::createVAO()
 {
-	return 1;
+	GLuint vaoid;
+
+	glGenVertexArrays(1, &(vaoid));
+	return (vaoid);
 }
 
 uint32_t renderDataSys::createVBO_VNT(float *vertices, uint32_t vertex_size, uint32_t vaoId)
 {
-	vertices = (float*)vertices;
-	vertex_size = (uint32_t)vertex_size;
-	vaoId = (uint32_t)vaoId;
-	return 1;
+	GLuint 	vertexBufferID;
+	GLuint	normalBufferID;
+	GLuint	textCoordBufferID;
+
+	glBindVertexArray(vaoId);
+
+	glGenBuffers(1, &(vertexBufferID));
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+
+	glBufferData(GL_ARRAY_BUFFER,  vertex_size * sizeof(float) * 8, &vertices[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float)*3));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float)*6));
+	return vertexBufferID;
 }
 
 uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size, uint32_t vaoId)
 {
-	indices = (uint32_t*)indices;
-	indice_size = (uint32_t)indice_size;
-	vaoId = (uint32_t)vaoId;
-	return 1;
+	GLuint indiceBufferId;
+	glBindVertexArray(vaoId);
+
+	glGenBuffers(1, &(indiceBufferId));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBufferId);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,  indice_size * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+	return indiceBufferId;
 }
 
 void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
@@ -72,13 +92,15 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 		vertices[i * 8 + 6] = mesh->mTextureCoords[0][i].x;
 		vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
 	}
+
 	meshData->has_texture = true;
 	meshData->has_normals = true;
 	meshData->vaoId = renderDataSys::createVAO();
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
+	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indices;
-	allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);
+	//allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);
 }
 
 

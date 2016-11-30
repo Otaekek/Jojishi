@@ -18,6 +18,7 @@ typedef struct 	s_renderMeshData {
 	GLuint		vaoId;
 	GLuint		vboVerticeId;
 	GLuint		indiceNum;
+	GLuint		indiceBufferId;
 	GLuint		*indices;
 }				t_renderMeshData;
 

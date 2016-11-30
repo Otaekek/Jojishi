@@ -23,17 +23,20 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	mode = (GLFWvidmode*)glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
-	glViewport(0, 0, mode->width,  mode->height);
+	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
+	window = glfwCreateWindow(500, 500, "jojishiGameEngine", NULL, NULL);
+	glViewport(0, 0, 500, 500);
 	glfwMakeContextCurrent(window);
 	glClearColor(1, 0, 1, 0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwSwapInterval(1);
+	camera[0] = transformBuiltin::create();
+	cameraNum = 1;
 }
 
 void 			renderBuiltIn::shutdown()
@@ -65,13 +68,10 @@ void			renderBuiltIn::update()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
-	/*
-	glm::mat4 proj = glm::perspective(45.0f, (float)mode->width/ (float)mode->height, 1.0f, 100.0f);
-	GLint uniProj = glGetUniformLocation(program, "proj");
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+
 	std::sort(list.begin(), list.end(), sort);
-	//renderBuiltIn::render(transformBuiltin::to_mat(camera[0]));
-	glFinish();*/
+	renderBuiltIn::render(transformBuiltin::to_mat(camera[0]));
+	glFinish();
 	glfwSwapBuffers(window);
 }
 
@@ -80,23 +80,38 @@ t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
 	return ((t_renderGO*)dynamicMemoryManager::get_ptr(ref));
 }
 
-void 			renderBuiltIn::render_unit(uint32_t index)
+void 			renderBuiltIn::render_unit(uint32_t index, glm::mat4 camera)
 {
 	t_renderMeshData 	*mesh;
 	t_renderGO 			*elem;
 
 	elem = (t_renderGO*)dynamicMemoryManager::get_ptr(list[index]);
 	mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(elem->assetHandler);
-	GLint model = glGetUniformLocation(program, "model");
+
+	glUseProgram(elem->program);
+
+	/*Set projection Matrix*/
+	glm::mat4 proj = glm::perspective(45.0f, (float)mode->width/ (float)mode->height, 1.0f, 100.0f);
+	GLint uniProj = glGetUniformLocation(elem->program, "P");
+
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+
+	/*Set camera */
+	GLint cam = glGetUniformLocation(elem->program, "V");
+	glUniformMatrix4fv(cam, 1, GL_FALSE, glm::value_ptr(camera));
+
+	/* Set model */
+	GLint model = glGetUniformLocation(elem->program, "M");
 	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler)));
-	//glBindVertexArray(mesh->vaoId);
-	glDrawElements(GL_TRIANGLES, mesh->indiceNum, GL_UNSIGNED_INT, mesh->indices);
+
+	glBindVertexArray(mesh->vaoId);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indiceBufferId);
+	glDrawElements(GL_TRIANGLES, mesh->indiceNum, GL_UNSIGNED_INT, 0);
 }
 
 void			renderBuiltIn::render(glm::mat4 camera)
 {
-	GLint cam = glGetUniformLocation(program, "camera");
-	glUniformMatrix4fv(cam, 1, GL_FALSE, glm::value_ptr(camera));
 	for (uint32_t i = 0; i < list.size(); i++)
-		renderBuiltIn::render_unit(i);
+		renderBuiltIn::render_unit(i, camera);
 }

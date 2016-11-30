@@ -27,8 +27,8 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint64_t get_fs_asset_assync(std::string path);
-	static uint64_t get_fs_asset_sync(std::string path);
+	static uint64_t get_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
+	static uint64_t get_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
 	static void init();
 	static void load_file(void *data);
 

@@ -7,13 +7,15 @@ uint64_t	 											staticMemoryManager::referencer = 0;
 uint32_t												staticMemoryManager::count = 0;
 std::mutex												staticMemoryManager::mutexes[NUMCLUSTER];
 
-uint64_t									staticMemoryManager::load_asset(void *loadData)
+uint64_t									staticMemoryManager::load_asset(void *loadData, E_ASSET_TYPE type)
 {
 	t_loadHeader header;
 
 	referencer++;
 	header.ref = referencer;
-	header.allocator = new stackAllocator();
+	header.allocator = &(clusters[type]);
+	ref_to_ptr[header.ref] = clusters[type].get_offset();
+	mutexes[type].lock();
 	memcpy(loadData, &header, sizeof(t_loadHeader));
 	data_status[referencer] = E_LOADING;
 	count++;
@@ -36,8 +38,9 @@ void										staticMemoryManager::asset_loaded(E_ASSET_TYPE type, t_loadHeader 
 {
 	count--;
 	data_status[header.ref] = E_LOADED;
-	mutexes[type].lock();
-	merge(header.allocator, type);
+	//mutexes[type].lock();
+	
+	//merge(header.allocator, type);
 	mutexes[type].unlock();
 }
 

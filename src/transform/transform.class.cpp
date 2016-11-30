@@ -65,6 +65,7 @@ void transformBuiltin::translate(uint32_t handler, float x, float y, float z)
 	transform->position.x += x;
 	transform->position.y += y;
 	transform->position.z += z;
+	
 }
 
 void transformBuiltin::scale(uint32_t handler, float x, float y, float  z)
@@ -92,6 +93,7 @@ glm::mat4 transformBuiltin::to_mat(uint32_t handler)
 
 	transform = get_transform(handler);
 	ret = (glm::mat4_cast(transform->rotation));
+	
 	ret[3][0] = transform->position.x;
 	ret[3][1] = transform->position.y;
 	ret[3][2] = transform->position.z;

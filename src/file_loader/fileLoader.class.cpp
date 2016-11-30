@@ -44,7 +44,7 @@ char 		*fileLoader::readfile(std::string path)
 	return ((char*)file.c_str());
 }
 
-uint64_t fileLoader::get_fs_asset_assync(std::string path)
+uint64_t fileLoader::get_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
 {
 	t_job			job;
 	char 			*job_path;
@@ -56,13 +56,13 @@ uint64_t fileLoader::get_fs_asset_assync(std::string path)
 	memcpy(job_path, path.c_str(), strlen(path.c_str()));
 	job_path[strlen(path.c_str())] = 0;
 	job.fptr = load_file;
-	ref = (staticMemoryManager::load_asset(job.data));
+	ref = (staticMemoryManager::load_asset(job.data, type));
 	path_as_guid[path] = ref;
 	jobHandler::push_job(job);
 	return (ref);
 }
 
-uint64_t fileLoader::get_fs_asset_sync(std::string path)
+uint64_t fileLoader::get_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
 {
 	t_job			job;
 	char 			*job_path;
@@ -74,7 +74,7 @@ uint64_t fileLoader::get_fs_asset_sync(std::string path)
 	memcpy(job_path, path.c_str(), strlen(path.c_str()));
 	job_path[strlen(path.c_str())] = 0;
 	job.fptr = load_file;
-	ref = (staticMemoryManager::load_asset(job.data));
+	ref = (staticMemoryManager::load_asset(job.data, type));
 	path_as_guid[path] = ref;
 	job.fptr(job.data);
 	return (ref);
