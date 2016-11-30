@@ -25,7 +25,7 @@ typedef struct 	s_render {
 	uint32_t 	assetHandler;
 	uint32_t	transformHandler;
 	uint32_t	vertex_shader;
-	uint32_t	frag_shader;			
+	uint32_t	frag_shader;
 }				t_renderGO;
 
 class renderBuiltIn {
@@ -41,7 +41,7 @@ public :
 	static 	void 		subscribe(uint32_t dataHandler);
 	static 	void 		unsubscribe(uint32_t dataHandler);
 
-	static 	void		update(); 
+	static 	void		update();
 
 	static 	t_renderGO 	*get_renderGO(uint32_t ref);
 
@@ -57,7 +57,7 @@ private :
 	static void						render(glm::mat4 camera);
 	static void 					render_unit(uint32_t index);
 	static uint32_t					program;
-	static const GLFWvidmode* 		mode;
+	static GLFWvidmode* 		mode;
 };
 
 #endif

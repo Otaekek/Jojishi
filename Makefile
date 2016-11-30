@@ -1,14 +1,14 @@
 NAME = jojishiEngine
 CFLAGS = -pthread -std=c++11
 #CFLAGS += -Wall -Werror -Wextra
-CFLAGS += -pedantic -pedantic-errors
-ifeq ($(shell basename $(CC)),clang) # Need autoconf
-CFLAGS += -Weverything
-endif
+#CFLAGS += -pedantic -pedantic-errors
+#ifeq ($(shell basename $(CC)),clang) # Need autoconf
+#CFLAGS += -Weverything
+#endif
 
 # Debug
 ifeq ($(DEBUG),yes)
-	CFLAGS += -g3 -O0 
+	CFLAGS += -g3 -O0
 endif
 
 # Profile
@@ -27,7 +27,7 @@ ifeq ($(SAN),yes)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 endif
 
-LDFLAGS += -pthread 
+LDFLAGS += -pthread
 # Input
 #SRC_SUBDIR += input
 #SOURCES += readline.c
@@ -98,13 +98,15 @@ LIB_GLM_PATH = glm/glm/
 CFLAGS += -I$(LIB_GLM_PATH)
 
 # glfw
-CFLAGS += -I./glfw-3.2.1/include/GLFW/  -DGL_GLEXT_PROTOTYPES 
-LDFLAGS += -L/usr/local/lib -lglfw3 -lrt -lm -ldl -lXrandr \
-	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
-	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES 
+CFLAGS += -I./glfw-3.2.1/include/GLFW/  -DGL_GLEXT_PROTOTYPES
+LDFLAGS += -L/usr/local/lib -L/Users/rcargou/.brew/lib -lglfw3
+# -lglfw3 -lrt -lm -ldl -lXrandr \
+#	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
+#	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES
 
-#  opengl 
-LDFLAGS += -lGL -lGLU
+#  opengl
+#LDFLAGS += -lGL -GLU
+LDFLAGS += -framework opengl
 
 # Object files
 OBJ_PATH = .obj
@@ -141,7 +143,7 @@ fclean: clean
 	$(RM) $(NAME)
 	$(RM) -rf $(DEP_PATH)
 
-sound: 
+sound:
 	aplay makefile_asset/roll.wav&
 
 re: sound fclean all

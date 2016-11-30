@@ -43,7 +43,7 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 
 
 	meshData = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
-	
+
 	mesh = scene->mMeshes[0];
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
@@ -78,7 +78,7 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indices;
-	allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);	
+	allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);
 }
 
 
@@ -94,7 +94,7 @@ std::string 		readfile(std::string path)
 		myfile.close();
 	}
 	else
-	{ 
+	{
 		std::cout << "Unable to open file";
 		exit(0);
 	}
@@ -103,8 +103,8 @@ std::string 		readfile(std::string path)
 
 uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::string fragPath)
 {
-	GLcharARB 		*vertexCode;
-	GLcharARB 		*fragCode;
+	GLchar 		*vertexCode;
+	GLchar 		*fragCode;
 	GLuint 			vertexShaderObject;
 	GLuint 			fragmentShaderObject;
 	GLint 			flength, vlength;
@@ -113,8 +113,9 @@ uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::stri
 	GLint			slen, blen;
 	std::string 	file;
 
-	vertexCode = (GLcharARB*)malloc(4096);
-	fragCode = (GLcharARB*)malloc(4096);
+
+	vertexCode = (GLchar*)malloc(4096);
+	fragCode = (GLchar*)malloc(4096);
 	file = readfile(vertexPath);
 	memcpy(vertexCode, file.c_str(), file.length() + 1);
 	file = readfile(fragPath);
@@ -123,24 +124,25 @@ uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::stri
 	fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
 	vlength = strlen(vertexCode);
 	flength = strlen(fragCode);
-	glShaderSourceARB(vertexShaderObject, 1, (const GLcharARB **)&(vertexCode), &vlength);
-	glCompileShaderARB(vertexShaderObject);
-	glGetObjectParameterivARB(vertexShaderObject, GL_COMPILE_STATUS, &compiled);
+	glShaderSource(vertexShaderObject, 1, (const GLchar **)&(vertexCode), &vlength);
+	glCompileShader(vertexShaderObject);
+	glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH , &blen);
-		glGetInfoLogARB(vertexShaderObject, blen, &slen, log);
+		printf("%d\n", compiled);
+		glGetShaderInfoLog(vertexShaderObject, blen, &slen, log);
 		printf("VertexShader compilation: %s\n", log);
 		exit(0);
 	}
-	glShaderSourceARB(fragmentShaderObject, 1, (const GLcharARB **)&(fragCode), &flength);
+	glShaderSource(fragmentShaderObject, 1, (const GLchar **)&(fragCode), &flength);
 	glCompileShader(fragmentShaderObject);
-	glGetObjectParameterivARB(fragmentShaderObject, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH , &blen);
-		glGetInfoLogARB(fragmentShaderObject, blen, &slen, log);
-		printf("%s\n", log);
+		glGetShaderInfoLog(fragmentShaderObject, blen, &slen, log);
+		printf("Frag shder compilation: %s\n", log);
 		exit(0);
 	}
 	GLint ProgramObject = glCreateProgram();

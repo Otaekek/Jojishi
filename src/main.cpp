@@ -26,9 +26,9 @@ int main()
 	renderDataSys::load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/basicFragShader.shader");
 	while (1)
 	{
-		return 1;
+		//return 1;
 		renderBuiltIn::update();
-		sleep(1);
+	//	sleep(1);
 	}
 	transformBuiltin::shutdown();
 	jobHandler::shutdown();

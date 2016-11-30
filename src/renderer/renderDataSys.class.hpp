@@ -6,8 +6,7 @@
 #include "../../assimp/include/assimp/scene.h"
 #include "../file_loader/fileLoader.class.hpp"
 #include "meshData.hpp"
-#include "/usr/include/GL/gl.h"
-#include "/usr/include/GL/glext.h"
+#include <jojishi.hpp>
 #include <string>
 
 typedef struct 	s_renderMeshData {
