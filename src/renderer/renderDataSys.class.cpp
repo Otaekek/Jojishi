@@ -67,7 +67,6 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	mesh = scene->mMeshes[0];
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
-
 	indices = (GLuint*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));
 	for (uint32_t i = 0; i < indices_size; i++)
 	{
@@ -84,13 +83,13 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 		vertices[i * 8] = mesh->mVertices[i].x;
 		vertices[i * 8 + 1] = mesh->mVertices[i].y;
 		vertices[i * 8 + 2] = mesh->mVertices[i].z;
-
 		vertices[i * 8 + 3] = mesh->mNormals[i].x;
 		vertices[i * 8 + 4] = mesh->mNormals[i].y;
 		vertices[i * 8 + 5] = mesh->mNormals[i].z;
-
-		vertices[i * 8 + 6] = mesh->mTextureCoords[0][i].x;
-		vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
+		if (mesh->HasTextureCoords(mesh->GetNumUVChannels())) {
+			vertices[i * 8 + 6] = mesh->mTextureCoords[mesh->GetNumUVChannels()][i].x;
+			vertices[i * 8 + 7] = mesh->mTextureCoords[mesh->GetNumUVChannels()][i].y;
+		}
 	}
 
 	meshData->has_texture = true;
@@ -100,6 +99,16 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indices;
+	aiMaterial*material = scene->mMaterials[mesh->mMaterialIndex];
+/*
+	
+	vector<Texture> diffuseMaps = this->loadMaterialTextures(material, 
+		aiTextureType_DIFFUSE, "texture_diffuse");
+	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	vector<Texture> specularMaps = this->loadMaterialTextures(material, 
+		aiTextureType_SPECULAR, "texture_specular");
+	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	*/
 	//allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);
 }
 

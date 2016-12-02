@@ -1,5 +1,5 @@
 #include <transform.class.hpp>
-
+#include <gtc/type_ptr.hpp>
 uint32_t transformBuiltin::cluster_id = 0;
 
 void transformBuiltin::init()
@@ -92,13 +92,11 @@ glm::mat4 transformBuiltin::to_mat(uint32_t handler)
 	glm::mat4 ret;
 
 	transform = get_transform(handler);
-	ret = (glm::mat4_cast(transform->rotation));
-	
-	ret[3][0] = transform->position.x;
-	ret[3][1] = transform->position.y;
-	ret[3][2] = transform->position.z;
-	ret[0][3] = transform->scale.x;
-	ret[1][3] = transform->scale.y;
-	ret[2][3] = transform->scale.z;
+	glm::mat4 scale = glm::scale(glm::mat4x4(1.0f), transform->scale);
+	ret = scale;
+	ret *= (glm::mat4_cast(transform->rotation));
+	ret[0][3] = transform->position.x;
+	ret[1][3] = transform->position.y;
+	ret[2][3] = transform->position.z;
 	return (ret);
 }

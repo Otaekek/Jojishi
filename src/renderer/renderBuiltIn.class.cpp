@@ -30,6 +30,8 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	window = glfwCreateWindow(500, 500, "jojishiGameEngine", NULL, NULL);
+	mode->height = 500;
+	mode->width = 500;
 	glViewport(0, 0, 500, 500);
 	glfwMakeContextCurrent(window);
 	glClearColor(1, 0, 1, 0);
@@ -37,6 +39,7 @@ void 			renderBuiltIn::init()
 	glfwSwapInterval(1);
 	camera[0] = transformBuiltin::create();
 	cameraNum = 1;
+	glEnable(GL_DEPTH_TEST);
 }
 
 void 			renderBuiltIn::shutdown()
@@ -93,7 +96,6 @@ void 			renderBuiltIn::render_unit(uint32_t index, glm::mat4 camera)
 	/*Set projection Matrix*/
 	glm::mat4 proj = glm::perspective(45.0f, (float)mode->width/ (float)mode->height, 1.0f, 100.0f);
 	GLint uniProj = glGetUniformLocation(elem->program, "P");
-
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
 	/*Set camera */

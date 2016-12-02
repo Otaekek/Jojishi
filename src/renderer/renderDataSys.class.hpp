@@ -20,6 +20,11 @@ typedef struct 	s_renderMeshData {
 	GLuint		indiceNum;
 	GLuint		indiceBufferId;
 	GLuint		*indices;
+	GLuint		programm;
+	GLuint		diffuseText;
+	GLuint		specularTexts;
+	GLuint		ChildAssets[12];
+	GLuint		ChildAssetsNum[12];
 }				t_renderMeshData;
 
 class renderDataSys {
@@ -30,10 +35,10 @@ public:
 
 	~renderDataSys();
 
-	static uint32_t createVAO();
-	static uint32_t createVBO_VNT(float *vertices, uint32_t vertex_size, uint32_t vaoId);
-	static uint32_t createVBO_Indice(uint32_t *indices, uint32_t indice_size, uint32_t vaoId);
-	static void 	obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene);
+	static uint32_t 		createVAO();
+	static uint32_t 		createVBO_VNT(float *vertices, uint32_t vertex_size, uint32_t vaoId);
+	static uint32_t 		createVBO_Indice(uint32_t *indices, uint32_t indice_size, uint32_t vaoId);
+	static void 			obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene);
 	static uint32_t 		load_programVertexFrag(std::string vertexPath, std::string fragPath);
 
 private:

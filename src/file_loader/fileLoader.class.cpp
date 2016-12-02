@@ -88,7 +88,14 @@ const aiScene 	*fileLoader::assimp_load(char *path, Assimp::Importer *importer)
 	aiProcess_CalcTangentSpace | 
 	aiProcess_Triangulate |
 	aiProcess_JoinIdenticalVertices |
-	aiProcess_SortByPType);
+	aiProcess_SortByPType |
+	aiProcess_ImproveCacheLocality |
+	aiProcess_GenNormals |
+	aiProcess_OptimizeMeshes |
+	aiProcess_OptimizeGraph |
+	aiProcess_FlipUVs |
+	aiProcess_GenUVCoords |
+	aiProcess_JoinIdenticalVertices);
 	return (scene);
 }
 

@@ -1,6 +1,8 @@
 #ifndef GAMEOBJECTCREATOR_CLASS_HPP
 #define GAMEOBJECTCREATOR_CLASS_HPP
 
+#include <transformBultin.class.hpp>
+
 class gameObjectCreator {
 
 public:
