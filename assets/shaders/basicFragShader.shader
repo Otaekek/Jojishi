@@ -19,7 +19,7 @@ void main(void)
 	vec3 ray;
 	vec3 viewDir;
 	vec3 reflectDir;
-	float specS = 32.0f;
+	float specS = 100000000.0f;
 	float spec;
 	vec3 frag_Normal;
 	vec3 specularResult, diffuseResult;

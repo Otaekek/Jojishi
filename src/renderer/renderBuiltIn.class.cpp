@@ -32,7 +32,7 @@ void 			renderBuiltIn::init()
 	//window = glfwCreateWindow(1000, 800, "jojishiGameEngine", NULL, NULL);
 	//mode->height = 1000;
 	//mode->width = 800;
-	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
+	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glViewport(0, 0, mode->height, mode->width);
 	glfwMakeContextCurrent(window);
 	glClearColor(0.4, 0.4, 0.4, 0);
@@ -41,6 +41,8 @@ void 			renderBuiltIn::init()
 	cameraNum = 1;
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
+	//glEnable(GL_MULTISAMPLE); 
 	glfwSwapBuffers(window);
 }
 
@@ -125,7 +127,7 @@ void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
 	/* Set model */
 	GLint model = glGetUniformLocation(elem->program, "M");
 	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler)));
-	
+
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 	mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs);
 	meshHandler = node->meshs;

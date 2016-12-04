@@ -33,8 +33,8 @@ int main()
 	go = renderBuiltIn::create();
 	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/lamborghini/Avent.obj", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/IronMan/IronMan.obj", staticMemoryManager::E_OBJ_FILE);
-	asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", staticMemoryManager::E_OBJ_FILE);
-	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/Altair/altair.obj", staticMemoryManager::E_OBJ_FILE);
+	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", staticMemoryManager::E_OBJ_FILE);
+	asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/Altair/altair.obj", staticMemoryManager::E_OBJ_FILE);
 	elem = renderBuiltIn::get_renderGO(go);
 	elem->assetHandler = asset;
 	elem->transformHandler = transform;
@@ -42,7 +42,7 @@ int main()
 	renderBuiltIn::subscribe(go);
 	transformBuiltin::scale(elem->transformHandler, 1, 1, 1);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 1.3f);
-	transformBuiltin::translate(elem->transformHandler, 0, -150, -120.01);
+	transformBuiltin::translate(elem->transformHandler, 0, 0, -3.01);
 	uint t = 0;
 	uint k = 0;
 	float count = 0;
