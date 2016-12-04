@@ -34,22 +34,25 @@ int main()
 	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/lamborghini/Avent.obj", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/IronMan/IronMan.obj", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", staticMemoryManager::E_OBJ_FILE);
-	asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/Altair/altair.obj", staticMemoryManager::E_OBJ_FILE);
+	//asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/Altair/altair.obj", staticMemoryManager::E_OBJ_FILE);
+	asset = fileLoader::get_fs_asset_sync("assets/graphic/mesh/Francis/Francis/Francis.dae", staticMemoryManager::E_OBJ_FILE);
+	
 	elem = renderBuiltIn::get_renderGO(go);
 	elem->assetHandler = asset;
 	elem->transformHandler = transform;
 	elem->program = program;
 	renderBuiltIn::subscribe(go);
 	transformBuiltin::scale(elem->transformHandler, 1, 1, 1);
-	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 1.3f);
-	transformBuiltin::translate(elem->transformHandler, 0, 0, -3.01);
+	//transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, -0.12f);
+	transformBuiltin::translate(elem->transformHandler, 0, -20, -100.01);
 	uint t = 0;
 	uint k = 0;
 	float count = 0;
+
 	while (1)
 	{
 		count +=  1.0f / (((float)(((clock() - t))) / CLOCKS_PER_SEC));
-		if (k++ > 100)
+		if (k++ > 1000)
 		{
 			printf("%f\n", count / k);
 			k = 0;
@@ -61,7 +64,7 @@ int main()
 		//printf("%d\n", i++);
 		//printf("%p\n", ouais
 		//transformBuiltin::translate(elem->transformHandler, -0.01, 0, -0.01);
-		transformBuiltin::rotate(elem->transformHandler, glm::vec3{0, 1, 0}, 0.001f);
+		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{0, 0, 1}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);

@@ -7,6 +7,8 @@
 #include "../../assimp/include/assimp/scene.h"
 #include "../file_loader/fileLoader.class.hpp"
 #include "meshData.hpp"
+#include <FreeImage.h>
+#include <cstdlib>
 #include <jojishi.hpp>
 #include <string>
 
@@ -28,8 +30,6 @@ typedef struct		s_material {
 
 typedef struct		s_mesh {
 
-	bool 			has_normals;
-	bool 			has_texture;
 	bool			has_child;
 
 	GLuint			textureHandler;
@@ -42,7 +42,7 @@ typedef struct		s_mesh {
 	GLuint			diffuseText;
 	GLuint			specularTexts;
 
-	uint32_t 		child;
+	GLuint			child;
 
 	glm::mat4		initialTransform;
 
@@ -52,10 +52,10 @@ typedef struct		s_mesh {
 
 typedef	struct		s_node {
 
-	bool			has_child;
 	bool			has_mesh;
 	uint32_t		meshs;
-	uint32_t		childs;
+	uint32_t 		child[12];
+	uint32_t		childNum;
 
 }					t_node;
 

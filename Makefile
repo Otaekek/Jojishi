@@ -117,6 +117,9 @@ ifeq ($(UNAME_S),Darwin)
 	LDFALGS += -framework opengl
 endif
 
+# FREEIMAGE
+LDFLAGS += -lfreeimage
+
 # Object files
 OBJ_PATH = .obj
 OBJECTS = $(SOURCES:%.cpp=$(OBJ_PATH)/%.o)

@@ -59,6 +59,10 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	uint32_t					indices_size;
 	uint32_t					vertex_size;
 	aiColor4D 					color;
+	aiString					texturePath;
+	FREE_IMAGE_FORMAT			format;
+	FIBITMAP*					image;
+	GLuint 						textureID;
 
 	material = scene->mMaterials[mesh->mMaterialIndex];
 	indices_size = mesh->mNumFaces;
@@ -99,8 +103,36 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	meshData->material.ambiant[0] = color.r;
 	meshData->material.ambiant[1] = color.g;
 	meshData->material.ambiant[2] = color.b;
-	meshData->has_texture = true;
-	meshData->has_normals = true;
+
+	if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+	{
+		material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+		format = FreeImage_GetFileType(texturePath.C_Str(), 0);
+		image = FreeImage_Load(format, texturePath.C_Str());
+		if (image != NULL)
+		{
+			meshData->material.has_diffuse_texture = true;
+			glGenTextures(1, &textureID);
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0,
+				GL_BGR, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(image));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			meshData->material.diffuseTexture = textureID;
+		}
+	}
+	if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+	{
+		material->GetTexture(aiTextureType_SPECULAR, 0, &texturePath);
+		if (meshData->material.specularTexture  != 0)
+		{
+			meshData->material.has_specular_texture = true;
+			glBindTexture(GL_TEXTURE_2D, meshData->material.specularTexture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+	}
 	meshData->vaoId = renderDataSys::createVAO();
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
@@ -112,24 +144,31 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 {
 	t_node 				*nodeData;
 	t_renderMeshData	*mesh;
+	uint32_t			k;
 
 	nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
 	nodeData->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
 	{
+		nodeData->has_mesh = true;
 		mesh = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
 		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene);
 		mesh->has_child = true;
 		mesh->child = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
 	}
-	mesh->has_child = false;
-	for (uint32_t k = 0; k < node->mNumChildren; k++)
+	if (node->mNumMeshes)
 	{
-		node_to_mesh(allocator, node->mChildren[k], trans, scene);
-		nodeData->childs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
-		nodeData->has_child = true;
-		nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
+		mesh->has_child = false;
+		nodeData->has_mesh = true;
 	}
+	else
+		nodeData->has_mesh = false;
+	for (k = 0; k < node->mNumChildren; k++)
+	{
+		nodeData->child[k] = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+		node_to_mesh(allocator, node->mChildren[k], trans, scene);
+	}
+	nodeData->childNum = k;
 }
 
 void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
