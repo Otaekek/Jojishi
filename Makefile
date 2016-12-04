@@ -128,7 +128,7 @@ BUILD_DIR = $(OBJ_PATH) $(DEP_PATH)
 
 .SECONDARY: $(OBJECTS)
 
-all: $(LIB42) $(DEPS) $(NAME)
+all: sound $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
@@ -155,7 +155,7 @@ fclean: clean
 sound:
 	aplay makefile_asset/roll.wav&
 
-re: sound fclean all
+re: fclean all
 
 sanitize:
 	$(MAKE) -C ./ re SAN=yes DEBUG=yes

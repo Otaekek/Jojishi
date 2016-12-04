@@ -22,6 +22,7 @@ public:
 		E_UNDEF = 0,
 		E_LOADING,
 		E_LOADED,
+		E_CHILD,
 		E_ERR
 	};
 
@@ -31,6 +32,8 @@ public:
 	};
 
 	static uint64_t									load_asset(void *loadData, E_ASSET_TYPE type);
+
+	static uint64_t									create_slot_child(E_ASSET_TYPE type);
 
 	static staticMemoryManager::e_asset_state		get_asset_state(uint64_t ref);
 

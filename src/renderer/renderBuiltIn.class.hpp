@@ -48,15 +48,16 @@ public :
 
 private :
 
-	static uint32_t 				cluster_id;
-	static std::vector<uint32_t> 	list;
-	static GLFWwindow* 				window;
+	static uint32_t					cluster_id;
+	static std::vector<uint32_t>	list;
+	static GLFWwindow*				window;
 	static uint32_t					camera[16];
 	static uint32_t					cameraNum;
 	static void						render(glm::mat4 camera);
-	static void 					render_unit(uint32_t index, glm::mat4 camera);
+	static void						render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_renderGO *elem);
+	static void						render_object(uint32_t index, glm::mat4 camera);
 	static uint32_t					program;
-	static GLFWvidmode* 			mode;
+	static GLFWvidmode*				mode;
 };
 
 #endif

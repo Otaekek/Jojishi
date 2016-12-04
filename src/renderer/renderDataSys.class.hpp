@@ -2,6 +2,7 @@
 #define RENDERDATASYS_CLASS_HPP
 
 #include <cstdint>
+#include <transform.class.hpp>
 #include "../memory_allocator/stackAllocator.class.hpp"
 #include "../../assimp/include/assimp/scene.h"
 #include "../file_loader/fileLoader.class.hpp"
@@ -9,23 +10,54 @@
 #include <jojishi.hpp>
 #include <string>
 
-typedef struct 	s_renderMeshData {
 
-	bool 		has_normals;
-	bool 		has_texture;
+typedef struct		s_material {
 
-	GLuint		textureHandler;
-	GLuint		vaoId;
-	GLuint		vboVerticeId;
-	GLuint		indiceNum;
-	GLuint		indiceBufferId;
-	GLuint		*indices;
-	GLuint		programm;
-	GLuint		diffuseText;
-	GLuint		specularTexts;
-	GLuint		ChildAssets[12];
-	GLuint		ChildAssetsNum[12];
-}				t_renderMeshData;
+	bool			has_diffuse_texture;
+	bool			has_specular_texture;
+	bool			is_twosided;
+
+	float			diffuse[3];
+	float			ambiant[3];
+	float			specular[3];
+
+	uint32_t		diffuseTexture;
+	uint32_t		specularTexture;
+
+}					t_material;
+
+typedef struct		s_mesh {
+
+	bool 			has_normals;
+	bool 			has_texture;
+	bool			has_child;
+
+	GLuint			textureHandler;
+	GLuint			vaoId;
+	GLuint			vboVerticeId;
+	GLuint			indiceNum;
+	GLuint			indiceBufferId;
+	GLuint			*indices;
+	GLuint			programm;
+	GLuint			diffuseText;
+	GLuint			specularTexts;
+
+	uint32_t 		child;
+
+	glm::mat4		initialTransform;
+
+	t_material		material;
+	
+}					t_renderMeshData;
+
+typedef	struct		s_node {
+
+	bool			has_child;
+	bool			has_mesh;
+	uint32_t		meshs;
+	uint32_t		childs;
+
+}					t_node;
 
 class renderDataSys {
 
@@ -42,6 +74,8 @@ public:
 	static uint32_t 		load_programVertexFrag(std::string vertexPath, std::string fragPath);
 
 private:
+	static void 					copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene);
+	static uint32_t 				node_to_mesh(stackAllocator *allocator, const aiNode *node,  glm::mat4 trans,const aiScene *scene);
 
 };
 

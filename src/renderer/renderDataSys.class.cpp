@@ -51,20 +51,16 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 	return indiceBufferId;
 }
 
-void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
+void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene)
 {
-	t_renderMeshData 			*meshData;
-	aiMesh						*mesh;
 	float 						*vertices;
 	GLuint						*indices;
+	aiMaterial					*material;
 	uint32_t					indices_size;
 	uint32_t					vertex_size;
-	void 						*to_free;
+	aiColor4D 					color;
 
-
-	meshData = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
-
-	mesh = scene->mMeshes[0];
+	material = scene->mMaterials[mesh->mMaterialIndex];
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
 	indices = (GLuint*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));
@@ -76,7 +72,6 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 			indices[i * 3 + j] = indice;
 		}
 	}
-	to_free = allocator->get_offset();
 	vertices = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 8);
 	for (uint32_t i = 0; i < vertex_size; i++)
 	{
@@ -86,12 +81,24 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 		vertices[i * 8 + 3] = mesh->mNormals[i].x;
 		vertices[i * 8 + 4] = mesh->mNormals[i].y;
 		vertices[i * 8 + 5] = mesh->mNormals[i].z;
-		if (mesh->HasTextureCoords(mesh->GetNumUVChannels())) {
-			vertices[i * 8 + 6] = mesh->mTextureCoords[mesh->GetNumUVChannels()][i].x;
-			vertices[i * 8 + 7] = mesh->mTextureCoords[mesh->GetNumUVChannels()][i].y;
+		if (mesh->GetNumUVChannels() > 0) {
+			vertices[i * 8 + 6] = mesh->mTextureCoords[0][i].x;
+			vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
 		}
 	}
 
+	aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &color);
+	meshData->material.diffuse[0] = color.r;
+	meshData->material.diffuse[1] = color.g;
+	meshData->material.diffuse[2] = color.b;
+	aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &color);
+	meshData->material.specular[0] = color.r;
+	meshData->material.specular[1] = color.g;
+	meshData->material.specular[2] = color.b;
+	aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &color);
+	meshData->material.ambiant[0] = color.r;
+	meshData->material.ambiant[1] = color.g;
+	meshData->material.ambiant[2] = color.b;
 	meshData->has_texture = true;
 	meshData->has_normals = true;
 	meshData->vaoId = renderDataSys::createVAO();
@@ -99,17 +106,37 @@ void 	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, cons
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indices;
-	aiMaterial*material = scene->mMaterials[mesh->mMaterialIndex];
-/*
-	
-	vector<Texture> diffuseMaps = this->loadMaterialTextures(material, 
-		aiTextureType_DIFFUSE, "texture_diffuse");
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	vector<Texture> specularMaps = this->loadMaterialTextures(material, 
-		aiTextureType_SPECULAR, "texture_specular");
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	*/
-	//allocator->mem_free((char*)allocator->get_offset() - (char*)to_free);
+}
+
+uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node, glm::mat4 trans, const aiScene *scene)
+{
+	t_node 				*nodeData;
+	t_renderMeshData	*mesh;
+
+	nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
+	nodeData->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
+	{
+		mesh = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
+		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene);
+		mesh->has_child = true;
+		mesh->child = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+	}
+	mesh->has_child = false;
+	for (uint32_t k = 0; k < node->mNumChildren; k++)
+	{
+		node_to_mesh(allocator, node->mChildren[k], trans, scene);
+		nodeData->childs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+		nodeData->has_child = true;
+		nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
+	}
+}
+
+void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
+{
+	glm::mat4 n;
+
+	node_to_mesh(allocator, scene->mRootNode, n, scene);
 }
 
 
@@ -184,3 +211,8 @@ uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::stri
 	free(fragCode);
 	return (ProgramObject);
 }
+
+
+/*
+
+*/

@@ -44,7 +44,7 @@ void *stackAllocator::get_data_pointer()
 
 void *stackAllocator::get_offset()
 {
-	return (index + data);
+	return (&data[index]);
 }
 
 uint32_t	stackAllocator::get_size()

@@ -60,6 +60,13 @@ bool										staticMemoryManager::all_read()
 	return (count == 0);
 }
 
+uint64_t									staticMemoryManager::create_slot_child(E_ASSET_TYPE type)
+{
+	referencer++;
+	ref_to_ptr[referencer] = clusters[type].get_offset();
+	data_status[referencer] = E_CHILD;
+	return referencer;
+}
 
 void										staticMemoryManager::merge(stackAllocator *allocator, staticMemoryManager::E_ASSET_TYPE type)
 {

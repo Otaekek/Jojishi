@@ -17,6 +17,9 @@ void fileLoader::init()
 {
 	extension_to_function["obj"] = &fileLoader::load_obj;
 	extension_to_function["blend"] = &fileLoader::load_obj;
+	extension_to_function["C4D"] = &fileLoader::load_obj;
+	extension_to_function["c4d"] = &fileLoader::load_obj;
+	extension_to_function["3ds"] = &fileLoader::load_obj;
 }
 
 fileLoader::~fileLoader()
