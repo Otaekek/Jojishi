@@ -20,7 +20,11 @@ void fileLoader::init()
 	extension_to_function["C4D"] = &fileLoader::load_obj;
 	extension_to_function["c4d"] = &fileLoader::load_obj;
 	extension_to_function["3ds"] = &fileLoader::load_obj;
+	extension_to_function["3DS"] = &fileLoader::load_obj;
 	extension_to_function["dae"] = &fileLoader::load_obj;
+	extension_to_function["max"] = &fileLoader::load_obj;
+	extension_to_function["fbx"] = &fileLoader::load_obj;
+	extension_to_function["ma"] = &fileLoader::load_obj;
 }
 
 fileLoader::~fileLoader()
@@ -97,7 +101,6 @@ const aiScene 	*fileLoader::assimp_load(char *path, Assimp::Importer *importer)
 	aiProcess_GenNormals |
 	aiProcess_OptimizeMeshes |
 	aiProcess_OptimizeGraph |
-	aiProcess_FlipUVs |
 	aiProcess_GenUVCoords |
 	aiProcess_JoinIdenticalVertices);
 	return (scene);
@@ -116,10 +119,10 @@ void 			fileLoader::load_obj(void *data)
 	if (scene == NULL)
 	{
 		staticMemoryManager::set_asset_state(staticMemoryManager::E_ERR, loadHeader->ref);
-		printf("Error when loading %s: File not found.\n", path);
+		printf("Error when loading %s: %s.\n", path, (importer.GetErrorString()));
 		return ;
 	}
-	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene);
+	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path);
 	staticMemoryManager::asset_loaded(staticMemoryManager::E_OBJ_FILE, *loadHeader);
 }
 

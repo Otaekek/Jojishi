@@ -54,10 +54,9 @@ private :
 	static uint32_t					camera[16];
 	static uint32_t					cameraNum;
 	static void						render(glm::mat4 camera);
-	static void						render_node(t_node node, t_renderGO *elem, glm::mat4 camera);
-	static void						render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_renderGO *elem);
+	static void						render_node(t_node node, t_renderGO *elem, glm::mat4 camera, uint32_t program);
+	static void						render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
 	static void						render_object(uint32_t index, glm::mat4 camera);
-	static uint32_t					program;
 	static GLFWvidmode*				mode;
 };
 

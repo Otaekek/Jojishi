@@ -1,11 +1,24 @@
 #include "renderDataSys.class.hpp"
 
+uint32_t renderDataSys::_programm = 0;
+
 renderDataSys::renderDataSys()
 {
 
 }
 
 renderDataSys::~renderDataSys()
+{
+
+}
+
+
+void 			renderDataSys::init()
+{
+	_programm = load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/basicFragShader.shader");
+}
+
+void 			renderDataSys::shutdown()
 {
 
 }
@@ -51,7 +64,39 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 	return indiceBufferId;
 }
 
-void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene)
+void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text)
+{
+	aiString					texturePath;
+	char						completePath[1000];
+	FREE_IMAGE_FORMAT			format;
+	FIBITMAP*					image;
+	GLuint 						textureID;
+
+	memcpy(completePath, path, strlen(path) + 1);
+	if (material->GetTextureCount(type) > 0)
+	{
+		material->GetTexture(type, 0, &texturePath);
+		strcat(completePath, texturePath.C_Str());
+		format = FreeImage_GetFileType(completePath, 0);
+		image = FreeImage_Load(format, completePath);
+		image = FreeImage_ConvertTo32Bits(image);
+		printf("%s\n", completePath);
+		if (image != NULL)
+		{
+			*has_text = true;
+			glGenTextures(1, &textureID);
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0,
+				GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(image));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			*textEmplacement = textureID;
+		}
+	}
+}
+
+void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path)
 {
 	float 						*vertices;
 	GLuint						*indices;
@@ -60,10 +105,13 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	uint32_t					vertex_size;
 	aiColor4D 					color;
 	aiString					texturePath;
-	FREE_IMAGE_FORMAT			format;
-	FIBITMAP*					image;
-	GLuint 						textureID;
+	char						completePath[1000];
+	uint32_t					i = 0;
 
+	memcpy(completePath, path, strlen(path) + 1);
+	for (i = 0; completePath[strlen(completePath) - i] != '/'; i++)
+		;
+	completePath[strlen(completePath) - i + 1] = '\0';
 	material = scene->mMaterials[mesh->mMaterialIndex];
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
@@ -104,43 +152,22 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	meshData->material.ambiant[1] = color.g;
 	meshData->material.ambiant[2] = color.b;
 
-	if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-	{
-		material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-		format = FreeImage_GetFileType(texturePath.C_Str(), 0);
-		image = FreeImage_Load(format, texturePath.C_Str());
-		if (image != NULL)
-		{
-			meshData->material.has_diffuse_texture = true;
-			glGenTextures(1, &textureID);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0,
-				GL_BGR, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(image));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			meshData->material.diffuseTexture = textureID;
-		}
-	}
-	if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
-	{
-		material->GetTexture(aiTextureType_SPECULAR, 0, &texturePath);
-		if (meshData->material.specularTexture  != 0)
-		{
-			meshData->material.has_specular_texture = true;
-			glBindTexture(GL_TEXTURE_2D, meshData->material.specularTexture);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-	}
+	handle_texture(aiTextureType_NORMALS, completePath, material,
+		&(meshData->material.bumpTexture), &(meshData->material.has_bump_texture));
+	handle_texture(aiTextureType_DIFFUSE, completePath, material,
+		&(meshData->material.diffuseTexture), &(meshData->material.has_diffuse_texture));
+	handle_texture(aiTextureType_SPECULAR, completePath, material,
+		&(meshData->material.specularTexture), &(meshData->material.has_specular_texture));
 	meshData->vaoId = renderDataSys::createVAO();
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indices;
+	meshData->vbo = vertices;
+	meshData->vertexNum = vertex_size;
 }
 
-uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node, glm::mat4 trans, const aiScene *scene)
+uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node, glm::mat4 trans, const aiScene *scene, char *path)
 {
 	t_node 				*nodeData;
 	t_renderMeshData	*mesh;
@@ -148,11 +175,12 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 
 	nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
 	nodeData->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+	nodeData->program = _programm;
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
 	{
 		nodeData->has_mesh = true;
 		mesh = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
-		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene);
+		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path);
 		mesh->has_child = true;
 		mesh->child = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
 	}
@@ -166,16 +194,16 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 	for (k = 0; k < node->mNumChildren; k++)
 	{
 		nodeData->child[k] = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
-		node_to_mesh(allocator, node->mChildren[k], trans, scene);
+		node_to_mesh(allocator, node->mChildren[k], trans, scene, path);
 	}
 	nodeData->childNum = k;
 }
 
-void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene)
+void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path)
 {
 	glm::mat4 n;
 
-	node_to_mesh(allocator, scene->mRootNode, n, scene);
+	node_to_mesh(allocator, scene->mRootNode, n, scene, path);
 }
 
 
@@ -252,6 +280,45 @@ uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::stri
 }
 
 
-/*
+void renderDataSys::computeModification(t_renderMeshData*mesh, glm::vec3 translation, float angle, glm::vec3 axis)
+{
+	for (uint32_t i = 0; i < mesh->vertexNum; i++)
+	{
+		
+		mesh->vbo[i * 8] += translation.x;
+		mesh->vbo[i * 8 + 1] += translation.y;
+		mesh->vbo[i * 8 + 2] += translation.z;	
+	}
+	mesh->vaoId = renderDataSys::createVAO();
+	mesh->vboVerticeId = renderDataSys::createVBO_VNT(mesh->vbo, mesh->vertexNum, mesh->vaoId);
+	mesh->indiceBufferId = renderDataSys::createVBO_Indice(mesh->indices, mesh->indiceNum, mesh->vaoId);
+}
 
-*/
+void renderDataSys::iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis)
+{
+	t_renderMeshData	*mesh;
+	bool 				mesh_has_child;
+
+	if (node.has_mesh)
+	{
+		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(node.meshs);
+		do
+		{
+			computeModification(mesh, translation, angle, axis);
+			mesh_has_child = mesh->has_child;
+			mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(mesh->child);
+		}	while (mesh_has_child);
+	}
+	for (int i = 0; i < node.childNum; i++)
+		iterNode(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), translation, angle, axis);
+
+}
+
+void renderDataSys::modifyVertices(uint32_t assetHandler, glm::vec3 translation, float angle, glm::vec3 axis)
+{
+	t_node *node;
+
+	node = (t_node*)staticMemoryManager::get_data_ptr(assetHandler);
+	iterNode(*node, translation, angle, axis);
+}
+

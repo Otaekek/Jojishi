@@ -17,6 +17,7 @@ out vec4 FragColor;
 
 void main(void)
 {
+
 	vec3 sunlight = vec3(0, 150, 0);
 	vec3 ray;
 	vec3 viewDir;
@@ -35,8 +36,9 @@ void main(void)
 	spec = clamp(pow(max(dot(viewDir, reflectDir), 0.0), specS), 0, 1);
 
 	specularResult = spec * specular;
-	diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * diffuse;
-	FragColor = vec4(diffuseResult + specularResult + ambiant, 1.0f);
-	if (has_diffuse == 1)
-		FragColor = vec4(texture(textDiffuse, uv).r * FragColor.x, texture(textDiffuse, uv).g * FragColor.y, texture(textDiffuse, uv).b * FragColor.z, 1.0f);
+	if (has_diffuse == 0)
+		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * diffuse;
+	else
+		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * texture(textDiffuse, uv).rgb;
+	FragColor = vec4(diffuseResult + specularResult + ambiant, 1);
 }

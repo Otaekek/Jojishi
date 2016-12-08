@@ -2,6 +2,8 @@
 #define GAMEOBJECTCREATOR_CLASS_HPP
 
 #include <transformBultin.class.hpp>
+#include <staticMemoryManager.class.hpp>
+#include <dynamicMemoryManager.class.hpp>
 
 class gameObjectCreator {
 
