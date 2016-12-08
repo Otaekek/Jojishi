@@ -16,10 +16,11 @@
 
 typedef struct 		s_transform {
 
+	bool 			has_parent;
+	uint32_t		parentHandler;
 	glm::vec3		position;
 	glm::vec3 		scale;
 	glm::quat 		rotation;
-
 }					t_transform;
 
 class transformBuiltin {

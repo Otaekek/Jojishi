@@ -27,12 +27,13 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint64_t get_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
-	static uint64_t get_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
-	static void init();
-	static void load_file(void *data);
+	static uint64_t 	load_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
+	static uint64_t 	load_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
+	static void 		init();
+	static void 		load_file(void *data);
+	static uint64_t		get_fs(std::string path);
 
-	static char 									*readfile(std::string path);
+	static char 		*readfile(std::string path);
 private :
 	
 	static std::map<std::string, void (*)(void*)> 	extension_to_function;

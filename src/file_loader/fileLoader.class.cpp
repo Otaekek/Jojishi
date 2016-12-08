@@ -32,6 +32,13 @@ fileLoader::~fileLoader()
 
 }
 
+uint64_t			fileLoader::get_fs(std::string path)
+{
+	if (path_as_guid[path] != 0)
+		return (path_as_guid[path]);
+	return 0;
+}
+
 char 		*fileLoader::readfile(std::string path)
 {
 	std::string line;
@@ -52,7 +59,7 @@ char 		*fileLoader::readfile(std::string path)
 	return ((char*)file.c_str());
 }
 
-uint64_t fileLoader::get_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
+uint64_t fileLoader::load_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
 {
 	t_job			job;
 	char 			*job_path;
@@ -70,7 +77,7 @@ uint64_t fileLoader::get_fs_asset_assync(std::string path, staticMemoryManager::
 	return (ref);
 }
 
-uint64_t fileLoader::get_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
+uint64_t fileLoader::load_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
 {
 	t_job			job;
 	char 			*job_path;
