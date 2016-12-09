@@ -4,8 +4,7 @@
 uint32_t 				renderBuiltIn::cluster_id;
 std::vector<uint32_t> 	renderBuiltIn::list;
 GLFWwindow* 			renderBuiltIn::window;
-uint32_t				renderBuiltIn::camera[16];
-uint32_t				renderBuiltIn::cameraNum;
+std::vector<uint32_t>	renderBuiltIn::_cameras(16);
 GLFWvidmode* 			renderBuiltIn::mode;
 
 int 			sort(uint32_t a, uint32_t b)
@@ -36,12 +35,11 @@ void 			renderBuiltIn::init()
 	glfwMakeContextCurrent(window);
 	glClearColor(0, 0, 0.1, 0);
 	glfwSwapInterval(1);
-	camera[0] = transformBuiltin::create();
-	cameraNum = 1;
+	_cameras[0] = transformBuiltin::create();
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//glfwWindowHint(GLFW_SAMPLES, 4);
-	//glEnable(GL_MULTISAMPLE); 
+	//glEnable(GL_MULTISAMPLE);
 	glfwSwapBuffers(window);
 	glEnable(GL_BLEND);
 }
@@ -75,9 +73,8 @@ void			renderBuiltIn::update()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
-
 	std::sort(list.begin(), list.end(), sort);
-	renderBuiltIn::render(transformBuiltin::to_mat(camera[0]));
+	renderBuiltIn::render(transformBuiltin::to_mat(_cameras[0]));
 	glFinish();
 	glfwSwapBuffers(window);
 }
@@ -159,3 +156,14 @@ void			renderBuiltIn::render(glm::mat4 camera)
 	for (uint32_t i = 0; i < list.size(); i++)
 		renderBuiltIn::render_object(i, camera);
 }
+
+void			renderBuiltIn::add_camera(uint32_t camHandler)
+{
+	_cameras.push_back(camHandler);
+}
+
+void			renderBuiltIn::remove_camera(uint32_t camHandler)
+{
+	_cameras.erase(std::find(_cameras.begin(), _cameras.end(), camHandler));
+}
+

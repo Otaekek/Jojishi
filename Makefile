@@ -73,6 +73,11 @@ SRC_SUBDIR += transform
 CFLAGS += -Isrc/transform
 SOURCES += transform.class.cpp
 
+# fpsController
+SRC_SUBDIR += basicFPSControlBuiltin
+CFLAGS += -Isrc/basicFPSControlBuiltin
+SOURCES += basicFPSControlBuiltin.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
@@ -114,7 +119,7 @@ ifeq ($(UNAME_S),Linux)
 	LDFLAGS += -lGL -lGLU
 endif
 ifeq ($(UNAME_S),Darwin)
-	LDFALGS += -framework opengl
+	LDFLAGS += -framework opengl
 endif
 
 # FREEIMAGE

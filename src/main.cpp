@@ -67,7 +67,7 @@ int main()
 		//printf("%d\n", i++);
 		//printf("%p\n", ouais
 		//transformBuiltin::translate(elem->transformHandler, -0.01, 0, -0.01);
-		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.001f);
+		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.01f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{0, 0, 1}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);

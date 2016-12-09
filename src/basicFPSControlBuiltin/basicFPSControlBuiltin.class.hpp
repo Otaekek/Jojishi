@@ -1,13 +1,13 @@
 #ifndef BASICFPSCONTROLBUILTIN_CLASS_HPP
 #define BASICFPSCONTROLBUILTIN_CLASS_HPP
 
-/* 
-	This factory was created mainly for debug and testing 
+/*
+	This factory was created mainly for debug and testing
 	As it has no physics components movement are based directly on the transform
 	and this is NOT recommended in a real game.
 */
 
-/* 
+/*
 	Note:
 		The way the Gameobject are conceived ( if they are ) are left to the game programmer
 		but it is recommanded to architect them this way.
@@ -15,6 +15,8 @@
 
 #include <transform.class.hpp>
 #include <string>
+#include <renderBuiltIn.class.hpp>
+#include <fileLoader.class.hpp>
 
 #define MAX_ELEM 16
 
@@ -22,15 +24,16 @@ class basicFPSControl {
 
 public:
 
-	 basicFPSControl(std::string meshPath, float posx, float posy, float posz);
+	basicFPSControl();
+	basicFPSControl(std::string meshPath, float posx, float posy, float posz);
 	~basicFPSControl();
 
 	void update();
 
 private:
 
-	uint32_t	transformHandler;
-	uint32_t	assetHandler;
+	uint32_t	_transformHandler;
+	uint32_t	_assetHandler;
 
 	void 		render();
 	void 		behave();
@@ -44,7 +47,7 @@ public:
 	static void 		shutdow();
 
 	static void 		update();
-	static void 		create();
+	static void 		create(std::string path, float posx, float posy, float posz);
 
 private:
 

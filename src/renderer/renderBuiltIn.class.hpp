@@ -44,15 +44,15 @@ public :
 
 	static 	t_renderGO 	*get_renderGO(uint32_t ref);
 
-	static	void 		set_camera(uint32_t *camHandlers, uint32_t camNum);
-
+	static	void		set_camera(uint32_t *camHandlers, uint32_t camNum);
+	static	void		add_camera(uint32_t camHandler);
+	static	void		remove_camera(uint32_t camHandler);
 private :
 
 	static uint32_t					cluster_id;
 	static std::vector<uint32_t>	list;
 	static GLFWwindow*				window;
-	static uint32_t					camera[16];
-	static uint32_t					cameraNum;
+	static std::vector<uint32_t>	_cameras;
 	static void						render(glm::mat4 camera);
 	static void						render_node(t_node node, t_renderGO *elem, glm::mat4 camera, uint32_t program);
 	static void						render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
