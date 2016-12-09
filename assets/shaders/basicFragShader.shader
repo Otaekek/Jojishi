@@ -22,7 +22,7 @@ void main(void)
 	vec3 ray;
 	vec3 viewDir;
 	vec3 reflectDir;
-	float specS = 32.0f;
+	float specS = 2.0f;
 	float spec;
 	vec3 frag_Normal;
 	vec3 specularResult, diffuseResult;
@@ -35,7 +35,7 @@ void main(void)
 
 	spec = clamp(pow(max(dot(viewDir, reflectDir), 0.0), specS), 0, 1);
 
-	specularResult = spec * 5 * specular;
+	specularResult = spec * 2 * specular;
 	if (has_diffuse == 0)
 		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * diffuse;
 	else
