@@ -25,7 +25,7 @@ class basicFPSControl {
 public:
 
 	basicFPSControl();
-	basicFPSControl(std::string meshPath, float posx, float posy, float posz);
+	basicFPSControl(float posx, float posy, float posz);
 	~basicFPSControl();
 
 	void update();
@@ -33,7 +33,6 @@ public:
 private:
 
 	uint32_t	_transformHandler;
-	uint32_t	_assetHandler;
 
 	void 		render();
 	void 		behave();
@@ -47,7 +46,7 @@ public:
 	static void 		shutdow();
 
 	static void 		update();
-	static void 		create(std::string path, float posx, float posy, float posz);
+	static void 		create(float posx, float posy, float posz);
 
 private:
 

@@ -5,11 +5,10 @@ basicFPSControl::basicFPSControl()
 
 }
 
-basicFPSControl::basicFPSControl(std::string meshPath, float posx, float posy, float posz)
+basicFPSControl::basicFPSControl(float posx, float posy, float posz)
 {
 	_transformHandler = transformBuiltin::create();
 	transformBuiltin::translate(_transformHandler, posx, posy, posz);
-	_assetHandler = fileLoader::load_fs_asset_sync(meshPath, staticMemoryManager::E_OBJ_FILE);
 }
 
 basicFPSControl::~basicFPSControl()
@@ -26,7 +25,6 @@ void 		basicFPSControl::update()
 void 		basicFPSControl::render()
 {
 	renderBuiltIn::add_camera(_transformHandler);
-	//renderBuiltIn::add_render(_assetHandler);
 	renderBuiltIn::remove_camera(_transformHandler);
 }
 
@@ -54,9 +52,9 @@ void 		basicFPSControlManagerBuiltin::update()
 		elems[i].update();
 }
 
-void 		basicFPSControlManagerBuiltin::create(std::string path, float posx, float posy, float posz)
+void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz)
 {
-	basicFPSControl control(path, posx, posy, posz);
+	basicFPSControl control(posx, posy, posz);
 
 	elems[numElem++] = control;
 }
