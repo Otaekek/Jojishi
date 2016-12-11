@@ -28,7 +28,9 @@ public:
 	basicFPSControl();
 	basicFPSControl(float posx, float posy, float posz);
 	~basicFPSControl();
-	void update();
+
+	void		mouse_update(float posX, float posY);
+	void 		update();
 
 private:
 
@@ -49,6 +51,7 @@ public:
 
 	static void 		update();
 	static void 		create(float posx, float posy, float posz);
+	static void 		mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 
 private:
 

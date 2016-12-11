@@ -27,7 +27,7 @@ int main()
 	transformBuiltin::init();
 	renderDataSys::init();
 	inputBuiltin::init();
-
+	basicFPSControlManagerBuiltin::init();
 	uint32_t transform;
 	uint32_t asset;
 	uint32_t go;
