@@ -80,7 +80,7 @@ SOURCES += basicFPSControlBuiltin.class.cpp
 
 # fpsController
 SRC_SUBDIR += input_builtin
-CFLAGS += -Isrc/inputBuiltin
+CFLAGS += -Isrc/input_builtin
 SOURCES += inputBuiltin.class.cpp
 
 # Generation

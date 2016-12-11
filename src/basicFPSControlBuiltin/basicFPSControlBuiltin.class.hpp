@@ -17,6 +17,7 @@
 #include <string>
 #include <renderBuiltIn.class.hpp>
 #include <fileLoader.class.hpp>
+#include <inputBuiltin.class.hpp>
 
 #define MAX_ELEM 64
 
@@ -36,6 +37,8 @@ private:
 
 	void 		render();
 	void 		behave();
+	float		rotx;
+	float		roty;
 };
 
 class basicFPSControlManagerBuiltin {

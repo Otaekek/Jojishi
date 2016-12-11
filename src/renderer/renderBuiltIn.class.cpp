@@ -30,8 +30,8 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	//window = glfwCreateWindow(1000, 800, "jojishiGameEngine", NULL, NULL);
-	mode->height = 800;
-	mode->width = 1000;
+	//mode->height = 800;
+	//mode->width = 1000;
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glViewport(0, 0, mode->height, mode->width);
 	glfwMakeContextCurrent(window);
@@ -81,12 +81,16 @@ void			renderBuiltIn::update()
 	for (uint32_t i = 0; i < numCamera; i++)
 	{
 		set_view_port(i, numCamera, mode->width, mode->height);
-		renderBuiltIn::render(transformBuiltin::to_mat(_cameras[i]));
+		renderBuiltIn::render(transformBuiltin::to_mat_cam(_cameras[i]));
 	}
 	numCamera = 0;
 	sizeList = 0;
 	glFinish();
 	glfwSwapBuffers(window);
+}
+GLFWvidmode				*renderBuiltIn::get_mode()
+{
+	return (mode);
 }
 
 t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
@@ -146,7 +150,8 @@ void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
 	glUseProgram(node->program);
 
 	/*Set projection Matrix*/
-	glm::mat4 proj = glm::perspective(45.0f, (float)mode->width / mode->height, 1.0f, 100.0f);
+	//glm::mat4 proj = glm::perspective(45.0f, (float)mode->width / mode->height, 1.0f, 100.0f);
+	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000.0f, (float)mode->width / mode->height);
 	GLint uniProj = glGetUniformLocation(node->program, "P");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 

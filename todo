@@ -1,7 +1,8 @@
-Camera (and struct)
+render advanced camera structure
 Skybox
 Lightning
 Terrain generation Builtin
+Camera player bundle
 Animation Builtin
 
 Add best support for mutlti threading

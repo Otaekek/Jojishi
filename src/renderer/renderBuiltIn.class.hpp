@@ -45,6 +45,8 @@ public :
 
 	static GLFWwindow*				get_window();
 
+	static GLFWvidmode				*get_mode();
+	
 private :
 
 	static uint32_t					cluster_id;

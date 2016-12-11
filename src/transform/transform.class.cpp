@@ -100,3 +100,52 @@ glm::mat4 transformBuiltin::to_mat(uint32_t handler)
 	ret[2][3] = transform->position.z;
 	return (ret);
 }
+
+
+glm::mat4 transformBuiltin::to_mat_cam(uint32_t handler)
+{
+	t_transform *transform;
+	glm::mat4 ret;
+
+	transform = get_transform(handler);
+	glm::mat4 scale = glm::scale(glm::mat4x4(1.0f), transform->scale);
+	ret = scale;
+	ret[0][3] = transform->position.x;
+	ret[1][3] = transform->position.y;
+	ret[2][3] = transform->position.z;
+	ret *= (glm::mat4_cast(transform->rotation));
+	return (ret);
+}
+
+
+glm::mat4	transformBuiltin::projection_matrix(float fov, float near, float far, float aspect)
+{
+	glm::mat4 	matrix;
+	float		x_scale;
+	float		y_scale;
+	float		frustrum;
+
+	matrix = glm::mat4x4(1.0f);
+	y_scale = (float)((1.0f / tan((fov / 2.0f) / 57.295)) * aspect);
+	x_scale = y_scale / aspect;
+	frustrum = far - near;
+	matrix[0][0] = x_scale;
+	matrix[1][1] = y_scale;
+	matrix[2][2] = -((far + near) / frustrum);
+	matrix[2][3] = -((2 * near * far) / frustrum);
+	matrix[3][2] = -1;
+	matrix[3][3] = 0;
+	return (matrix);
+}
+
+void transformBuiltin::euler_angle(uint32_t handler, float x, float y)
+{
+	t_transform *transform;
+
+	transform = get_transform(handler);
+	transform->rotation = glm::angleAxis(y, glm::vec3{1.0f, 0.0f, 0.0f});
+	glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+
+	up = up * transform->rotation;
+	transform->rotation = glm::rotate(transform->rotation, x, up);
+}
