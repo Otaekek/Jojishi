@@ -28,7 +28,6 @@ public:
 	basicFPSControl();
 	basicFPSControl(float posx, float posy, float posz);
 	~basicFPSControl();
-
 	void update();
 
 private:
