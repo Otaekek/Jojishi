@@ -78,6 +78,11 @@ SRC_SUBDIR += basicFPSControlBuiltin
 CFLAGS += -Isrc/basicFPSControlBuiltin
 SOURCES += basicFPSControlBuiltin.class.cpp
 
+# fpsController
+SRC_SUBDIR += input_builtin
+CFLAGS += -Isrc/inputBuiltin
+SOURCES += inputBuiltin.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include

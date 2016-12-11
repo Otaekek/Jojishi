@@ -16,7 +16,7 @@
 #include <vector>
 #include <ctime>
 #include <renderBuiltIn.class.hpp>
-
+#include <basicFPSControlBuiltin.class.hpp>
 int main()
 {
 	renderBuiltIn::init();
@@ -42,12 +42,14 @@ int main()
 	elem->assetHandler = asset;
 	elem->transformHandler = transform;
 	//elem->program = program;
-	renderBuiltIn::subscribe(go);
 	//renderDataSys::modifyVertices(asset, glm::vec3(20, -10, 0), 0, glm::vec3(0, 0, 0));
 	//transformBuiltin::scale(elem->transformHandler, 20.2, 20.2, 20.2);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
 	transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
-	transformBuiltin::translate(elem->transformHandler, 0, -150, -200.01);
+	transformBuiltin::translate(elem->transformHandler, 0, -150, -260.01);
+	basicFPSControlManagerBuiltin::create(0, 0, 0);
+	basicFPSControlManagerBuiltin::create(0, 20, -200);
+	basicFPSControlManagerBuiltin::create(20, 0, 200);
 	uint t = 0;
 	uint k = 0;
 	float count = 0;
@@ -55,22 +57,26 @@ int main()
 	while (1)
 	{
 		count +=  1.0f / (((float)(((clock() - t))) / CLOCKS_PER_SEC));
-		if (k++ > 1000)
+		if (k++ > 100)
 		{
 			printf("%f\n", count / k);
 			k = 0;
+			//basicFPSControlManagerBuiltin::create(0, 0, 0);
 			count = 0;
 		}
 		t = clock();
+		//usleep(1.0f / 60000000);
 //		i = !i;
 		//printf("%d", i);
 		//printf("%d\n", i++);
 		//printf("%p\n", ouais
 		//transformBuiltin::translate(elem->transformHandler, -0.01, 0, -0.01);
-		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.01f);
+		renderBuiltIn::render_me(go);
+		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.02f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{0, 0, 1}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);
 	//	transformBuiltin::rotate(elem->transformHandler, glm::vec3{1, 0, 0}, 0.001f);
+		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();
 	}
 	transformBuiltin::shutdown();

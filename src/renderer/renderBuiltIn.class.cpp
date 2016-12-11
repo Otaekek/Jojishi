@@ -2,12 +2,14 @@
 #include <unistd.h>
 
 uint32_t 				renderBuiltIn::cluster_id;
-std::vector<uint32_t> 	renderBuiltIn::list;
+uint32_t				renderBuiltIn::list[MAX_SUBSCRIBE];
+uint32_t				renderBuiltIn::sizeList;
 GLFWwindow* 			renderBuiltIn::window;
-std::vector<uint32_t>	renderBuiltIn::_cameras(16);
+uint32_t				renderBuiltIn::_cameras[512];
+uint32_t				renderBuiltIn::numCamera = 0;
 GLFWvidmode* 			renderBuiltIn::mode;
 
-int 			sort(uint32_t a, uint32_t b)
+int				sort(uint32_t a, uint32_t b)
 {
 	return (0);
 }
@@ -28,14 +30,15 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	//window = glfwCreateWindow(1000, 800, "jojishiGameEngine", NULL, NULL);
-	//mode->height = 1000;
-	//mode->width = 800;
+	mode->height = 800;
+	mode->width = 1000;
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glViewport(0, 0, mode->height, mode->width);
 	glfwMakeContextCurrent(window);
 	glClearColor(0, 0, 0.1, 0);
 	glfwSwapInterval(1);
-	_cameras[0] = transformBuiltin::create();
+
+//	numCamera = 1;
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//glfwWindowHint(GLFW_SAMPLES, 4);
@@ -54,27 +57,34 @@ uint32_t 		renderBuiltIn::create()
 	return (dynamicMemoryManager::create_slot(cluster_id));
 }
 
-void 			renderBuiltIn::destroy(uint32_t ref)
+void			set_view_port(uint32_t	i, uint32_t nCam, uint32_t x, uint32_t y)
 {
-	dynamicMemoryManager::clear_data(ref, cluster_id);
-}
+	uint32_t	resultx;
+	uint32_t	resulty;
 
-void 			renderBuiltIn::subscribe(uint32_t dataHandler)
-{
-	list.push_back(dataHandler);
-}
-
-void 			renderBuiltIn::unsubscribe(uint32_t dataHandler)
-{
-	list.erase(std::find(list.begin(), list.end(), dataHandler));
+	if (nCam == 1)
+	{
+		glViewport(0, 0, x, y);
+		return ;
+	}
+	nCam += nCam & 1;
+	resulty = (i / 2) * (y / (nCam / 2));
+	resultx = (i % 2) * (x / 2);
+	glViewport(resultx, resulty, x / (2), y / (nCam / 2));
 }
 
 void			renderBuiltIn::update()
 {
+	glfwGetWindowSize(window, &(mode->width), &(mode->height));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
-	std::sort(list.begin(), list.end(), sort);
-	renderBuiltIn::render(transformBuiltin::to_mat(_cameras[0]));
+	for (uint32_t i = 0; i < numCamera; i++)
+	{
+		set_view_port(i, numCamera, mode->width, mode->height);
+		renderBuiltIn::render(transformBuiltin::to_mat(_cameras[i]));
+	}
+	numCamera = 0;
+	sizeList = 0;
 	glFinish();
 	glfwSwapBuffers(window);
 }
@@ -153,17 +163,21 @@ void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
 
 void			renderBuiltIn::render(glm::mat4 camera)
 {
-	for (uint32_t i = 0; i < list.size(); i++)
+	for (uint32_t i = 0; i < sizeList; i++)
 		renderBuiltIn::render_object(i, camera);
 }
 
-void			renderBuiltIn::add_camera(uint32_t camHandler)
+void					renderBuiltIn::add_camera(uint32_t camHandler)
 {
-	_cameras.push_back(camHandler);
+	_cameras[numCamera++] = camHandler;
 }
 
-void			renderBuiltIn::remove_camera(uint32_t camHandler)
+void					renderBuiltIn::render_me(uint32_t assetHandler)
 {
-	_cameras.erase(std::find(_cameras.begin(), _cameras.end(), camHandler));
+	list[sizeList++] = assetHandler;
 }
 
+GLFWwindow*				renderBuiltIn::get_window()
+{
+	return (window);
+}

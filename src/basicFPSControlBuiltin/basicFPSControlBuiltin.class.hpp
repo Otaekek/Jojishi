@@ -18,7 +18,7 @@
 #include <renderBuiltIn.class.hpp>
 #include <fileLoader.class.hpp>
 
-#define MAX_ELEM 16
+#define MAX_ELEM 64
 
 class basicFPSControl {
 

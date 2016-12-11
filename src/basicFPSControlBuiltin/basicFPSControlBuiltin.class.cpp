@@ -25,12 +25,11 @@ void 		basicFPSControl::update()
 void 		basicFPSControl::render()
 {
 	renderBuiltIn::add_camera(_transformHandler);
-	renderBuiltIn::remove_camera(_transformHandler);
 }
 
 void 		basicFPSControl::behave()
 {
-
+	transformBuiltin::translate(_transformHandler, 0, 0, -0.012);
 }
 
 basicFPSControl		basicFPSControlManagerBuiltin::elems[MAX_ELEM];
