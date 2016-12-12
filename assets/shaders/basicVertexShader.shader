@@ -12,12 +12,20 @@ uniform mat4 P;
 out vec3 pos_color;
 out vec2 uv;
 out vec3 normal;
-out mat4 camPos;
+out vec3 camPos;
 
 void main(void)
 {
+	vec4 tmpcamPos;
+
+	tmpcamPos.x = -V[0][3];
+	tmpcamPos.y = -V[1][3];
+	tmpcamPos.z = -V[2][3];
+	tmpcamPos.w = 0;
+	tmpcamPos *= inverse(V);
+
 	uv = in_uv;
-	camPos = V;
+	camPos = tmpcamPos.xyz;
 	gl_Position = vec4(in_Position.x, in_Position.y, in_Position.z, 1.0);
 	gl_Position *= M;
 	normal = (vec4(in_Normal.xyz, 0) * M).xyz;

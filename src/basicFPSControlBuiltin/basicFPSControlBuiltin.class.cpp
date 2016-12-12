@@ -41,12 +41,18 @@ void 		basicFPSControl::render()
 
 void		basicFPSControl::mouse_update(float mouseX, float mouseY)
 {
-	static float relx, rely;
+	static float relx = 0, rely = 0;
 
 	mouseX = mouseX / (renderBuiltIn::get_mode()->width) - 0.5;
 	mouseY = mouseY / (renderBuiltIn::get_mode()->height) - 0.5;
-	rotx = -mouseX * 10;
-	roty = -mouseY * 2;
+	rotx -= mouseX - relx;
+	roty -= mouseY - rely;
+	if (roty < -0.8)
+		roty = -0.8;
+	if (roty > 0.8)
+		roty = 0.8;
+	rely = mouseY;
+	relx = mouseX;
 	transformBuiltin::euler_angle(_transformHandler, rotx, roty);
 }
 

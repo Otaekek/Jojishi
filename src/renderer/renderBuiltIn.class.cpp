@@ -8,7 +8,9 @@ uint32_t				renderBuiltIn::camCluster_id;
 GLFWwindow* 			renderBuiltIn::window;
 uint32_t				renderBuiltIn::_cameras[512];
 uint32_t				renderBuiltIn::numCamera = 0;
+uint32_t				renderBuiltIn::skyboxGO;
 GLFWvidmode* 			renderBuiltIn::mode;
+float					renderBuiltIn::skybox_light = 1;
 
 int				sort(uint32_t a, uint32_t b)
 {
@@ -17,6 +19,7 @@ int				sort(uint32_t a, uint32_t b)
 
 void 			renderBuiltIn::init()
 {
+	t_renderGO *skybox;
 	cluster_id = dynamicMemoryManager::cluster_init(sizeof(t_renderGO), 65536);
 	camCluster_id = dynamicMemoryManager::cluster_init(sizeof(t_camera), 16);
 	glfwInit();
@@ -38,7 +41,7 @@ void 			renderBuiltIn::init()
 	glViewport(0, 0, mode->height, mode->width);
 	glfwMakeContextCurrent(window);
 	glClearColor(0, 0, 0.1, 0);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 //	numCamera = 1;
 	glEnable(GL_DEPTH_TEST);
@@ -47,6 +50,10 @@ void 			renderBuiltIn::init()
 	//glEnable(GL_MULTISAMPLE);
 	glfwSwapBuffers(window);
 	glEnable(GL_BLEND);
+	skyboxGO = renderBuiltIn::create();
+	skybox = get_renderGO(skyboxGO);
+	skybox->transformHandler = transformBuiltin::create();
+	transformBuiltin::scale(skybox->transformHandler, 2000, 2000, 2000);
 }
 
 void 			renderBuiltIn::shutdown()
@@ -59,22 +66,6 @@ uint32_t 		renderBuiltIn::create()
 	return (dynamicMemoryManager::create_slot(cluster_id));
 }
 
-void			set_view_port(uint32_t	i, uint32_t nCam, uint32_t x, uint32_t y)
-{
-	uint32_t	resultx;
-	uint32_t	resulty;
-
-	if (nCam == 1)
-	{
-		glViewport(0, 0, x, y);
-		return ;
-	}
-	nCam += nCam & 1;
-	resulty = (i / 2) * (y / (nCam / 2));
-	resultx = (i % 2) * (x / 2);
-	glViewport(resultx, resulty, x / (2), y / (nCam / 2));
-}
-
 void			renderBuiltIn::update()
 {
 	t_camera			*camera;
@@ -85,7 +76,7 @@ void			renderBuiltIn::update()
 	for (uint32_t i = 0; i < numCamera; i++)
 	{
 		camera = renderBuiltIn::get_camera(_cameras[i]);
-		printf("%f\n", camera->sizey);
+		render_skybox(camera);
 		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
 		renderBuiltIn::render(camera);
 	}
@@ -151,13 +142,12 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	t_renderGO 			*elem;
 
 
-	elem = (t_renderGO*)renderBuiltIn::get_renderGO(list[index]);
+	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 
 	glUseProgram(node->program);
 
 	/*Set projection Matrix*/
-	//glm::mat4 proj = glm::perspective(45.0f, (float)mode->width / mode->height, 1.0f, 100.0f);
 	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 	GLint uniProj = glGetUniformLocation(node->program, "P");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
@@ -176,7 +166,7 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 void			renderBuiltIn::render(t_camera *camera)
 {
 	for (uint32_t i = 0; i < sizeList; i++)
-		renderBuiltIn::render_object(i, camera);
+		renderBuiltIn::render_object(list[i], camera);
 }
 
 void					renderBuiltIn::add_camera(uint32_t camHandler)
@@ -208,3 +198,42 @@ t_camera	*renderBuiltIn::get_camera(uint32_t ref)
 {
 	return ((t_camera*)dynamicMemoryManager::get_ptr(ref));
 }
+
+void		renderBuiltIn::modify_skybox(uint32_t handler)
+{
+	t_renderGO *skybox;
+
+	skybox = get_renderGO(skyboxGO);
+	skybox->assetHandler = handler;
+}
+
+void		renderBuiltIn::render_skybox(t_camera *camera)
+{
+	t_renderGO 		*skybox;
+	t_transform 	*camTransform;
+	t_transform 	*skyboxTransform;
+	t_node *node;
+
+	glDisable(GL_DEPTH_TEST);
+	camTransform = transformBuiltin::get_transform(camera->transformHandler);
+	skybox = renderBuiltIn::get_renderGO(skyboxGO);
+	skyboxTransform = transformBuiltin::get_transform(skybox->transformHandler);
+	skyboxTransform->position.x = -camTransform->position.x;
+	skyboxTransform->position.y = -camTransform->position.y;
+	skyboxTransform->position.z = -camTransform->position.z;
+	node = (t_node*)staticMemoryManager::get_data_ptr(skybox->assetHandler);
+	glUseProgram(node->program);
+	GLuint location = glGetUniformLocation(node->program, "sunlight");
+	glUniform1f(location, skybox_light);
+	render_object(skyboxGO, camera);
+	glEnable(GL_DEPTH_TEST);
+}
+
+t_renderGO					*renderBuiltIn::get_skyboxGO()
+{
+	return (get_renderGO(skyboxGO));
+}
+ void						renderBuiltIn::modify_skybox_light(float f)
+ {
+ 	skybox_light = f;
+ }

@@ -33,7 +33,12 @@ int main()
 	uint32_t go;
 	transform = transformBuiltin::create();
 	t_renderGO *elem;
+	float light = 0.2;
+	float lightA = 0.00005;
 	go = renderBuiltIn::create();
+	asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/cube/cube.obj", staticMemoryManager::E_OBJ_FILE);
+	renderDataSys::set_programm(E_SKYBOX, asset);
+	renderBuiltIn::modify_skybox(asset);
 	//asset = fileLoader::load_fs_asset_sync("assets/graphic/mesh/lamborghini/Avent.obj", staticMemoryManager::E_OBJ_FILE);
 	asset = fileLoader::load_fs_asset_sync("assets/graphic/mesh/IronMan/IronMan.obj", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::load_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", staticMemoryManager::E_OBJ_FILE);
@@ -41,12 +46,13 @@ int main()
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/maiden/crystal_maiden_econ1.fbx", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/riven/Championship Riven.obj", staticMemoryManager::E_OBJ_FILE);
 
+
 	elem = renderBuiltIn::get_renderGO(go);
 	elem->assetHandler = asset;
 	elem->transformHandler = transform;
 	//elem->program = program;
 	//renderDataSys::modifyVertices(asset, glm::vec3(20, -10, 0), 0, glm::vec3(0, 0, 0));
-	//transformBuiltin::scale(elem->transformHandler, 20.2, 20.2, 20.2);
+	//transformBuiltin::scale(elem->transformHandler, 2000.2, 2000.2, 2000.2);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
 	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
@@ -56,6 +62,8 @@ int main()
 	uint k = 0;
 	float count = 0;
 	int i = 0;
+	t_renderGO *skybox;
+	skybox = renderBuiltIn::get_skyboxGO();
 	while (1)
 	{
 		//printf("%d\n", i++);
@@ -68,8 +76,13 @@ int main()
 		}
 		//usleep(1.0f / 60000000);
 		t = clock();
+		if (light > 1.2 || light < 0.2)
+			lightA *= -1;
+		light += lightA;
+		renderBuiltIn::modify_skybox_light(light);
 		renderBuiltIn::render_me(go);
 		//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
+		transformBuiltin::rotate(skybox->transformHandler, glm::vec3(0, 1, 0), 0.0001);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();

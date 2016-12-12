@@ -1,6 +1,6 @@
 #include "renderDataSys.class.hpp"
 
-uint32_t renderDataSys::_programm = 0;
+uint32_t renderDataSys::_programm[16];
 
 renderDataSys::renderDataSys()
 {
@@ -15,7 +15,8 @@ renderDataSys::~renderDataSys()
 
 void 			renderDataSys::init()
 {
-	_programm = load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/basicFragShader.shader");
+	_programm[0] = load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/basicFragShader.shader");
+	_programm[1] = load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/skyboxFragShader.shader");
 }
 
 void 			renderDataSys::shutdown()
@@ -90,6 +91,8 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 				GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(image));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			*textEmplacement = textureID;
 		}
@@ -175,7 +178,7 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 
 	nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
 	nodeData->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
-	nodeData->program = _programm;
+	nodeData->program = _programm[0];
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
 	{
 		nodeData->has_mesh = true;
@@ -322,3 +325,10 @@ void renderDataSys::modifyVertices(uint32_t assetHandler, glm::vec3 translation,
 	iterNode(*node, translation, angle, axis);
 }
 
+void			renderDataSys::set_programm(E_SHADER shader, uint32_t assetHandler)
+{
+	t_node *node;
+
+	node = (t_node*)staticMemoryManager::get_data_ptr(assetHandler);
+	node->program = _programm[shader];
+}

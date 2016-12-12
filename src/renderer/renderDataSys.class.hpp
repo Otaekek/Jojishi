@@ -13,6 +13,10 @@
 #include <jojishi.hpp>
 #include <string>
 
+enum E_SHADER {
+	E_DEFAULT,
+	E_SKYBOX
+};
 
 typedef struct		s_material {
 
@@ -83,12 +87,13 @@ public:
 	static void				computeModification(t_renderMeshData *mesh, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				modifyVertices(uint32_t assetHandler, glm::vec3 translation, float angle, glm::vec3 axis);
+	static void				set_programm(E_SHADER shader, uint32_t asset);
 
 private:
 	static void 			copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path);
 	static uint32_t 		node_to_mesh(stackAllocator *allocator, const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path);
 	static void				handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text);
-	static uint32_t			_programm;
+	static uint32_t			_programm[16];
 };
 
 #endif
