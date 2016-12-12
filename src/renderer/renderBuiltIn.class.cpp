@@ -158,7 +158,7 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 
 	/*Set projection Matrix*/
 	//glm::mat4 proj = glm::perspective(45.0f, (float)mode->width / mode->height, 1.0f, 100.0f);
-	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
+	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 	GLint uniProj = glGetUniformLocation(node->program, "P");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
