@@ -18,7 +18,7 @@ out vec4 FragColor;
 void main(void)
 {
 
-	vec3 sunlight = vec3(0, 0, 200);
+	vec3 sunlight = vec3(0, 200, 200);
 	vec3 ray;
 	vec3 viewDir;
 	vec3 reflectDir;
@@ -30,7 +30,7 @@ void main(void)
 	frag_Normal = normalize(normal);
 
 	ray = normalize(sunlight - pos_color);
-	viewDir = normalize((((-vec4(camPos[0][3], camPos[1][3], camPos[2][3],  1)) - vec4(pos_color.xyz, 1.0f)))).xyz;
+	viewDir = normalize((((-vec4(camPos[0][3], camPos[1][3], camPos[2][3],  1)) + vec4(pos_color.xyz, 1.0f)))).xyz;
 	reflectDir = reflect(-ray, frag_Normal);
 
 	spec = clamp(pow(max(dot(viewDir, reflectDir), 0.0), specS), 0, 1);

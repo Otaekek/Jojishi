@@ -69,7 +69,7 @@ int main()
 		//usleep(1.0f / 60000000);
 		t = clock();
 		renderBuiltIn::render_me(go);
-		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
+		//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();

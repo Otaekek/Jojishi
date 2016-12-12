@@ -20,8 +20,7 @@ basicFPSControl::basicFPSControl(float posx, float posy, float posz, float camxp
 	rotx = 0;
 	roty = 0;
 	transformBuiltin::translate(_transformHandler, posx, posy, posz);
-	glfwSetInputMode(renderBuiltIn::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//inputBuiltin::hide_cursor();
+	inputBuiltin::disable_cursor();
 }
 
 basicFPSControl::~basicFPSControl()
