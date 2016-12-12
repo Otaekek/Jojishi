@@ -87,7 +87,7 @@ void			renderBuiltIn::update()
 		camera = renderBuiltIn::get_camera(_cameras[i]);
 		printf("%f\n", camera->sizey);
 		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
-		renderBuiltIn::render(transformBuiltin::to_mat_cam(camera->transformHandler));
+		renderBuiltIn::render(camera);
 	}
 	numCamera = 0;
 	sizeList = 0;
@@ -104,7 +104,7 @@ t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
 	return ((t_renderGO*)dynamicMemoryManager::get_ptr(ref));
 }
 
-void 			renderBuiltIn::render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
+void 			renderBuiltIn::render_unit(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
 {
 	GLuint location;
 
@@ -123,7 +123,7 @@ void 			renderBuiltIn::render_unit(glm::mat4 camera, t_renderMeshData *mesh, t_r
 	glDrawElements(GL_TRIANGLES, mesh->indiceNum, GL_UNSIGNED_INT, 0);
 }
 
-void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, glm::mat4 camera, uint32_t program)
+void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t program)
 {
 	t_renderMeshData	*mesh;
 	bool 				mesh_has_child;
@@ -133,16 +133,16 @@ void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, glm::mat4 camer
 		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(node.meshs);
 		do
 		{
-			render_unit(camera, mesh, elem, program);
+			render_unit(mesh, elem, program);
 			mesh_has_child = mesh->has_child;
 			mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(mesh->child);
 		}	while (mesh_has_child);
 	}
 	for (int i = 0; i < node.childNum; i++)
-		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, camera, program);
+		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, program);
 }
 
-void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
+void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 {
 	t_renderMeshData	*mesh;
 	t_node				*node;
@@ -158,22 +158,22 @@ void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
 
 	/*Set projection Matrix*/
 	//glm::mat4 proj = glm::perspective(45.0f, (float)mode->width / mode->height, 1.0f, 100.0f);
-	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000.0f, (float)mode->width / mode->height);
+	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 	GLint uniProj = glGetUniformLocation(node->program, "P");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
 	/*Set camera */
 	GLint cam = glGetUniformLocation(node->program, "V");
-	glUniformMatrix4fv(cam, 1, GL_FALSE, glm::value_ptr(camera));
+	glUniformMatrix4fv(cam, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat_cam(camera->transformHandler)));
 
 	/* Set model */
 	GLint model = glGetUniformLocation(node->program, "M");
 	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler)));
 
-	render_node(*node, elem, camera, node->program);
+	render_node(*node, elem, node->program);
 }
 
-void			renderBuiltIn::render(glm::mat4 camera)
+void			renderBuiltIn::render(t_camera *camera)
 {
 	for (uint32_t i = 0; i < sizeList; i++)
 		renderBuiltIn::render_object(i, camera);
