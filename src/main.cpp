@@ -58,11 +58,11 @@ int main()
 	int i = 0;
 	while (1)
 	{
-		printf("%d\n", i++);
+		//printf("%d\n", i++);
 		count +=  1.0f / (((float)(((clock() - t))) / CLOCKS_PER_SEC));
 		if (k++ > 100)
 		{
-			printf("%f\n", count / k);
+		//	printf("%f\n", count / k);
 			k = 0;
 			count = 0;
 		}

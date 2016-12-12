@@ -20,6 +20,7 @@ void main(void)
 
 	vec3 sunlight = vec3(0, 200, 200);
 	vec3 ray;
+
 	vec3 viewDir;
 	vec3 reflectDir;
 	float specS = 2.0f;
