@@ -52,7 +52,7 @@ int main()
 	elem->transformHandler = transform;
 	//elem->program = program;
 	//renderDataSys::modifyVertices(asset, glm::vec3(20, -10, 0), 0, glm::vec3(0, 0, 0));
-	//transformBuiltin::scale(elem->transformHandler, 2000.2, 2000.2, 2000.2);
+	//transformBuiltin::scale(elem->transformHandler, 200.2, 200.2, 200.2);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
 	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);

@@ -19,6 +19,7 @@ void main(void)
 {
 
 	vec3 sunlight = vec3(0, 0, 200);
+	sunlight = camPos;
 	vec3 ray;
 
 	vec3 viewDir;
@@ -35,11 +36,11 @@ void main(void)
 	reflectDir = reflect(-ray, frag_Normal);
 
 	spec = clamp(pow(max(dot(viewDir, reflectDir), 0.0), specS), 0, 1);
-	specularResult = spec * specular * 2;
+	specularResult = spec * specular * 3;
 	specularResult *= clamp(dot(ray, frag_Normal), 0, 1);
 	if (has_diffuse == 0)
 		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * diffuse;
 	else
-		diffuseResult = clamp(dot(ray, frag_Normal), 1, 1) * texture(textDiffuse, uv).rgb;
-	FragColor = vec4(diffuseResult + (specularResult) + ambiant, 1);
+		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * texture(textDiffuse, uv).rgb;
+	FragColor = vec4(diffuseResult + (specularResult) + ambiant / 2, 1);
 }
