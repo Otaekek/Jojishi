@@ -31,17 +31,20 @@ void 		basicFPSControl::render()
 
 void		basicFPSControl::mouse_update(float mouseX, float mouseY)
 {
+	static float relx, rely;
+
 	mouseX = mouseX / (renderBuiltIn::get_mode()->width) - 0.5;
 	mouseY = mouseY / (renderBuiltIn::get_mode()->height) - 0.5;
-	rotx -= mouseX * 2;
-	//if (fabs(roty -mouseY / 3) < 0.3)
-		roty += -mouseY;
+	rotx = -mouseX * 20;
+	roty = -mouseY * 2;
+
 	transformBuiltin::euler_angle(_transformHandler, rotx, roty);
 }
 
 void 		basicFPSControl::behave()
 {
 	glm::vec3 up = glm::vec3(0, 1, 0);
+
 	inputBuiltin::hide_cursor();
 	glm::vec3 direction = transformBuiltin::get_direction(_transformHandler);
 	glm::vec3 crossDirection = -cross(up, direction);
@@ -76,7 +79,6 @@ void 		basicFPSControlManagerBuiltin::mouse_move_callback(GLFWwindow* window, do
 {
 	for (uint32_t i = 0; i < numElem; i++)
 		elems[i].mouse_update(xpos, ypos);
-	glfwSetCursorPos(renderBuiltIn::get_window(), renderBuiltIn::get_mode()->width / 2, renderBuiltIn::get_mode()->height / 2);
 }
 
 void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz)
@@ -88,5 +90,15 @@ void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz)
 
 void 		basicFPSControlManagerBuiltin::init()
 {
-	glfwSetCursorPosCallback(renderBuiltIn::get_window(), basicFPSControlManagerBuiltin::mouse_move_callback);
+	inputBuiltin::add_mouse_move_callback(basicFPSControlManagerBuiltin::mouse_move_callback);
 }
+
+
+
+
+
+
+
+
+
+

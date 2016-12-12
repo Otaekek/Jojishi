@@ -54,9 +54,10 @@ int main()
 	uint t = 0;
 	uint k = 0;
 	float count = 0;
-
+	int i = 0;
 	while (1)
 	{
+		printf("%d\n", i++);
 		count +=  1.0f / (((float)(((clock() - t))) / CLOCKS_PER_SEC));
 		if (k++ > 100)
 		{
@@ -64,6 +65,7 @@ int main()
 			k = 0;
 			count = 0;
 		}
+		//usleep(1.0f / 60000000);
 		t = clock();
 		renderBuiltIn::render_me(go);
 		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);

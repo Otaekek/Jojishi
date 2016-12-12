@@ -56,3 +56,8 @@ void inputBuiltin::hide_cursor()
 {
 	glfwSetInputMode(renderBuiltIn::get_window(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
+
+void  inputBuiltin::add_mouse_move_callback(void (*f)(GLFWwindow *w, double x, double y))
+{
+	glfwSetCursorPosCallback(renderBuiltIn::get_window(), f);
+}
