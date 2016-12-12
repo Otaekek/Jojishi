@@ -34,8 +34,8 @@ void		basicFPSControl::mouse_update(float mouseX, float mouseY)
 	mouseX = mouseX / (renderBuiltIn::get_mode()->width) - 0.5;
 	mouseY = mouseY / (renderBuiltIn::get_mode()->height) - 0.5;
 	rotx -= mouseX * 2;
-	if (fabs(roty -mouseY / 3) < 0.3)
-		roty += -mouseY / 3;
+	//if (fabs(roty -mouseY / 3) < 0.3)
+		roty += -mouseY;
 	transformBuiltin::euler_angle(_transformHandler, rotx, roty);
 }
 

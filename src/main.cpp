@@ -49,7 +49,7 @@ int main()
 	//transformBuiltin::scale(elem->transformHandler, 20.2, 20.2, 20.2);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
-	transformBuiltin::translate(elem->transformHandler, 0, -150, -260.01);
+	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
 	basicFPSControlManagerBuiltin::create(0, 0, 0);
 	uint t = 0;
 	uint k = 0;
@@ -66,7 +66,7 @@ int main()
 		}
 		t = clock();
 		renderBuiltIn::render_me(go);
-		//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
+		transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();

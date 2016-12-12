@@ -14,19 +14,6 @@ void inputBuiltin::init()
 {
 	glfwSetKeyCallback(renderBuiltIn::get_window(), inputBuiltin::key_callback);
 	glfwSetMouseButtonCallback(renderBuiltIn::get_window(), inputBuiltin::mouse_button_callback);
-	glfwSetCursorPosCallback(renderBuiltIn::get_window(), mouse_move_callback);
-	glfwSetCursorPos(renderBuiltIn::get_window(), renderBuiltIn::get_mode()->width / 2, renderBuiltIn::get_mode()->height / 2);
-}
-
-void inputBuiltin::mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
-{
-
-	_relMouseXPos = -_mouseXPos;
-	_relMouseYPos = -_mouseYPos;
-	_mouseXPos = xpos / (renderBuiltIn::get_mode()->width) - 0.5;
-	_mouseYPos = ypos / (renderBuiltIn::get_mode()->height) - 0.5;
-	_relMouseYPos += _mouseYPos;
-	_relMouseXPos += _mouseXPos;
 	glfwSetCursorPos(renderBuiltIn::get_window(), renderBuiltIn::get_mode()->width / 2, renderBuiltIn::get_mode()->height / 2);
 }
 
