@@ -5,12 +5,22 @@ basicFPSControl::basicFPSControl()
 
 }
 
-basicFPSControl::basicFPSControl(float posx, float posy, float posz)
+basicFPSControl::basicFPSControl(float posx, float posy, float posz, float camxpos, float camypos, float camxsize, float camysize)
 {
-	_transformHandler = transformBuiltin::create();
+	t_camera *camera;
+
+	_cameraHandler = renderBuiltIn::create_camera();
+	camera = renderBuiltIn::get_camera(_cameraHandler);
+	camera->posx = camxpos;
+	camera->posy = camypos;
+	camera->sizex = camxsize;
+	camera->sizey = camysize;
+	camera->transformHandler = transformBuiltin::create();
+	_transformHandler = camera->transformHandler;
 	rotx = 0;
 	roty = 0;
 	transformBuiltin::translate(_transformHandler, posx, posy, posz);
+
 }
 
 basicFPSControl::~basicFPSControl()
@@ -26,7 +36,7 @@ void 		basicFPSControl::update()
 
 void 		basicFPSControl::render()
 {
-	renderBuiltIn::add_camera(_transformHandler);
+	renderBuiltIn::add_camera(_cameraHandler);
 }
 
 void		basicFPSControl::mouse_update(float mouseX, float mouseY)
@@ -36,15 +46,14 @@ void		basicFPSControl::mouse_update(float mouseX, float mouseY)
 	mouseX = mouseX / (renderBuiltIn::get_mode()->width) - 0.5;
 	mouseY = mouseY / (renderBuiltIn::get_mode()->height) - 0.5;
 	rotx = -mouseX * 20;
+	//if (fabs(roty -mouseY / 3) < 0.3)
 	roty = -mouseY * 2;
-
 	transformBuiltin::euler_angle(_transformHandler, rotx, roty);
 }
 
 void 		basicFPSControl::behave()
 {
 	glm::vec3 up = glm::vec3(0, 1, 0);
-
 	inputBuiltin::hide_cursor();
 	glm::vec3 direction = transformBuiltin::get_direction(_transformHandler);
 	glm::vec3 crossDirection = -cross(up, direction);
@@ -79,11 +88,12 @@ void 		basicFPSControlManagerBuiltin::mouse_move_callback(GLFWwindow* window, do
 {
 	for (uint32_t i = 0; i < numElem; i++)
 		elems[i].mouse_update(xpos, ypos);
+	//glfwSetCursorPos(renderBuiltIn::get_window(), renderBuiltIn::get_mode()->width / 2, renderBuiltIn::get_mode()->height / 2);
 }
 
-void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz)
+void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz,float camxpos, float camypos, float camxsize, float camysize)
 {
-	basicFPSControl control(posx, posy, posz);
+	basicFPSControl control(posx, posy, posz, camypos, camypos, camxsize, camysize);
 
 	elems[numElem++] = control;
 }

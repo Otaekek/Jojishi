@@ -4,6 +4,7 @@
 uint32_t 				renderBuiltIn::cluster_id;
 uint32_t				renderBuiltIn::list[MAX_SUBSCRIBE];
 uint32_t				renderBuiltIn::sizeList;
+uint32_t				renderBuiltIn::camCluster_id;
 GLFWwindow* 			renderBuiltIn::window;
 uint32_t				renderBuiltIn::_cameras[512];
 uint32_t				renderBuiltIn::numCamera = 0;
@@ -17,6 +18,7 @@ int				sort(uint32_t a, uint32_t b)
 void 			renderBuiltIn::init()
 {
 	cluster_id = dynamicMemoryManager::cluster_init(sizeof(t_renderGO), 65536);
+	camCluster_id = dynamicMemoryManager::cluster_init(sizeof(t_camera), 16);
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -75,13 +77,17 @@ void			set_view_port(uint32_t	i, uint32_t nCam, uint32_t x, uint32_t y)
 
 void			renderBuiltIn::update()
 {
+	t_camera			*camera;
+
 	glfwGetWindowSize(window, &(mode->width), &(mode->height));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
 	for (uint32_t i = 0; i < numCamera; i++)
 	{
-		set_view_port(i, numCamera, mode->width, mode->height);
-		renderBuiltIn::render(transformBuiltin::to_mat_cam(_cameras[i]));
+		camera = renderBuiltIn::get_camera(_cameras[i]);
+		printf("%f\n", camera->sizey);
+		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
+		renderBuiltIn::render(transformBuiltin::to_mat_cam(camera->transformHandler));
 	}
 	numCamera = 0;
 	sizeList = 0;
@@ -144,6 +150,7 @@ void 			renderBuiltIn::render_object(uint32_t index, glm::mat4 camera)
 	bool 				node_has_child;
 	t_renderGO 			*elem;
 
+
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(list[index]);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 
@@ -185,4 +192,19 @@ void					renderBuiltIn::render_me(uint32_t assetHandler)
 GLFWwindow*				renderBuiltIn::get_window()
 {
 	return (window);
+}
+
+uint32_t	renderBuiltIn::create_camera()
+{
+	return (dynamicMemoryManager::create_slot(camCluster_id));
+}
+
+void		renderBuiltIn::destroy_camera(uint32_t ref)
+{
+	dynamicMemoryManager::clear_data(ref, camCluster_id);
+}
+
+t_camera	*renderBuiltIn::get_camera(uint32_t ref)
+{
+	return ((t_camera*)dynamicMemoryManager::get_ptr(ref));
 }

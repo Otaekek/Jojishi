@@ -21,38 +21,55 @@
 
 #define MAX_SUBSCRIBE 65536
 
-typedef struct 	s_render {
-	uint32_t 	assetHandler;
+typedef struct	s_render {
+	uint32_t	assetHandler;
 	uint32_t	transformHandler;
 }				t_renderGO;
+
+typedef struct	s_camera {
+	uint32_t	effect;
+	uint32_t	transformHandler;
+	float		posx;
+	float		posy;
+	float		sizex;
+	float		sizey;
+}				t_camera;
 
 class renderBuiltIn {
 
 public :
 
-	static 	void 		init();
-	static 	void 		shutdown();
+	static	void		init();
+	static	void		shutdown();
 
-	static 	uint32_t 	create();
-	static	void 		destroy(uint32_t ref);
+	static	uint32_t	create();
+	static	void		destroy(uint32_t ref);
+	static	t_renderGO	*get_renderGO(uint32_t ref);
 
-	static	void		render_me(uint32_t assetHandler);
-	static 	void		update();
-
-	static 	t_renderGO 	*get_renderGO(uint32_t ref);
+	static	uint32_t	create_camera();
+	static	void		destroy_camera(uint32_t ref);
+	static	t_camera	*get_camera(uint32_t ref);
 
 	static	void		add_camera(uint32_t camHandler);
+	static	void 		remove_camera(uint32_t camHandler);
+
+	static	void		render_me(uint32_t assetHandler);
+	static	void		update();
+
+
 
 	static GLFWwindow*				get_window();
 
 	static GLFWvidmode				*get_mode();
-	
+
 private :
 
 	static uint32_t					cluster_id;
+	static uint32_t					camCluster_id;
 	static uint32_t					list[MAX_SUBSCRIBE];
 	static uint32_t					sizeList;
 	static GLFWwindow*				window;
+	static std::vector<uint32_t> 	cameraList;
 	static uint32_t					_cameras[512];
 	static uint32_t					numCamera;
 	static void						render(glm::mat4 camera);

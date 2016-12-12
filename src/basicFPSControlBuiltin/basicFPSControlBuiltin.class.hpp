@@ -26,7 +26,7 @@ class basicFPSControl {
 public:
 
 	basicFPSControl();
-	basicFPSControl(float posx, float posy, float posz);
+	basicFPSControl(float posx, float posy, float posz, float camxpos, float camypos, float camxsize, float camysize);
 	~basicFPSControl();
 
 	void		mouse_update(float posX, float posY);
@@ -34,6 +34,7 @@ public:
 
 private:
 
+	uint32_t	_cameraHandler;
 	uint32_t	_transformHandler;
 
 	void 		render();
@@ -50,7 +51,7 @@ public:
 	static void 		shutdow();
 
 	static void 		update();
-	static void 		create(float posx, float posy, float posz);
+	static void 		create(float posx, float posy, float posz, float camxpos, float camypos, float camxsize, float camysize);
 	static void 		mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 
 private:

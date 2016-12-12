@@ -284,10 +284,10 @@ void renderDataSys::computeModification(t_renderMeshData*mesh, glm::vec3 transla
 {
 	for (uint32_t i = 0; i < mesh->vertexNum; i++)
 	{
-		
+
 		mesh->vbo[i * 8] += translation.x;
 		mesh->vbo[i * 8 + 1] += translation.y;
-		mesh->vbo[i * 8 + 2] += translation.z;	
+		mesh->vbo[i * 8 + 2] += translation.z;
 	}
 	mesh->vaoId = renderDataSys::createVAO();
 	mesh->vboVerticeId = renderDataSys::createVBO_VNT(mesh->vbo, mesh->vertexNum, mesh->vaoId);

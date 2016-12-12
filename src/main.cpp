@@ -50,7 +50,9 @@ int main()
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
 	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
-	basicFPSControlManagerBuiltin::create(0, 0, 0);
+	basicFPSControlManagerBuiltin::create(0, 0, 0, 0, 0, 1, 1);
+	basicFPSControlManagerBuiltin::create(-100, 0, 0, 0, 0, 0.25, 0.25);
+	basicFPSControlManagerBuiltin::create(100, 0, 0, 0.75, 0.75, 0.25, 0.25);
 	uint t = 0;
 	uint k = 0;
 	float count = 0;
