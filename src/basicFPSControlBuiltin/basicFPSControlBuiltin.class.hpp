@@ -39,6 +39,8 @@ private:
 
 	void 		render();
 	void 		behave();
+	float 		relx;
+	float 		rely;
 	float		rotx;
 	float		roty;
 };

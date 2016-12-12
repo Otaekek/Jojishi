@@ -76,7 +76,12 @@ void			renderBuiltIn::update()
 	for (uint32_t i = 0; i < numCamera; i++)
 	{
 		camera = renderBuiltIn::get_camera(_cameras[i]);
+		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
 		render_skybox(camera);
+	}
+	for (uint32_t i = 0; i < numCamera; i++)
+	{
+		camera = renderBuiltIn::get_camera(_cameras[i]);
 		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
 		renderBuiltIn::render(camera);
 	}

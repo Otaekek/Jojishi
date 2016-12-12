@@ -41,8 +41,6 @@ void 		basicFPSControl::render()
 
 void		basicFPSControl::mouse_update(float mouseX, float mouseY)
 {
-	static float relx = 0, rely = 0;
-
 	mouseX = mouseX / (renderBuiltIn::get_mode()->width) - 0.5;
 	mouseY = mouseY / (renderBuiltIn::get_mode()->height) - 0.5;
 	rotx -= mouseX - relx;
@@ -98,7 +96,7 @@ void 		basicFPSControlManagerBuiltin::mouse_move_callback(GLFWwindow* window, do
 
 void 		basicFPSControlManagerBuiltin::create(float posx, float posy, float posz,float camxpos, float camypos, float camxsize, float camysize)
 {
-	basicFPSControl control(posx, posy, posz, camypos, camypos, camxsize, camysize);
+	basicFPSControl control(posx, posy, posz, camxpos, camypos, camxsize, camysize);
 
 	elems[numElem++] = control;
 }
