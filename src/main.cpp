@@ -18,6 +18,7 @@
 #include <renderBuiltIn.class.hpp>
 #include <basicFPSControlBuiltin.class.hpp>
 #include <inputBuiltin.class.hpp>
+#include <basicMeshFactory.class.hpp>
 
 int main()
 {
@@ -57,7 +58,8 @@ int main()
 	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
 	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
 	basicFPSControlManagerBuiltin::create(0, 0, 0, 0, 0, 1, 1);
-	/*basicFPSControlManagerBuiltin::create(-200, 0, 0, 0.5, 0.5, 0.5, 0.5);
+	/*
+	basicFPSControlManagerBuiltin::create(-200, 0, 0, 0.5, 0.5, 0.5, 0.5);
 	basicFPSControlManagerBuiltin::create(0, 0, 200, 0, 0.5, 0.25, 0.5);
 	basicFPSControlManagerBuiltin::create(200, 0, 0, 0.25, 0.5, 0.25, 0.5);
 	basicFPSControlManagerBuiltin::create(0, 200, 0, 0.87, 0.13, 0.12, 0.12);*/
@@ -67,25 +69,26 @@ int main()
 	int i = 0;
 	t_renderGO *skybox;
 	skybox = renderBuiltIn::get_skyboxGO();
+	staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 0, glm::vec3(3, 3, 3), "assets/graphic/mesh/IronMan/IronMan.obj");
+	staticMeshManager::create(glm::vec3(-300, 100, -200), glm::vec3(0, 1.0, 0), 1, glm::vec3(1, 1, 1) , "assets/graphic/mesh/IronMan/IronMan.obj");
+	staticMeshManager::create(glm::vec3(300, 0, 0), glm::vec3(1.0, 0.0, 0), 1, glm::vec3(0.2, 0.2, 0.2) ,"assets/graphic/mesh/IronMan/IronMan.obj");
 	while (1)
 	{
-		//printf("%d\n", i++);
-		count +=  1.0f / (((float)(((clock() - t))) / CLOCKS_PER_SEC));
-		if (k++ > 100)
+		printf("%d\n", i++);
+		if (k++ > 60)
 		{
-		//	printf("%f\n", count / k);
+		count =  (float)(((clock() - t))) / CLOCKS_PER_SEC;
+			printf("%f\n", 1.0f / (count * k));
 			k = 0;
+		t = clock();
 			count = 0;
 		}
 		//usleep(1.0f / 60000000);
-		t = clock();
 		if (light > 1.2 || light < 0.2)
 			lightA *= -1;
 		light += lightA;
+		staticMeshManager::update();
 		renderBuiltIn::modify_skybox_light(light);
-		renderBuiltIn::render_me(go);
-		//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{0, 1, 0}, 0.005f);
-		transformBuiltin::rotate(skybox->transformHandler, glm::vec3(0, 1, 0), 0.0001);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();

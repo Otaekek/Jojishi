@@ -42,5 +42,5 @@ void main(void)
 		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * diffuse;
 	else
 		diffuseResult = clamp(dot(ray, frag_Normal), 0, 1) * texture(textDiffuse, uv).rgb;
-	FragColor = vec4(diffuseResult + (specularResult) + ambiant / 2, 1);
+	FragColor = vec4(diffuseResult + (specularResult) + ambiant * 0, 1);
 }

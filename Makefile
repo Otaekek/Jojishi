@@ -83,6 +83,11 @@ SRC_SUBDIR += input_builtin
 CFLAGS += -Isrc/input_builtin
 SOURCES += inputBuiltin.class.cpp
 
+# static mesh factory
+SRC_SUBDIR += static_mesh_factory
+CFLAGS += -Isrc/static_mesh_factory
+SOURCES += basicMeshFactory.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
