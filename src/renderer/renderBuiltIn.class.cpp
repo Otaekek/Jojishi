@@ -41,7 +41,7 @@ void 			renderBuiltIn::init()
 	glViewport(0, 0, mode->height, mode->width);
 	glfwMakeContextCurrent(window);
 	glClearColor(0, 0, 0.1, 0);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 //	numCamera = 1;
 	glEnable(GL_DEPTH_TEST);

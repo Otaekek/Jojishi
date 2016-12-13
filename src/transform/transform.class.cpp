@@ -65,7 +65,7 @@ void transformBuiltin::translate(uint32_t handler, float x, float y, float z)
 	transform->position.x += x;
 	transform->position.y += y;
 	transform->position.z += z;
-	
+
 }
 
 void transformBuiltin::scale(uint32_t handler, float x, float y, float  z)
@@ -145,7 +145,6 @@ void transformBuiltin::euler_angle(uint32_t handler, float x, float y)
 	transform = get_transform(handler);
 	transform->rotation = glm::angleAxis(y, glm::vec3{1.0f, 0.0f, 0.0f});
 	glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
-
 	up = up * transform->rotation;
 	transform->rotation = glm::rotate(transform->rotation, x, up);
 }

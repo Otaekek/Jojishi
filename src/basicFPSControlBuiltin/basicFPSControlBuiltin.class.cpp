@@ -19,6 +19,8 @@ basicFPSControl::basicFPSControl(float posx, float posy, float posz, float camxp
 	_transformHandler = camera->transformHandler;
 	rotx = 0;
 	roty = 0;
+	relx = 0;
+	rely = 0;
 	transformBuiltin::translate(_transformHandler, posx, posy, posz);
 	inputBuiltin::disable_cursor();
 }
