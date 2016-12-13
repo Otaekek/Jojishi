@@ -18,6 +18,10 @@ enum E_SHADER {
 	E_SKYBOX
 };
 
+typedef struct s_light {
+
+};
+
 typedef struct		s_material {
 
 	bool			has_diffuse_texture;
@@ -55,7 +59,7 @@ typedef struct		s_mesh {
 	glm::mat4		initialTransform;
 
 	t_material		material;
-	
+
 }					t_renderMeshData;
 
 typedef	struct		s_node {
