@@ -1,6 +1,7 @@
 Lightning difinition and factory
 Lightning
 Skybox builtin / sunlight builtin 
+Culling {oclusion / obstruction}
 Terrain generation Builtin
 Camera player bundle { Shall include transform improvement and value inheritence}
 Texture Builtin
@@ -11,3 +12,7 @@ Particle Builtin
 
 Add best support for mutlti threading
 
+HDR rendering
+Bloor effect
+
+GUI Builtin

@@ -18,7 +18,17 @@ enum E_SHADER {
 	E_SKYBOX
 };
 
+enum E_LIGHT {
+	E_UNI = 0,
+	E_OMNI
+};
+
 typedef struct s_light {
+
+	E_LIGHT		light;
+	glm::vec3	direction;
+	glm::vec3	position;
+	glm::vec3	color;
 
 };
 
