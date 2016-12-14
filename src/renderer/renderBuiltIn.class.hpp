@@ -45,14 +45,14 @@ public :
 	static	uint32_t				create();
 	static	void					destroy(uint32_t ref);
 	static	t_renderGO				*get_renderGO(uint32_t ref);
+	static	void					render_me(uint32_t assetHandler);
 
 	static	uint32_t				create_camera();
 	static	void					destroy_camera(uint32_t ref);
 	static	t_camera				*get_camera(uint32_t ref);
-
 	static	void					add_camera(uint32_t camHandler);
 
-	static	void					render_me(uint32_t assetHandler);
+
 	static	void					update();
 
 	static GLFWwindow*				get_window();
@@ -66,6 +66,7 @@ public :
 	static uint32_t					create_light();
 	static void						destroy_light(uint32_t ref);
 	static void						add_light(uint32_t ref);
+	static t_light					*get_light(uint32_t ref);
 
 private :
 
@@ -90,8 +91,11 @@ private :
 	static void						render(t_camera *camera);
 	static void						render_node(t_node node, t_renderGO *elem, uint32_t program);
 	static void						render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
+
 	static void						render_object(uint32_t index, t_camera *camera);
 	static void						render_skybox(t_camera *camera);
+
+	static void						push_light(t_renderGO *elem)
 };
 
 #endif

@@ -1,16 +1,23 @@
 #include <renderBuiltIn.class.hpp>
 #include <unistd.h>
 
+GLFWvidmode* 			renderBuiltIn::mode;
+GLFWwindow* 			renderBuiltIn::window;
+
 uint32_t 				renderBuiltIn::cluster_id;
 uint32_t				renderBuiltIn::list[MAX_SUBSCRIBE];
 uint32_t				renderBuiltIn::sizeList;
+
 uint32_t				renderBuiltIn::camCluster_id;
-GLFWwindow* 			renderBuiltIn::window;
 uint32_t				renderBuiltIn::_cameras[512];
 uint32_t				renderBuiltIn::numCamera = 0;
+
 uint32_t				renderBuiltIn::skyboxGO;
-GLFWvidmode* 			renderBuiltIn::mode;
 float					renderBuiltIn::skybox_light = 1;
+
+uint32_t				renderBuiltIn::lightClusterId;
+uint32_t				renderBuiltIn::_numLight = 0;
+uint32_t				renderBuiltIn::_lightsHandlers[4096];
 
 int				sort(uint32_t a, uint32_t b)
 {
@@ -21,7 +28,9 @@ void 			renderBuiltIn::init()
 {
 	t_renderGO *skybox;
 	cluster_id = dynamicMemoryManager::cluster_init(sizeof(t_renderGO), 65536);
-	camCluster_id = dynamicMemoryManager::cluster_init(sizeof(t_camera), 16);
+	camCluster_id = dynamicMemoryManager::cluster_init(sizeof(t_camera), 4096);
+	lightClusterId = dynamicMemoryManager::cluster_init(sizeof(t_light), 65536);
+
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -85,6 +94,7 @@ void			renderBuiltIn::update()
 	}
 	numCamera = 0;
 	sizeList = 0;
+	_numLight = 0;
 	glFinish();
 	glfwSwapBuffers(window);
 }
@@ -136,6 +146,26 @@ void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t progra
 		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, program);
 }
 
+void 			renderBuiltIn::push_light(t_renderGO *elem)
+{
+	float		array[256];
+	t_light		light;
+
+	for (int i = 0; i < _numLight; i++)
+	{
+		//cull()
+		array[0 + i * 9] = 
+		array[0 + i * 9 + 1] =
+		array[0 + i * 9 + 2] =
+		array[0 + i * 9 + 3] =
+		array[0 + i * 9 + 4] =
+		array[0 + i * 9 + 5] =
+		array[0 + i * 9 + 6] =
+		array[0 + i * 9 + 7] =
+		array[0 + i * 9 + 8] = 
+	}
+}
+
 void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 {
 	t_renderMeshData	*mesh;
@@ -144,10 +174,10 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	bool 				node_has_child;
 	t_renderGO 			*elem;
 
-
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 
+	push_light(elem);
 	glUseProgram(node->program);
 
 	/*Set projection Matrix*/
@@ -215,7 +245,7 @@ void		renderBuiltIn::render_skybox(t_camera *camera)
 	t_renderGO 		*skybox;
 	t_transform 	*camTransform;
 	t_transform 	*skyboxTransform;
-	t_node *node;
+	t_node 			*node;
 
 	glDisable(GL_DEPTH_TEST);
 	camTransform = transformBuiltin::get_transform(camera->transformHandler);
@@ -240,3 +270,24 @@ t_renderGO					*renderBuiltIn::get_skyboxGO()
  {
  	skybox_light = f;
  }
+
+
+uint32_t					renderBuiltIn::create_light()
+{
+	return (dynamicMemoryManager::create_slot(lightClusterId));
+}
+
+void						renderBuiltIn::destroy_light(uint32_t ref)
+{
+	dynamicMemoryManager::clear_data(ref, lightClusterId);
+}
+
+void						renderBuiltIn::add_light(uint32_t ref)
+{
+	_lightsHandlers[_numLight++] = ref;
+}
+
+t_light						*renderBuiltIn::get_light(uint32_t ref)
+{
+	return ((t_light*)dynamicMemoryManager::get_ptr(ref));
+}

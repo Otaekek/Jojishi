@@ -26,9 +26,10 @@ enum E_LIGHT {
 typedef struct s_light {
 
 	E_LIGHT		light;
-	glm::vec3	direction;
-	glm::vec3	position;
-	glm::vec3	color;
+	glm::vec4	direction;
+	glm::vec4	position;
+	glm::vec4	color;
+	float 		attenuation;
 
 }				t_light;
 

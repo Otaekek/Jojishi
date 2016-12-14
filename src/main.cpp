@@ -34,8 +34,6 @@ int main()
 	uint32_t go;
 	transform = transformBuiltin::create();
 	t_renderGO *elem;
-	float light = 0.2;
-	float lightA = 0.0005;
 	go = renderBuiltIn::create();
 	asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/cube/cube.obj", staticMemoryManager::E_OBJ_FILE);
 	renderDataSys::set_programm(E_SKYBOX, asset);
@@ -51,11 +49,7 @@ int main()
 	elem = renderBuiltIn::get_renderGO(go);
 	elem->assetHandler = asset;
 	elem->transformHandler = transform;
-	//elem->program = program;
-	//renderDataSys::modifyVertices(asset, glm::vec3(20, -10, 0), 0, glm::vec3(0, 0, 0));
-	//transformBuiltin::scale(elem->transformHandler, 200.2, 200.2, 200.2);
-	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -1.57f);
-	//transformBuiltin::rotate_model(elem->transformHandler, glm::vec3{1, 0, 0}, -0.15f);
+
 	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
 	basicFPSControlManagerBuiltin::create(0, 0, 0, 0, 0, 1, 1);
 	/*
@@ -72,23 +66,10 @@ int main()
 	staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 0, glm::vec3(3, 3, 3), "assets/graphic/mesh/IronMan/IronMan.obj");
 	staticMeshManager::create(glm::vec3(-300, 100, -200), glm::vec3(0, 1.0, 0), 1, glm::vec3(1, 1, 1) , "assets/graphic/mesh/IronMan/IronMan.obj");
 	staticMeshManager::create(glm::vec3(300, 0, 0), glm::vec3(1.0, 0.0, 0), 1, glm::vec3(0.2, 0.2, 0.2) ,"assets/graphic/mesh/IronMan/IronMan.obj");
+	renderBuiltIn::modify_skybox_light(1.2);
 	while (1)
 	{
-		printf("%d\n", i++);
-		if (k++ > 60)
-		{
-		count =  (float)(((clock() - t))) / CLOCKS_PER_SEC;
-			printf("%f\n", 1.0f / (count * k));
-			k = 0;
-		t = clock();
-			count = 0;
-		}
-		//usleep(1.0f / 60000000);
-		if (light > 1.2 || light < 0.2)
-			lightA *= -1;
-		light += lightA;
 		staticMeshManager::update();
-		renderBuiltIn::modify_skybox_light(light);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		renderBuiltIn::update();

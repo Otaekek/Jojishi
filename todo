@@ -17,3 +17,8 @@ HDR rendering
 Bloor effect
 
 GUI Builtin
+
+Error system
+
+issue : delete static memory manager and use dynamic one
+
