@@ -30,7 +30,7 @@ typedef struct s_light {
 	glm::vec3	position;
 	glm::vec3	color;
 
-};
+}				t_light;
 
 typedef struct		s_material {
 

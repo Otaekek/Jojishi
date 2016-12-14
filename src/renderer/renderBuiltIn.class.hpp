@@ -89,7 +89,7 @@ private :
 
 	static void						render(t_camera *camera);
 	static void						render_node(t_node node, t_renderGO *elem, uint32_t program);
-	static void						render_unit(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
+	static void						render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
 	static void						render_object(uint32_t index, t_camera *camera);
 	static void						render_skybox(t_camera *camera);
 };

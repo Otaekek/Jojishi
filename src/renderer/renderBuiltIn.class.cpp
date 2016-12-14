@@ -98,7 +98,7 @@ t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
 	return ((t_renderGO*)dynamicMemoryManager::get_ptr(ref));
 }
 
-void 			renderBuiltIn::render_unit(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
+void 			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
 {
 	GLuint location;
 
@@ -127,7 +127,7 @@ void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t progra
 		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(node.meshs);
 		do
 		{
-			render_unit(mesh, elem, program);
+			render_mesh(mesh, elem, program);
 			mesh_has_child = mesh->has_child;
 			mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(mesh->child);
 		}	while (mesh_has_child);
