@@ -95,7 +95,7 @@ private :
 	static void						render_object(uint32_t index, t_camera *camera);
 	static void						render_skybox(t_camera *camera);
 
-	static void						push_light(t_renderGO *elem)
+	static void						push_light(t_renderGO *elem, GLuint program);
 };
 
 #endif

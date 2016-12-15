@@ -150,7 +150,7 @@ all: sound $(LIB42) $(DEPS) $(NAME)
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
-	aplay makefile_asset/oe.wav&
+	#aplay makefile_asset/oe.wav&
 
 $(LIB42):
 	$(MAKE) -C $(LIB42_PATH) all
@@ -171,7 +171,7 @@ fclean: clean
 	$(RM) -rf $(DEP_PATH)
 
 sound:
-	aplay makefile_asset/roll.wav&
+	#aplay makefile_asset/roll.wav&
 
 re: fclean all
 

@@ -146,24 +146,34 @@ void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t progra
 		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, program);
 }
 
-void 			renderBuiltIn::push_light(t_renderGO *elem)
+void 			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 {
-	float		array[256];
-	t_light		light;
+	float			array[256];
+	t_light			*light;
+	t_transform		*transform;
+	glm::vec3		direction;
+	GLuint			location;
 
 	for (int i = 0; i < _numLight; i++)
 	{
-		//cull()
-		array[0 + i * 9] = 
-		array[0 + i * 9 + 1] =
-		array[0 + i * 9 + 2] =
-		array[0 + i * 9 + 3] =
-		array[0 + i * 9 + 4] =
-		array[0 + i * 9 + 5] =
-		array[0 + i * 9 + 6] =
-		array[0 + i * 9 + 7] =
-		array[0 + i * 9 + 8] = 
+		light = get_light(_lightsHandlers[i]);
+		transform = transformBuiltin::get_transform(light->transformHandler);
+		//cull(light)
+		direction = transformBuiltin::get_direction(light->transformHandler);
+		array[0 + i * 9] = transform->position.x; 
+		array[0 + i * 9 + 1] = transform->position.y;
+		array[0 + i * 9 + 2] = transform->position.z;
+		array[0 + i * 9 + 3] = light->color.x;
+		array[0 + i * 9 + 4] = light->color.y;
+		array[0 + i * 9 + 5] = light->color.z;
+		array[0 + i * 9 + 6] = direction.x;
+		array[0 + i * 9 + 7] = direction.y;
+		array[0 + i * 9 + 8] = direction.z;
 	}
+	location = glGetUniformLocation(program, "lights");
+	glUniform3fv(location, _numLight, array);
+	location = glGetUniformLocation(program, "numLight");
+	glUniform1i(program, _numLight);
 }
 
 void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
@@ -177,8 +187,9 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 
-	push_light(elem);
 	glUseProgram(node->program);
+
+	push_light(elem, node->program);
 
 	/*Set projection Matrix*/
 	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
