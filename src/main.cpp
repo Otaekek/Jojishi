@@ -44,14 +44,8 @@ int main()
 	//asset = fileLoader::load_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/Altair/altair.3ds", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/maiden/crystal_maiden_econ1.fbx", staticMemoryManager::E_OBJ_FILE);
-	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/riven/Championship Riven.obj", staticMemoryManager::E_OBJ_FILE);
+	asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/witcher/Geralt/Geralt.obj", staticMemoryManager::E_OBJ_FILE);
 
-
-	elem = renderBuiltIn::get_renderGO(go);
-	elem->assetHandler = asset;
-	elem->transformHandler = transform;
-
-	transformBuiltin::translate(elem->transformHandler, 0, -0, -2.01);
 	basicFPSControlManagerBuiltin::create(0, 0, 0, 0, 0, 1, 1);
 	/*
 	basicFPSControlManagerBuiltin::create(-200, 0, 0, 0.5, 0.5, 0.5, 0.5);
@@ -64,13 +58,15 @@ int main()
 	int i = 0;
 	t_renderGO *skybox;
 	skybox = renderBuiltIn::get_skyboxGO();
-	staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 0, glm::vec3(3, 3, 3), "assets/graphic/mesh/IronMan/IronMan.obj");
+	staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 0, glm::vec3(300, 300, 300), "./assets/graphic/mesh/witcher/Geralt/Geralt.obj");
 	staticMeshManager::create(glm::vec3(-300, 100, -200), glm::vec3(0, 1.0, 0), 1, glm::vec3(1, 1, 1) , "assets/graphic/mesh/IronMan/IronMan.obj");
 	staticMeshManager::create(glm::vec3(300, 0, 0), glm::vec3(1.0, 0.0, 0), 1, glm::vec3(0.2, 0.2, 0.2) ,"assets/graphic/mesh/IronMan/IronMan.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
-	basicLightFactory::create(glm::vec3(0, 0, -200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(200, 0, 200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(-200, 0, 200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	while (1)
 	{
+		printf("%d\n", i++);
 		staticMeshManager::update();
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();

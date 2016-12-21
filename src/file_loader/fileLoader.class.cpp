@@ -10,7 +10,7 @@ std::map<std::string, uint64_t> 			fileLoader::path_as_guid;
 
 fileLoader::fileLoader()
 {
-	
+
 }
 
 void fileLoader::init()
@@ -51,7 +51,7 @@ char 		*fileLoader::readfile(std::string path)
 		myfile.close();
 	}
 	else
-	{ 
+	{
 		std::cout << "Unable to open file";
 		exit(0);
 	}
@@ -96,11 +96,11 @@ uint64_t fileLoader::load_fs_asset_sync(std::string path, staticMemoryManager::E
 }
 
 const aiScene 	*fileLoader::assimp_load(char *path, Assimp::Importer *importer)
-{	
+{
 	const					aiScene *scene;
 
-  	scene = importer->ReadFile( std::string(path), 
-	aiProcess_CalcTangentSpace | 
+	scene = importer->ReadFile( std::string(path),
+	aiProcess_CalcTangentSpace |
 	aiProcess_Triangulate |
 	aiProcess_JoinIdenticalVertices |
 	aiProcess_SortByPType |
@@ -143,8 +143,8 @@ void 			fileLoader::load_file(void *data)
 	loadHeader = (t_loadHeader*)data;
 	path = (char *)((char*)data + sizeof(t_loadHeader));
 	j = strlen(path);
-   	for (uint32_t i = 0; (j - i) > 0 && path[j - i - 1] != '.'; i++)
-   		extenstion[i] = path[j - i - 1];
+	for (uint32_t i = 0; (j - i) > 0 && path[j - i - 1] != '.'; i++)
+		extenstion[i] = path[j - i - 1];
 	for (uint32_t i = 0; i < strlen(extenstion) / 2; i++)
 	{
 		char c = extenstion[i];

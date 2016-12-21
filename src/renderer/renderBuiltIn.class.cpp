@@ -49,7 +49,7 @@ void 			renderBuiltIn::init()
 	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glClearColor(0.1, 0, 0, 0);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -172,23 +172,22 @@ void 			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 	}
 	location = glGetUniformLocation(program, "lights");
 	glUniform3fv(location, _numLight * 4, array);
-	location = glGetUniformLocation(program, "numLight");
-	glUniform1i(program, _numLight);
+	location = glGetUniformLocation(program, "num_light");
+	glUniform1i(location, _numLight);
 }
 
 void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 {
 	t_renderMeshData	*mesh;
 	t_node				*node;
-	bool 				mesh_has_child;
-	bool 				node_has_child;
-	t_renderGO 			*elem;
+	bool				mesh_has_child;
+	bool				node_has_child;
+	t_renderGO			*elem;
 
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 
 	glUseProgram(node->program);
-
 	push_light(elem, node->program);
 
 	/*Set projection Matrix*/

@@ -13,7 +13,7 @@ uniform sampler2D	textDiffuse;
 uniform int 		has_diffuse;
 
 uniform vec3		lights[16];
-uniform int			numLight;
+uniform int			num_light;
 
 out vec4 FragColor;
 
@@ -25,7 +25,7 @@ vec3 compute_diffuse(vec3 pos, vec3 norm, vec3 col)
 	vec3 ray;
 	vec3 outter = vec3(0, 0, 0);
 
-	while (i < numLight)
+	while (i < num_light)
 	{
 		ray = normalize(lights[i * 4] - pos);
 		outter += max(dot(ray, norm), 0) * lights[i * 4 + 1];
@@ -46,7 +46,7 @@ vec3 compute_specular(vec3 col, vec3 viewDir, vec3 pos, vec3 norm, float specS)
 	vec3 outter = vec3(0, 0, 0);
 	float phong;
 
-	while (i < numLight)
+	while (i < num_light)
 	{
 		ray = normalize(lights[i * 4] - pos);
 		reflectray = reflect(-ray, norm);
@@ -54,9 +54,8 @@ vec3 compute_specular(vec3 col, vec3 viewDir, vec3 pos, vec3 norm, float specS)
 		phong *= max(0, dot(ray, norm));
 		outter += phong * col * lights[i * 4 + 1];
 		i++;
-		outter.x = 1;
 	}
-	//outter.x = min(1, outter.x);
+	outter.x = min(1, outter.x);
 	outter.y = min(1, outter.y);
 	outter.z = min(1, outter.z);
 	return (outter);

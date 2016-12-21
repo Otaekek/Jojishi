@@ -1,5 +1,5 @@
 NAME = jojishiEngine
-CFLAGS = -pthread -std=c++11
+CFLAGS = -pthread -std=c++11 -o3
 UNAME_S := $(shell uname -s)
 #CFLAGS += -Wall -Werror -Wextra
 #CFLAGS += -pedantic -pedantic-errors
