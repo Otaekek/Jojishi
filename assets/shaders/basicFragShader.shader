@@ -54,8 +54,9 @@ vec3 compute_specular(vec3 col, vec3 viewDir, vec3 pos, vec3 norm, float specS)
 		phong *= max(0, dot(ray, norm));
 		outter += phong * col * lights[i * 4 + 1];
 		i++;
+		outter.x = 1;
 	}
-	outter.x = min(1, outter.x);
+	//outter.x = min(1, outter.x);
 	outter.y = min(1, outter.y);
 	outter.z = min(1, outter.z);
 	return (outter);

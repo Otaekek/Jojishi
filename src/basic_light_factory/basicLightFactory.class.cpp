@@ -11,17 +11,18 @@ basicLight::basicLight(glm::vec3 position, glm::vec3 direction, glm::vec3 scale,
 	t_light		*light;
 
 	transformHandler = transformBuiltin::create();
-	tranformBuiltin::scale(transformHandler, scale.x, scale.y, scale.z);
+	transformBuiltin::scale(transformHandler, scale.x, scale.y, scale.z);
 	transformBuiltin::translate(transformHandler, position.x, position.y, position.z);
-	transformHandler::rotate(transformHandler, rotate.x, rotate.y, rotate.z);
+	//transformBuiltin::rotate(transformHandler, direction.x, direction.y, direction.z);
 
 	lightHandler = renderBuiltIn::create_light();
 	light = renderBuiltIn::get_light(lightHandler);
-	light->type = type;
+	light->light = type;
 	light->color = color;
 	light->attenuation = 1;
 	light->linearAttenuation = 1;
 	light->quadraticAttenuation = 1;
+	light->transformHandler = transformHandler;
 }
 
 basicLight::~basicLight()
@@ -31,7 +32,7 @@ basicLight::~basicLight()
 
 void basicLight::update()
 {
-
+	renderBuiltIn::add_light(lightHandler);
 }
 
 
@@ -50,12 +51,13 @@ void		basicLightFactory::shutdown()
 
 void		basicLightFactory::create(glm::vec3 position, glm::vec3 direction, glm::vec3 scale, E_LIGHT type, glm::vec3 color)
 {
-
+	elems[numElem++] = basicLight(position, direction, scale, type, color);
 }
 
 void		basicLightFactory::update()
 {
-
+	for (uint32_t i = 0; i < numElem; i++)
+		elems[i].update();
 }
 
 

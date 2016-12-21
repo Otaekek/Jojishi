@@ -19,6 +19,7 @@
 #include <basicFPSControlBuiltin.class.hpp>
 #include <inputBuiltin.class.hpp>
 #include <basicMeshFactory.class.hpp>
+#include <basicLightFactory.class.hpp>
 
 int main()
 {
@@ -67,11 +68,13 @@ int main()
 	staticMeshManager::create(glm::vec3(-300, 100, -200), glm::vec3(0, 1.0, 0), 1, glm::vec3(1, 1, 1) , "assets/graphic/mesh/IronMan/IronMan.obj");
 	staticMeshManager::create(glm::vec3(300, 0, 0), glm::vec3(1.0, 0.0, 0), 1, glm::vec3(0.2, 0.2, 0.2) ,"assets/graphic/mesh/IronMan/IronMan.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
+	basicLightFactory::create(glm::vec3(0, 0, -200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	while (1)
 	{
 		staticMeshManager::update();
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
+		basicLightFactory::update();
 		renderBuiltIn::update();
 	}
 	transformBuiltin::shutdown();

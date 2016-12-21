@@ -88,6 +88,11 @@ SRC_SUBDIR += static_mesh_factory
 CFLAGS += -Isrc/static_mesh_factory
 SOURCES += basicMeshFactory.class.cpp
 
+# basic light factory
+SRC_SUBDIR += basic_light_factory
+CFLAGS += -Isrc/basic_light_factory
+SOURCES+= basicLightFactory.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
