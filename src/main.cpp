@@ -22,10 +22,10 @@
 
 int main()
 {
+	transformBuiltin::init();
 	renderBuiltIn::init();
 	fileLoader::init();
 	//jobHandler::init();
-	transformBuiltin::init();
 	renderDataSys::init();
 	inputBuiltin::init();
 	basicFPSControlManagerBuiltin::init();

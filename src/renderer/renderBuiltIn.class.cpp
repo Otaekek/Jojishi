@@ -160,18 +160,18 @@ void 			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 		transform = transformBuiltin::get_transform(light->transformHandler);
 		//cull(light)
 		direction = transformBuiltin::get_direction(light->transformHandler);
-		array[0 + i * 9] = transform->position.x; 
-		array[0 + i * 9 + 1] = transform->position.y;
-		array[0 + i * 9 + 2] = transform->position.z;
-		array[0 + i * 9 + 3] = light->color.x;
-		array[0 + i * 9 + 4] = light->color.y;
-		array[0 + i * 9 + 5] = light->color.z;
-		array[0 + i * 9 + 6] = direction.x;
-		array[0 + i * 9 + 7] = direction.y;
-		array[0 + i * 9 + 8] = direction.z;
+		array[0 + i * 12] = transform->position.x;
+		array[0 + i * 12 + 1] = transform->position.y;
+		array[0 + i * 12 + 2] = transform->position.z;
+		array[0 + i * 12 + 3] = light->color.x;
+		array[0 + i * 12 + 4] = light->color.y;
+		array[0 + i * 12 + 5] = light->color.z;
+		array[0 + i * 12 + 6] = direction.x;
+		array[0 + i * 12 + 7] = direction.y;
+		array[0 + i * 12 + 8] = direction.z;
 	}
 	location = glGetUniformLocation(program, "lights");
-	glUniform3fv(location, _numLight, array);
+	glUniform3fv(location, _numLight * 4, array);
 	location = glGetUniformLocation(program, "numLight");
 	glUniform1i(program, _numLight);
 }

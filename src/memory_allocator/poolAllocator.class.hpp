@@ -1,14 +1,11 @@
 #ifndef POOLALLOCATOR_CLASS_HPP
 #define POOLALLOCATOR_CLASS_HPP
 
-#define DEFAULT_BLOC_SIZE 1024
-#define DEFAULT_BLOC_NUMBER 2048
-
 #include <cstdint>
 
 class poolAllocator {
 
-public: 
+public:
 
 	typedef struct 			s_bloc {
 		char 				*mem;

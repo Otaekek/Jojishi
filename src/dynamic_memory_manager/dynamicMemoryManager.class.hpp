@@ -3,7 +3,7 @@
 
 #include "../memory_allocator/poolAllocator.class.hpp"
 
-#define NUM_CLUSTERS 12
+#define NUM_CLUSTERS 65536
 #define MAX_REF 524288
 
 class dynamicMemoryManager {

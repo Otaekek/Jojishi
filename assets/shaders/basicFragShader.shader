@@ -69,8 +69,8 @@ void main(void)
 		diffuse_color = diffuse;
 	else
 		diffuse_color = texture(textDiffuse, uv).rgb;
-	FragColor = vec4(compute_diffuse(pos_color, frag_Normal, diffuse_color).xyz + 
-		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16) + 
-		ambiant, 
+	FragColor = vec4(compute_diffuse(pos_color, frag_Normal, diffuse_color).xyz +
+		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16) +
+		ambiant,
 		1);
 }

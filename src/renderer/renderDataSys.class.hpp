@@ -28,7 +28,9 @@ typedef struct s_light {
 	E_LIGHT		light;
 	uint32_t	transformHandler;
 	glm::vec3	color;
-	float 		attenuation;
+	float		attenuation;
+	float		linearAttenuation;
+	float		quadraticAttenuation;
 
 }				t_light;
 

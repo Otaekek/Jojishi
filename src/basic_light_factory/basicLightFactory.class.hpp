@@ -12,7 +12,7 @@ class basicLight {
 public:
 
 	basicLight();
-	basicLight(glm::vec3 position, glm::vec3 direction, glm::vec3 scale, E_LIGHT type, glm::vec3 color, std::string meshName);
+	basicLight(glm::vec3 position, glm::vec3 direction, glm::vec3 scale, E_LIGHT type, glm::vec3 color);
 	~basicLight();
 
 	void update();
@@ -21,7 +21,6 @@ private:
 
 	uint32_t	transformHandler;
 	uint32_t	lightHandler;
-	uint32_t	assetHandler;
 	uint32_t	renderGoHandler;
 
 };
@@ -33,7 +32,7 @@ public:
 	static void		init();
 	static void		shutdown();
 
-	static void		create(glm::vec3 position, glm::vec3 direction, glm::vec3 scale, E_LIGHT type, glm::vec3 color, std::string meshName);
+	static void		create(glm::vec3 position, glm::vec3 direction, glm::vec3 scale, E_LIGHT type, glm::vec3 color);
 
 	static void		update();
 
