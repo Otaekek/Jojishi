@@ -12,7 +12,7 @@ uniform vec3 		ambiant;
 uniform sampler2D	textDiffuse;
 uniform int 		has_diffuse;
 
-uniform vec3		lights[16];
+uniform vec3		lights[4 * 12];
 uniform int			num_light;
 
 out vec4 FragColor;

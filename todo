@@ -1,7 +1,4 @@
 modification of programm 
-Lightning difinition and factory
-Lightning
-Skybox builtin / sunlight builtin 
 Culling {oclusion / obstruction}
 Terrain generation Builtin
 Camera player bundle { Shall include transform improvement and value inheritence}
@@ -22,6 +19,8 @@ Shadow
 Error system
 
 Tesselation
+
+Lightning improvement
 
 issue : delete static memory manager and use dynamic one
 
