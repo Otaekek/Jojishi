@@ -5,7 +5,7 @@ uint32_t			dynamicMemoryManager::referencer = 0;
 uint32_t			dynamicMemoryManager::cluster_id = 0;
 void 				*dynamicMemoryManager::ref_to_ptr[MAX_REF] = {nullptr};
 void 				*dynamicMemoryManager::ref_to_bloc[MAX_REF] = {nullptr};
-	
+
 uint32_t			dynamicMemoryManager::cluster_init(uint32_t sizeBloc, uint32_t numBloc)
 {
 	cluster_id++;
@@ -32,4 +32,9 @@ void				dynamicMemoryManager::clear_data(uint32_t ref, uint32_t type_id)
 void 				*dynamicMemoryManager::get_ptr(uint32_t ref)
 {
 	return (ref_to_ptr[ref % MAX_REF]);
+}
+
+void				dynamicMemoryManager::zerofy(uint32_t handler, uint32_t size)
+{
+	bzero(get_ptr(handler), size);
 }

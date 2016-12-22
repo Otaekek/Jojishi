@@ -2,6 +2,7 @@
 #define DYNAMICMEMORYMANAGER
 
 #include "../memory_allocator/poolAllocator.class.hpp"
+#include <cstring>
 
 #define NUM_CLUSTERS 65536
 #define MAX_REF 524288
@@ -13,6 +14,7 @@ public:
 	static uint32_t				create_slot(uint32_t type_id);
 	static void					clear_data(uint32_t ref, uint32_t type_id);
 	static void 				*get_ptr(uint32_t ref);
+	static void					zerofy(uint32_t handler, uint32_t size);
 
 private:
 	static poolAllocator 		allocator[NUM_CLUSTERS];

@@ -49,7 +49,7 @@ void 			renderBuiltIn::init()
 	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glClearColor(0.1, 0, 0, 0);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -61,16 +61,26 @@ void 			renderBuiltIn::init()
 	skybox = get_renderGO(skyboxGO);
 	skybox->transformHandler = transformBuiltin::create();
 	transformBuiltin::scale(skybox->transformHandler, 2000, 2000, 2000);
+	glFrontFace(GL_CCW);
 }
 
-void 			renderBuiltIn::shutdown()
+void			renderBuiltIn::face_culling(t_renderGO *go)
+{
+	if (go->cullOnMe)
+		glEnable(GL_CULL_FACE);
+	glCullFace(go->cullMode);
+}
+
+void			renderBuiltIn::shutdown()
 {
 	glfwDestroyWindow(window);
 }
 
-uint32_t 		renderBuiltIn::create()
+uint32_t		renderBuiltIn::create()
 {
-	return (dynamicMemoryManager::create_slot(cluster_id));
+	uint32_t h = (dynamicMemoryManager::create_slot(cluster_id));
+	dynamicMemoryManager::zerofy(h, sizeof(t_renderGO));
+	return (h);
 }
 
 void			renderBuiltIn::update()
@@ -108,7 +118,7 @@ t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
 	return ((t_renderGO*)dynamicMemoryManager::get_ptr(ref));
 }
 
-void 			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
+void			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
 {
 	GLuint location;
 
@@ -130,7 +140,7 @@ void 			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uin
 void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t program)
 {
 	t_renderMeshData	*mesh;
-	bool 				mesh_has_child;
+	bool				mesh_has_child;
 
 	if (node.has_mesh)
 	{
@@ -146,7 +156,68 @@ void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t progra
 		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, program);
 }
 
-void 			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
+bool			cull_mesh(float modelMat[][4], float cameraMat[][4], float maxDist, float *perspectiveMat)
+{
+	glm::vec3 model_position;
+
+	model_position.x = modelMat[0][3] - cameraMat[0][3];
+	model_position.y = modelMat[1][3] - cameraMat[1][3];
+	model_position.z = modelMat[2][3] - cameraMat[2][3];
+
+	if (model_position.z < 0)
+		printf("mdr !!!\n");
+}
+
+void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
+{
+	t_renderMeshData	*mesh;
+	t_node				*node;
+	bool				mesh_has_child;
+	bool				node_has_child;
+	t_renderGO			*elem;
+	const float 		*modelMat, *viewMat, *projMat;
+
+	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
+	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
+
+	face_culling(elem);
+	glUseProgram(node->program);
+	push_light(elem, node->program);
+
+
+	projMat = glm::value_ptr(transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey)));
+	viewMat = glm::value_ptr(transformBuiltin::to_mat_cam(camera->transformHandler));
+	modelMat = glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler));
+
+	/*Set projection Matrix*/
+	GLint uniProj = glGetUniformLocation(node->program, "P");
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, projMat);
+
+	/*Set camera */
+	GLint cam = glGetUniformLocation(node->program, "V");
+	glUniformMatrix4fv(cam, 1, GL_FALSE, viewMat);
+
+	/* Set model */
+	GLint model = glGetUniformLocation(node->program, "M");
+	glUniformMatrix4fv(model, 1, GL_FALSE, modelMat);
+
+	render_node(*node, elem, node->program);
+}
+
+
+void			renderBuiltIn::render(t_camera *camera)
+{
+	uint32_t	cull_result[65536];
+
+	for (uint32_t i = 0; i < sizeList; i++)
+	{
+		renderBuiltIn::render_object(list[i], camera);
+		glDisable(GL_CULL_FACE);
+	}
+}
+
+
+void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 {
 	float			array[256];
 	t_light			*light;
@@ -174,42 +245,6 @@ void 			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 	glUniform3fv(location, _numLight * 4, array);
 	location = glGetUniformLocation(program, "num_light");
 	glUniform1i(location, _numLight);
-}
-
-void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
-{
-	t_renderMeshData	*mesh;
-	t_node				*node;
-	bool				mesh_has_child;
-	bool				node_has_child;
-	t_renderGO			*elem;
-
-	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
-	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
-
-	glUseProgram(node->program);
-	push_light(elem, node->program);
-
-	/*Set projection Matrix*/
-	glm::mat4 proj = transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
-	GLint uniProj = glGetUniformLocation(node->program, "P");
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-
-	/*Set camera */
-	GLint cam = glGetUniformLocation(node->program, "V");
-	glUniformMatrix4fv(cam, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat_cam(camera->transformHandler)));
-
-	/* Set model */
-	GLint model = glGetUniformLocation(node->program, "M");
-	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler)));
-
-	render_node(*node, elem, node->program);
-}
-
-void			renderBuiltIn::render(t_camera *camera)
-{
-	for (uint32_t i = 0; i < sizeList; i++)
-		renderBuiltIn::render_object(list[i], camera);
 }
 
 void					renderBuiltIn::add_camera(uint32_t camHandler)

@@ -17,6 +17,8 @@ staticMesh::staticMesh(glm::vec3 pos, glm::vec3 rot, float angle, glm::vec3 scal
 	renderGO = renderBuiltIn::get_renderGO(renderGOhandler);
 	renderGO->transformHandler = transformHandler;
 	renderGO->assetHandler = assetHandler;
+	renderGO->cullOnMe = true;
+	renderGO->cullMode = GL_BACK;
 	transformBuiltin::translate(transformHandler, pos.x, pos.y, pos.z);
 	transformBuiltin::rotate(transformHandler, rot, angle);
 	transformBuiltin::scale(transformHandler, scale.x, scale.y, scale.z);

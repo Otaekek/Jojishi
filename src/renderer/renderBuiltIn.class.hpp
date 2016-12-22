@@ -24,6 +24,8 @@
 typedef struct	s_render {
 	uint32_t	assetHandler;
 	uint32_t	transformHandler;
+	bool		cullOnMe;
+	GLenum		cullMode;
 }				t_renderGO;
 
 typedef struct	s_camera {
@@ -96,6 +98,8 @@ private :
 	static void						render_skybox(t_camera *camera);
 
 	static void						push_light(t_renderGO *elem, GLuint program);
+
+	static void						face_culling(t_renderGO *go);
 };
 
 #endif
