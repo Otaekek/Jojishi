@@ -61,6 +61,7 @@ SOURCES += fileLoader.class.cpp
 SRC_SUBDIR += renderer
 CFLAGS += -Isrc/renderer
 SOURCES += renderDataSys.class.cpp
+SOURCES += complexObjectRenderingPipeline.cpp
 SOURCES += renderBuiltIn.class.cpp
 
 # jb system

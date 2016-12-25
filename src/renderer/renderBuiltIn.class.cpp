@@ -108,6 +108,7 @@ void			renderBuiltIn::update()
 	glFinish();
 	glfwSwapBuffers(window);
 }
+
 GLFWvidmode				*renderBuiltIn::get_mode()
 {
 	return (mode);
@@ -118,133 +119,13 @@ t_renderGO 		*renderBuiltIn::get_renderGO(uint32_t ref)
 	return ((t_renderGO*)dynamicMemoryManager::get_ptr(ref));
 }
 
-void			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program)
-{
-	GLuint location;
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(mesh->vaoId);
-	location = glGetUniformLocation(program, "diffuse");
-	glUniform3f(location, mesh->material.diffuse[0], mesh->material.diffuse[1], mesh->material.diffuse[2]);
-	location = glGetUniformLocation(program, "specular");
-	glUniform3f(location, mesh->material.specular[0], mesh->material.specular[1], mesh->material.specular[2]);
-	location = glGetUniformLocation(program, "ambiant");
-	glUniform3f(location, mesh->material.ambiant[0], mesh->material.ambiant[1], mesh->material.ambiant[2]);
-	location = glGetUniformLocation(program, "has_diffuse");
-	glUniform1i(location, (int)mesh->material.has_diffuse_texture);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indiceBufferId);
-	glBindTexture(GL_TEXTURE_2D, mesh->material.diffuseTexture);
-	glDrawElements(GL_TRIANGLES, mesh->indiceNum, GL_UNSIGNED_INT, 0);
-}
-
-void			renderBuiltIn::render_node(t_node node, t_renderGO *elem, uint32_t program)
-{
-	t_renderMeshData	*mesh;
-	bool				mesh_has_child;
-
-	if (node.has_mesh)
-	{
-		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(node.meshs);
-		do
-		{
-			render_mesh(mesh, elem, program);
-			mesh_has_child = mesh->has_child;
-			mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(mesh->child);
-		}	while (mesh_has_child);
-	}
-	for (int i = 0; i < node.childNum; i++)
-		render_node(*(t_node*)(staticMemoryManager::get_data_ptr(node.child[i])), elem, program);
-}
-
-bool			cull_mesh(float modelMat[][4], float cameraMat[][4], float maxDist, float *perspectiveMat)
-{
-	glm::vec3 model_position;
-
-	model_position.x = modelMat[0][3] - cameraMat[0][3];
-	model_position.y = modelMat[1][3] - cameraMat[1][3];
-	model_position.z = modelMat[2][3] - cameraMat[2][3];
-
-	if (model_position.z < 0)
-		printf("mdr !!!\n");
-}
-
-void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
-{
-	t_renderMeshData	*mesh;
-	t_node				*node;
-	bool				mesh_has_child;
-	bool				node_has_child;
-	t_renderGO			*elem;
-	const float 		*modelMat, *viewMat, *projMat;
-
-	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
-	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
-
-	face_culling(elem);
-	glUseProgram(node->program);
-	push_light(elem, node->program);
-
-
-	projMat = glm::value_ptr(transformBuiltin::projection_matrix(60.0f, 10.0f, 10000.0f, (float)(mode->width * camera->sizex) / (mode->height * camera->sizey)));
-	viewMat = glm::value_ptr(transformBuiltin::to_mat_cam(camera->transformHandler));
-	modelMat = glm::value_ptr(transformBuiltin::to_mat(elem->transformHandler));
-
-	/*Set projection Matrix*/
-	GLint uniProj = glGetUniformLocation(node->program, "P");
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, projMat);
-
-	/*Set camera */
-	GLint cam = glGetUniformLocation(node->program, "V");
-	glUniformMatrix4fv(cam, 1, GL_FALSE, viewMat);
-
-	/* Set model */
-	GLint model = glGetUniformLocation(node->program, "M");
-	glUniformMatrix4fv(model, 1, GL_FALSE, modelMat);
-
-	render_node(*node, elem, node->program);
-}
-
-
 void			renderBuiltIn::render(t_camera *camera)
 {
-	uint32_t	cull_result[65536];
-
 	for (uint32_t i = 0; i < sizeList; i++)
 	{
 		renderBuiltIn::render_object(list[i], camera);
 		glDisable(GL_CULL_FACE);
 	}
-}
-
-
-void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
-{
-	float			array[256];
-	t_light			*light;
-	t_transform		*transform;
-	glm::vec3		direction;
-	GLuint			location;
-
-	for (int i = 0; i < _numLight; i++)
-	{
-		light = get_light(_lightsHandlers[i]);
-		transform = transformBuiltin::get_transform(light->transformHandler);
-		//cull(light)
-		direction = transformBuiltin::get_direction(light->transformHandler);
-		array[0 + i * 12] = transform->position.x;
-		array[0 + i * 12 + 1] = transform->position.y;
-		array[0 + i * 12 + 2] = transform->position.z;
-		array[0 + i * 12 + 3] = light->color.x;
-		array[0 + i * 12 + 4] = light->color.y;
-		array[0 + i * 12 + 5] = light->color.z;
-		array[0 + i * 12 + 6] = direction.x;
-		array[0 + i * 12 + 7] = direction.y;
-		array[0 + i * 12 + 8] = direction.z;
-	}
-	location = glGetUniformLocation(program, "lights");
-	glUniform3fv(location, _numLight * 4, array);
-	location = glGetUniformLocation(program, "num_light");
-	glUniform1i(location, _numLight);
 }
 
 void					renderBuiltIn::add_camera(uint32_t camHandler)

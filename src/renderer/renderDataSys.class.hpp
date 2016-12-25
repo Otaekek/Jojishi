@@ -31,6 +31,7 @@ typedef struct s_light {
 	float		attenuation;
 	float		linearAttenuation;
 	float		quadraticAttenuation;
+	float		constantEuristicOcclusion;
 
 }				t_light;
 
