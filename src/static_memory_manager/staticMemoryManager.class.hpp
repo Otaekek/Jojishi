@@ -35,6 +35,8 @@ public:
 
 	static uint64_t									create_slot_child(E_ASSET_TYPE type);
 
+	static uint64_t									create_asset(uint32_t cluster_id, uint32_t size);
+
 	static staticMemoryManager::e_asset_state		get_asset_state(uint64_t ref);
 
 	static void 									set_asset_state(staticMemoryManager::e_asset_state state, uint64_t ref);

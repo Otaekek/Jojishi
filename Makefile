@@ -94,6 +94,11 @@ SRC_SUBDIR += basic_light_factory
 CFLAGS += -Isrc/basic_light_factory
 SOURCES+= basicLightFactory.class.cpp
 
+# Terrain generation
+SRC_SUBDIR += terrain_generation_builtin
+CFLAGS += -Isrc/terrain_generation_builtin
+SOURCES += terrainGenerationBuiltin.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include

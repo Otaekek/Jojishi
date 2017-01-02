@@ -1,4 +1,4 @@
-#version 400
+#version 450
 
 in vec3 			pos_color;
 in vec3				camPos;
@@ -9,11 +9,12 @@ uniform vec3 		diffuse;
 uniform vec3 		specular;
 uniform vec3 		ambiant;
 
-uniform sampler2D	textDiffuse;
-uniform int 		has_diffuse;
+int					num_light = 2;
+uniform vec3		lights[12 * 4];
 
-uniform vec3		lights[4 * 12];
-uniform int			num_light;
+uniform sampler2D	textDiffuse;
+
+uniform int 		has_diffuse;
 
 out vec4 FragColor;
 
@@ -65,6 +66,7 @@ void main(void)
 {
 	vec3 diffuse_color;
 	vec3 frag_Normal = normalize(normal);
+
 	if (has_diffuse == 0)
 		diffuse_color = diffuse;
 	else

@@ -73,3 +73,9 @@ void										staticMemoryManager::merge(stackAllocator *allocator, staticMemory
 	memcpy(clusters[type].get_offset(), allocator->get_data_pointer(), allocator->get_size());
 	delete allocator;
 }
+
+uint64_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
+{
+	ref_to_ptr[++referencer] = clusters[cluster_id].mem_alloc(size);
+	return (referencer);
+}

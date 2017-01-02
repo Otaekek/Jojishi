@@ -99,7 +99,8 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 	}
 }
 
-void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path)
+void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData,
+											const aiScene *scene, char *path)
 {
 	float 						*vertices;
 	GLuint						*indices;
@@ -170,7 +171,8 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	meshData->vertexNum = vertex_size;
 }
 
-uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node, glm::mat4 trans, const aiScene *scene, char *path)
+uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node,
+				glm::mat4 trans, const aiScene *scene, char *path)
 {
 	t_node 				*nodeData;
 	t_renderMeshData	*mesh;
