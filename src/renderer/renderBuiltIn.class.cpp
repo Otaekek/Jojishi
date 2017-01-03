@@ -192,11 +192,11 @@ t_renderGO					*renderBuiltIn::get_skyboxGO()
 {
 	return (get_renderGO(skyboxGO));
 }
- void						renderBuiltIn::modify_skybox_light(float f)
- {
- 	skybox_light = f;
- }
 
+void						renderBuiltIn::modify_skybox_light(float f)
+{
+	skybox_light = f;
+}
 
 uint32_t					renderBuiltIn::create_light()
 {

@@ -1,4 +1,4 @@
-#version 450
+#version 400
 
 in vec3 			pos_color;
 in vec3				camPos;
@@ -9,7 +9,7 @@ uniform vec3 		diffuse;
 uniform vec3 		specular;
 uniform vec3 		ambiant;
 
-int					num_light = 2;
+uniform int num_light;
 uniform vec3		lights[12 * 4];
 
 uniform sampler2D	textDiffuse;
@@ -75,4 +75,5 @@ void main(void)
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16) +
 		ambiant,
 		1);
+	FragColor = vec4(1, 1, 0, 1);
 }

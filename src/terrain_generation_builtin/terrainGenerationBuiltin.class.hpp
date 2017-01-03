@@ -3,16 +3,18 @@
 
 #include <staticMemoryManager.class.hpp>
 #include <renderDataSys.class.hpp>
+#include <renderBuiltIn.class.hpp>
+#include <transform.class.hpp>
 
-#define FRAGMENT_SIZE 10000
+#define FRAGMENT_SIZE 100
 
 typedef struct	s_biom {
 
-	float				sizex;
-	float				sizey;
+	float				size;
 	float				posx;
 	float				posy;
 	uint32_t			dataRef;
+	uint32_t			numFrag;
 	uint32_t			transformHandler;
 	uint32_t			renderGoHandler[4096];
 }						t_biom;
@@ -26,7 +28,7 @@ public:
 
 	static void 		update();
 
-	static void			add_biom(float posx, float posy, float sizex, float sizey);
+	static void			add_biom(float posx, float posy, uint32_t size);
 
 private:
 

@@ -39,7 +39,7 @@ void										staticMemoryManager::asset_loaded(E_ASSET_TYPE type, t_loadHeader 
 	count--;
 	data_status[header.ref] = E_LOADED;
 	//mutexes[type].lock();
-	
+
 	//merge(header.allocator, type);
 	mutexes[type].unlock();
 }
@@ -74,7 +74,7 @@ void										staticMemoryManager::merge(stackAllocator *allocator, staticMemory
 	delete allocator;
 }
 
-uint64_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
+uint32_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
 {
 	ref_to_ptr[++referencer] = clusters[cluster_id].mem_alloc(size);
 	return (referencer);

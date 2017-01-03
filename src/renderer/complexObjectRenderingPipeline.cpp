@@ -16,7 +16,8 @@ void			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint
 	location = glGetUniformLocation(program, "has_diffuse");
 	glUniform1i(location, (int)mesh->material.has_diffuse_texture);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indiceBufferId);
-	glBindTexture(GL_TEXTURE_2D, mesh->material.diffuseTexture);
+	if (mesh->material.has_diffuse_texture)
+		glBindTexture(GL_TEXTURE_2D, mesh->material.diffuseTexture);
 	glDrawElements(GL_TRIANGLES, mesh->indiceNum, GL_UNSIGNED_INT, 0);
 }
 
@@ -55,7 +56,9 @@ void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 		array[i * 12 + 7] = direction.y;
 		array[i * 12 + 8] = direction.z;
 	}
+	printf("%d\n", glGetError());
 	location = glGetUniformLocation(program, "num_light");
+	printf("%d\n", glGetError());
 	glUniform1i(location, _numLight);
 	location = glGetUniformLocation(program, "lights");
 	glUniform3fv(location, _numLight * 4, array);
@@ -119,8 +122,10 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	projMat = transformBuiltin::projection_matrix(60.0f, 10.0f, 100000.0f,
 		(float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 
-	face_culling(elem);
 	glUseProgram(node->program);
+
+//	face_culling(elem);
+
 	push_light(elem, node->program);
 
 	/*Set projection Matrix*/
@@ -135,6 +140,6 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	GLint model = glGetUniformLocation(node->program, "M");
 	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(modelMat));
 
-	if (cull_mesh(modelMat, viewMat, 500, projMat))
+	//if (cull_mesh(modelMat, viewMat, 500, projMat))
 		render_node(*node, elem, node->program);
 }

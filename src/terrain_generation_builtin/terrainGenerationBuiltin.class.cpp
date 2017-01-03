@@ -10,15 +10,19 @@ void		terrainGenerationBuiltin::init()
 
 void		terrainGenerationBuiltin::update()
 {
-
+	for (uint32_t i = 0; i < numBiom; i++)
+		for (uint32_t j = 0; j < bioms[i].numFrag; j++)
+			renderBuiltIn::render_me(bioms[i].renderGoHandler[j]);
 }
 
 void	create_vbo(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *meshData)
 {
-	float		vertex[sizey * sizex * 8];
-	uint32_t	indices[sizex * sizey];
+	float		*vertex;
+	uint32_t	*indices;
 	t_material	material;
 
+	vertex = (float*)malloc(sizeof(float) * sizey * sizey * 8);
+	indices = (uint32_t*)malloc(sizeof(uint32_t) * sizex * sizey * 3);
 	memset(&material, 0, sizeof(t_material));
 	meshData->vaoId = renderDataSys::createVAO();
 	meshData->vertexNum = sizex * sizey;
@@ -28,10 +32,10 @@ void	create_vbo(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t siz
 	{
 		for (uint32_t j = 0; j < sizey; j++)
 		{
-			vertex[i * j * 8] = i + offsetx;
-			vertex[i * j * 8 + 1] = j + offsety;
-			vertex[i * j * 8 + 2] = data[i * j];
-	
+			vertex[i * j * 8] = (i + offsetx * 0);
+			vertex[i * j * 8 + 2] = (j + offsety * 0);
+			vertex[i * j * 8 + 1] = 0;
+
 			vertex[i * j * 8 + 3] = 0;
 			vertex[i * j * 8 + 4] = 1;
 			vertex[i * j * 8 + 5] = 0;
@@ -42,62 +46,54 @@ void	create_vbo(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t siz
 	}
 	for (uint32_t i = 0; i + 6 < sizey * sizex; i += 6)
 	{
-		indices[i] = i; 
-		indices[i + 1] = i + 1; 
+		indices[i] = i;
+		indices[i + 1] = i + 1;
 		indices[i + 2] = i + sizey;
 
-		indices[i + 3] = i + 1; 
+		indices[i + 3] = i + 1;
 		indices[i + 1 + 3] = i + sizey + 1;
-		indices[i + 2 + 3] = i + sizey; 
+		indices[i + 2 + 3] = i + sizey;
 	}
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertex, sizey * sizex, meshData->vaoId);
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, sizex * sizey, meshData->vaoId);
+	meshData->indiceNum = sizey * sizex * 2;
+	free(indices);
+	free(vertex);
 }
 
-void		update_object(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t sizey, float *data)
+void update_object(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *meshData)
 {
-	t_renderMeshData *meshData;
-
 	meshData->has_child = false;
+	meshData->child = 0;
+	create_vbo(offsetx, offsety, sizex, sizey, data, meshData);
 }
 
-void		terrainGenerationBuiltin::add_biom(float posx, float posy, float sizex, float sizey)
+void		terrainGenerationBuiltin::add_biom(float posx, float posy, uint32_t size)
 {
 	t_biom				biom;
 	uint32_t			i;
-	uint32_t			size_frag_y;
-	uint32_t			size_frag_x;
+	uint32_t			meshDataHandler;
+	t_node				*node;
 
 	biom.posy = posy;
 	biom.posx = posx;
-	biom.sizex = sizex;
-	biom.sizey = sizey;
-	biom.dataRef = staticMemoryManager::create_asset(1, sizex * sizey * sizeof(float));
-	bioms[numBiom++] = biom;
-	for (i = 0; i < (sizex * sizey) / FRAGMENT_SIZE; i++)
+	biom.size = size;
+	biom.dataRef = staticMemoryManager::create_asset(1, size * size * sizeof(float));
+	for (i = 0; i * FRAGMENT_SIZE * FRAGMENT_SIZE < size * size && FRAGMENT_SIZE < size; i++)
 	{
-		update_object( sizex, sizey);
+		meshDataHandler = staticMemoryManager::create_asset(1, sizeof(t_node));
+		node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);
+		node->has_mesh = 1;
+		node->childNum = 0;
+		node->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+		renderDataSys::set_programm(E_DEFAULT, meshDataHandler);
+		biom.renderGoHandler[i] = renderBuiltIn::create();
+		(renderBuiltIn::get_renderGO(biom.renderGoHandler[i]))->assetHandler = meshDataHandler;
+		(renderBuiltIn::get_renderGO(biom.renderGoHandler[i]))->transformHandler = transformBuiltin::create();
+		update_object((i * FRAGMENT_SIZE) % size, (i * FRAGMENT_SIZE) / size, FRAGMENT_SIZE, FRAGMENT_SIZE,
+			(float*)staticMemoryManager::get_data_ptr(biom.dataRef), (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs));
+		break ;
 	}
-	i = (sizex * sizey) % FRAGMENT_SIZE;
-	if (i > 0)
-		;
-	//update_object(sizex, sizey, data);
+	biom.numFrag = i;
+	bioms[numBiom++] = biom;
 }
-
-	// bool			has_child;
-
-	// GLuint			textureHandler;
-	// GLuint			vaoId;
-	// GLuint			vertexNum;
-	// GLuint			vboVerticeId;
-	// GLuint			indiceNum;
-	// GLuint			indiceBufferId;
-	// GLuint			*indices;
-	// GLuint			diffuseText;
-	// GLuint			specularTexts;
-
-	// GLuint			child;
-
-	// float 			*vbo;
-	// glm::mat4		initialTransform;
-	// t_material		material;
