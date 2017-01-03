@@ -4,6 +4,8 @@
 #include <staticMemoryManager.class.hpp>
 #include <renderDataSys.class.hpp>
 
+#define FRAGMENT_SIZE 10000
+
 typedef struct	s_biom {
 
 	float				sizex;
@@ -11,9 +13,8 @@ typedef struct	s_biom {
 	float				posx;
 	float				posy;
 	uint32_t			dataRef;
-	uint32_t			meshDataHandler;
 	uint32_t			transformHandler;
-	uint32_t			renderGoHandler;
+	uint32_t			renderGoHandler[4096];
 }						t_biom;
 
 class terrainGenerationBuiltin {

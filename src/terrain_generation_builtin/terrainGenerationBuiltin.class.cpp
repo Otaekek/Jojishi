@@ -13,7 +13,7 @@ void		terrainGenerationBuiltin::update()
 
 }
 
-void	create_vbo(uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *meshData)
+void	create_vbo(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *meshData)
 {
 	float		vertex[sizey * sizex * 8];
 	uint32_t	indices[sizex * sizey];
@@ -28,8 +28,8 @@ void	create_vbo(uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *m
 	{
 		for (uint32_t j = 0; j < sizey; j++)
 		{
-			vertex[i * j * 8] = i;
-			vertex[i * j * 8 + 1] = j;
+			vertex[i * j * 8] = i + offsetx;
+			vertex[i * j * 8 + 1] = j + offsety;
 			vertex[i * j * 8 + 2] = data[i * j];
 	
 			vertex[i * j * 8 + 3] = 0;
@@ -54,7 +54,7 @@ void	create_vbo(uint32_t sizex, uint32_t sizey, float *data, t_renderMeshData *m
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, sizex * sizey, meshData->vaoId);
 }
 
-void		update_object(uint32_t sizex, uint32_t sizey, float *data)
+void		update_object(uint32_t offsetx, uint32_t offsety, uint32_t sizex, uint32_t sizey, float *data)
 {
 	t_renderMeshData *meshData;
 
@@ -63,7 +63,10 @@ void		update_object(uint32_t sizex, uint32_t sizey, float *data)
 
 void		terrainGenerationBuiltin::add_biom(float posx, float posy, float sizex, float sizey)
 {
-	t_biom		biom;
+	t_biom				biom;
+	uint32_t			i;
+	uint32_t			size_frag_y;
+	uint32_t			size_frag_x;
 
 	biom.posy = posy;
 	biom.posx = posx;
@@ -71,6 +74,14 @@ void		terrainGenerationBuiltin::add_biom(float posx, float posy, float sizex, fl
 	biom.sizey = sizey;
 	biom.dataRef = staticMemoryManager::create_asset(1, sizex * sizey * sizeof(float));
 	bioms[numBiom++] = biom;
+	for (i = 0; i < (sizex * sizey) / FRAGMENT_SIZE; i++)
+	{
+		update_object( sizex, sizey);
+	}
+	i = (sizex * sizey) % FRAGMENT_SIZE;
+	if (i > 0)
+		;
+	//update_object(sizex, sizey, data);
 }
 
 	// bool			has_child;
