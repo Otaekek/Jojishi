@@ -56,9 +56,7 @@ void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 		array[i * 12 + 7] = direction.y;
 		array[i * 12 + 8] = direction.z;
 	}
-	printf("%d\n", glGetError());
 	location = glGetUniformLocation(program, "num_light");
-	printf("%d\n", glGetError());
 	glUniform1i(location, _numLight);
 	location = glGetUniformLocation(program, "lights");
 	glUniform3fv(location, _numLight * 4, array);
