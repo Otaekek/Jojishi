@@ -75,5 +75,5 @@ void main(void)
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16) +
 		ambiant,
 		1);
-	FragColor = vec4(1, 1, 0, 1);
+	//FragColor = vec4(1, 1, 0, 1);
 }
