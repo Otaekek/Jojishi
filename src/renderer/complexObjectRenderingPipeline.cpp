@@ -47,6 +47,7 @@ void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 			continue ;
 		direction = transformBuiltin::get_direction(light->transformHandler);
 		array[i * 12] = transform->position.x;
+		printf("%d\n", _numLight);
 		array[i * 12 + 1] = transform->position.y;
 		array[i * 12 + 2] = transform->position.z;
 		array[i * 12 + 3] = light->color.x;
