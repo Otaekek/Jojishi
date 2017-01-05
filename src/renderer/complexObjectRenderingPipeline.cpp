@@ -47,7 +47,7 @@ void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 			continue ;
 		direction = transformBuiltin::get_direction(light->transformHandler);
 		array[i * 12] = transform->position.x;
-		printf("%d\n", _numLight);
+
 		array[i * 12 + 1] = transform->position.y;
 		array[i * 12 + 2] = transform->position.z;
 		array[i * 12 + 3] = light->color.x;
@@ -115,7 +115,6 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
-
 	modelMat = transformBuiltin::to_mat(elem->transformHandler);
 	viewMat = transformBuiltin::to_mat_cam(camera->transformHandler);
 	projMat = transformBuiltin::projection_matrix(60.0f, 10.0f, 100000.0f,
