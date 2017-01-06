@@ -6,7 +6,7 @@
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
 std::map<std::string, void (*)(void*)>  	fileLoader::extension_to_function;
-std::map<std::string, uint64_t> 			fileLoader::path_as_guid;
+std::map<std::string, uint32_t> 			fileLoader::path_as_guid;
 
 fileLoader::fileLoader()
 {
@@ -32,7 +32,7 @@ fileLoader::~fileLoader()
 
 }
 
-uint64_t			fileLoader::get_fs(std::string path)
+uint32_t			fileLoader::get_fs(std::string path)
 {
 	if (path_as_guid[path] != 0)
 		return (path_as_guid[path]);
@@ -59,6 +59,7 @@ char 		*fileLoader::readfile(std::string path)
 	return ((char*)file.c_str());
 }
 
+/*
 uint64_t fileLoader::load_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
 {
 	t_job			job;
@@ -76,12 +77,13 @@ uint64_t fileLoader::load_fs_asset_assync(std::string path, staticMemoryManager:
 	jobHandler::push_job(job);
 	return (ref);
 }
+*/
 
-uint64_t fileLoader::load_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
+uint32_t fileLoader::load_fs_asset_sync(std::string path, uint32_t cluster)
 {
 	t_job			job;
 	char 			*job_path;
-	uint64_t 		ref;
+	uint32_t 		ref;
 
 	if (path_as_guid[path] != 0)
 		return (path_as_guid[path]);
@@ -89,7 +91,7 @@ uint64_t fileLoader::load_fs_asset_sync(std::string path, staticMemoryManager::E
 	memcpy(job_path, path.c_str(), strlen(path.c_str()));
 	job_path[strlen(path.c_str())] = 0;
 	job.fptr = load_file;
-	ref = (staticMemoryManager::load_asset(job.data, type));
+	ref = staticMemoryManager::assign_asset(cluster);
 	path_as_guid[path] = ref;
 	job.fptr(job.data);
 	return (ref);
@@ -129,8 +131,8 @@ void 			fileLoader::load_obj(void *data)
 		printf("Error when loading %s: %s.\n", path, (importer.GetErrorString()));
 		return ;
 	}
-	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path);
-	staticMemoryManager::asset_loaded(staticMemoryManager::E_OBJ_FILE, *loadHeader);
+	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path, ref);
+	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadHeader->ref);
 }
 
 void 			fileLoader::load_file(void *data)

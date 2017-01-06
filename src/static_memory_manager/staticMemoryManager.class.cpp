@@ -3,48 +3,31 @@
 stackAllocator											staticMemoryManager::clusters[NUMCLUSTER];
 staticMemoryManager::e_asset_state						staticMemoryManager::data_status[MAXREF];
 void													*staticMemoryManager::ref_to_ptr[MAXREF];
-uint64_t	 											staticMemoryManager::referencer = 0;
+uint32_t	 											staticMemoryManager::referencer = 0;
 uint32_t												staticMemoryManager::count = 0;
 std::mutex												staticMemoryManager::mutexes[NUMCLUSTER];
+uint32_t												staticMemoryManager::clusters_count = 0;
+uint32_t												staticMemoryManager::ref_to_cluster[MAXREF];
 
-uint64_t									staticMemoryManager::load_asset(void *loadData, E_ASSET_TYPE type)
+uint32_t									staticMemoryManager::init_cluster()
 {
-	t_loadHeader header;
-
-	referencer++;
-	header.ref = referencer;
-	header.allocator = &(clusters[type]);
-	ref_to_ptr[header.ref] = clusters[type].get_offset();
-	mutexes[type].lock();
-	memcpy(loadData, &header, sizeof(t_loadHeader));
-	data_status[referencer] = E_LOADING;
-	count++;
-	return (referencer);
+	clusters_count %= NUMCLUSTER;
+	return (clusters_count++);
 }
 
-staticMemoryManager::e_asset_state			staticMemoryManager::get_asset_state(uint64_t ref)
+staticMemoryManager::e_asset_state			staticMemoryManager::get_asset_state(uint32_t ref)
 {
 	return (data_status[ref]);
 }
 
-void 										staticMemoryManager::set_asset_state(staticMemoryManager::e_asset_state state, uint64_t ref)
+void 										staticMemoryManager::set_asset_state(staticMemoryManager::e_asset_state state, uint32_t ref)
 {
-	if (state == E_ERR)
+	if (state == E_ERR || state == E_LOADED)
 		count--;
 	data_status[ref] = state;
 }
 
-void										staticMemoryManager::asset_loaded(E_ASSET_TYPE type, t_loadHeader header)
-{
-	count--;
-	data_status[header.ref] = E_LOADED;
-	//mutexes[type].lock();
-
-	//merge(header.allocator, type);
-	mutexes[type].unlock();
-}
-
-void 										*staticMemoryManager::get_data_ptr(uint64_t ref)
+void 										*staticMemoryManager::get_data_ptr(uint32_t ref)
 {
 	return (ref_to_ptr[ref]);
 }
@@ -60,22 +43,25 @@ bool										staticMemoryManager::all_read()
 	return (count == 0);
 }
 
-uint64_t									staticMemoryManager::create_slot_child(E_ASSET_TYPE type)
-{
-	referencer++;
-	ref_to_ptr[referencer] = clusters[type].get_offset();
-	data_status[referencer] = E_CHILD;
-	return referencer;
-}
-
-void										staticMemoryManager::merge(stackAllocator *allocator, staticMemoryManager::E_ASSET_TYPE type)
-{
-	memcpy(clusters[type].get_offset(), allocator->get_data_pointer(), allocator->get_size());
-	delete allocator;
-}
-
 uint32_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
 {
 	ref_to_ptr[++referencer] = clusters[cluster_id].mem_alloc(size);
 	return (referencer);
+}
+
+void										staticMemoryManager::realloc()
+{
+
+}
+
+uint32_t									staticMemoryManager::assign_asset(uint32_t cluster)
+{
+	ref_to_cluster[referencer] = cluster; 
+	return (referencer++);
+}
+
+void										*staticMemoryManager::alloc_asset(uint32_t ref, uint32_t size)
+{
+	ref_to_ptr[ref] = clusters[ref_to_cluster[ref]].mem_alloc(size);
+	return (ref_to_ptr[ref]);
 }

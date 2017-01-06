@@ -20,6 +20,12 @@
 #include <iostream>
 #include <fstream>
 
+typedef struct 			s_loadHeader {
+	stackAllocator 		*allocator;
+	uint32_t 			ref;
+	uint32_t			cluster;
+}						t_loadHeader;
+
 class fileLoader {
 
 public:
@@ -27,11 +33,11 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint64_t 	load_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
-	static uint64_t 	load_fs_asset_sync(std::string path, staticMemoryManager::E_ASSET_TYPE type);
+	static uint32_t 	load_fs_asset_assync(std::string path, uint32_t cluster);
+	static uint32_t 	load_fs_asset_sync(std::string path, uint32_t cluster);
 	static void 		init();
 	static void 		load_file(void *data);
-	static uint64_t		get_fs(std::string path);
+	static uint32_t		get_fs(std::string path);
 
 	static char 		*readfile(std::string path);
 private :
@@ -39,7 +45,7 @@ private :
 	static std::map<std::string, void (*)(void*)> 	extension_to_function;
 	static const aiScene 							*assimp_load(char *path, Assimp::Importer *importer);
 	static void 									load_obj(void *data);
-	static std::map<std::string, uint64_t> 			path_as_guid;
+	static std::map<std::string, uint32_t> 			path_as_guid;
 };
 
 #endif

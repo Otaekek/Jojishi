@@ -9,11 +9,6 @@
 #include <cstring>
 #include <mutex>
 
-typedef struct 			s_loadHeader {
-	stackAllocator 		*allocator;
-	uint64_t 			ref;
-}						t_loadHeader;
-
 class staticMemoryManager {
 
 public:
@@ -26,35 +21,35 @@ public:
 		E_ERR
 	};
 
-	enum E_ASSET_TYPE {
-		E_OBJ_FILE = 0,
-		E_ENUM_SIZE,
-	};
-
-	static uint64_t									load_asset(void *loadData, E_ASSET_TYPE type);
-
-	static uint64_t									create_slot_child(E_ASSET_TYPE type);
+	static uint32_t									init_cluster();
 
 	static uint32_t									create_asset(uint32_t cluster_id, uint32_t size);
 
-	static staticMemoryManager::e_asset_state		get_asset_state(uint64_t ref);
+	static staticMemoryManager::e_asset_state		get_asset_state(uint32_t ref);
 
-	static void 									set_asset_state(staticMemoryManager::e_asset_state state, uint64_t ref);
-	static void										asset_loaded(E_ASSET_TYPE type, t_loadHeader header);
-	static void 									*get_data_ptr(uint64_t ref);
+	static void 									set_asset_state(staticMemoryManager::e_asset_state state, uint32_t ref);
+
+	static void 									*get_data_ptr(uint32_t ref);
+
 	static void 									free_all();
 
 	static bool										all_read();
 
+	static uint32_t									assign_asset(uint32_t cluster);
+
+	static uint32_t									alloc_asset(uint32_t ref, uint32_t size);
+
 private:
 
-	static void										merge(stackAllocator *allocator, staticMemoryManager::E_ASSET_TYPE type);
 	static stackAllocator							clusters[NUMCLUSTER];
 	static staticMemoryManager::e_asset_state		data_status[MAXREF];
 	static void										*ref_to_ptr[MAXREF];
-	static uint64_t	 								referencer;
+	static uint32_t	 								referencer;
 	static uint32_t									count;
+	static uint32_t									clusters_count;
 	static std::mutex								mutexes[NUMCLUSTER];
+	static void										realloc();
+	static uint32_t									ref_to_cluster[MAXREF];
 };
 
 #endif

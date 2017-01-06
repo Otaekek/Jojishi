@@ -172,22 +172,22 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 }
 
 uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node,
-				glm::mat4 trans, const aiScene *scene, char *path)
+				glm::mat4 trans, const aiScene *scene, char *path, uint32_t ref)
 {
 	t_node 				*nodeData;
 	t_renderMeshData	*mesh;
 	uint32_t			k;
 
-	nodeData = (t_node*)allocator->mem_alloc(sizeof(t_node));
-	nodeData->meshs = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+	nodeData = (t_node*)staticMemoryManager::alloc_asset(ref, sizeof(t_node));
+	nodeData->meshs = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
 	nodeData->program = _programm[0];
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
 	{
 		nodeData->has_mesh = true;
-		mesh = (t_renderMeshData*)allocator->mem_alloc(sizeof(t_renderMeshData));
+		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(nodeData->meshs);
 		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path);
 		mesh->has_child = true;
-		mesh->child = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+		mesh->child = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
 	}
 	if (node->mNumMeshes)
 	{
@@ -198,19 +198,18 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 		nodeData->has_mesh = false;
 	for (k = 0; k < node->mNumChildren; k++)
 	{
-		nodeData->child[k] = staticMemoryManager::create_slot_child(staticMemoryManager::E_OBJ_FILE);
+		nodeData->child[k] = staticMemoryManager::create_asset(0, sizeof(t_node));
 		node_to_mesh(allocator, node->mChildren[k], trans, scene, path);
 	}
 	nodeData->childNum = k;
 }
 
-void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path)
+void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path, uint32_t ref)
 {
 	glm::mat4 n;
 
-	node_to_mesh(allocator, scene->mRootNode, n, scene, path);
+	node_to_mesh(allocator, scene->mRootNode, n, scene, path, ref);
 }
-
 
 std::string 		readfile(std::string path)
 {

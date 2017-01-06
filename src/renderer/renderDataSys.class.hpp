@@ -99,7 +99,7 @@ public:
 	static uint32_t 		createVAO();
 	static uint32_t 		createVBO_VNT(float *vertices, uint32_t vertex_size, uint32_t vaoId);
 	static uint32_t 		createVBO_Indice(uint32_t *indices, uint32_t indice_size, uint32_t vaoId);
-	static void 			obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path);
+	static void 			obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path, uint32_t ref);
 	static uint32_t 		load_programVertexFrag(std::string vertexPath, std::string fragPath);
 	static void				computeModification(t_renderMeshData *mesh, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis);
