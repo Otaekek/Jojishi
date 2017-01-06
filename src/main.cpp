@@ -65,11 +65,11 @@ int main()
 	//staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 1, glm::vec3(1, 1, 1) , "assets/graphic/mesh/IronMan/IronMan.obj");
 	//staticMeshManager::create(glm::vec3(800, 0, 200), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(0.5, 0.3, 0.5) ,"assets/graphic/mesh/land/OBJ/Models_OBJ/Terrain_500000.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
-	basicLightFactory::create(glm::vec3(0, 1000, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(-200, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 
-	terrainGenerationBuiltin::add_biom(0, 0, 1000);
+	terrainGenerationBuiltin::add_biom(0, 0, 1500);
 	while (1)
 	{
 		//printf("%d\n", i++);
