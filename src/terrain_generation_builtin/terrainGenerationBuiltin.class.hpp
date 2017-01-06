@@ -28,7 +28,7 @@ public:
 
 	static void 		update();
 
-	static void			add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl);
+	static void			add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl, uint32_t dataref, uint32_t datasize);
 
 private:
 

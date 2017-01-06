@@ -108,9 +108,9 @@ t_material	handle_material()
 	return (material);
 }
 
-void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec)
+void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor)
 {
-	glm::vec3 base = glm::vec3(0, 0.01, 0);
+	glm::vec3 base = glm::vec3(0, 0.01 / divisor, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
@@ -159,7 +159,8 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 	k = 0;
 	vertex = (float*)malloc(sizeof(float) * size * size * 8);
 	indices = (uint32_t*)malloc(sizeof(uint32_t) * size * size * 6);
-
+	float treshOld = size * 0.1;
+	float divisor;
 	meshData->vaoId = renderDataSys::createVAO();
 
 	meshData->vertexNum = size * size;
@@ -171,17 +172,30 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 	{
 		for (int32_t j = 0; j < size; j++)
 		{
+			divisor = 1;
 			// Set position
+
 			vertex[i * size * 8 + j * 8] = (float)i * scale;
-			vertex[i * size * 8 + j * 8 + 1] = data[j + i * size] * ampl;
+			if (size - j < treshOld)
+					divisor = (float)(size - j) / treshOld;
+			if (j < treshOld)
+				divisor = fmin(divisor, (float)(j) / treshOld);
+			if (size - i < treshOld)
+					divisor = fmin(divisor, (float)(size - i) / treshOld);
+			if (i < treshOld)
+				divisor = fmin(divisor, (float)(i) / treshOld);
+			if (divisor < 0.1)
+				divisor = 0;
+
+			vertex[i * size * 8 + j * 8 + 1] = data[j + i * size] * ampl * divisor;
 			vertex[i * size * 8 + j * 8 + 2] = (float)j * scale;
 
 			// Set normal
-			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3]);
+			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3], divisor);
 
 			// Set UV
-			vertex[i * size * 8 + j * 8 + 6] = 0;
-			vertex[i * size * 8 + j * 8 + 7] = 0;
+			vertex[i * size * 8 + j * 8 + 6] = (float)i / size;
+			vertex[i * size * 8 + j * 8 + 7] = (float)j / size;
 
 			// Set indices
 			if (j != size - 1 && i != 0 && j != 0 && i != size - 1)
@@ -217,17 +231,18 @@ void		fill_data(float *data, uint32_t	size, uint32_t res)
 		data[i] = Get2DPerlinNoiseValue((i) / size , (i) % size, res);
 }
 
-void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl)
+void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl, uint32_t dataHandler, uint32_t datasize)
 {
 	t_biom				biom;
 	uint32_t			i;
 	uint32_t			meshDataHandler;
 	t_node				*node;
 
+	size += 3;
 	biom.posy = posy;
 	biom.posx = posx;
 	biom.size = size;
-	biom.dataRef = staticMemoryManager::create_asset(1, size * size * sizeof(float));
+	biom.dataRef = dataHandler;
 	fill_data((float*)staticMemoryManager::get_data_ptr(biom.dataRef), size, 70);
 	meshDataHandler = staticMemoryManager::create_asset(1, sizeof(t_node));
 	node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);

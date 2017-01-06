@@ -29,7 +29,7 @@ vec3 compute_diffuse(vec3 pos, vec3 norm, vec3 col)
 	while (i < num_light)
 	{
 		ray = normalize(lights[i * 4] - pos);
-		outter += max(dot(ray, norm), 0.2) * lights[i * 4 + 1];
+		outter += max(dot(ray, norm), 0) * lights[i * 4 + 1];
 		i++;
 	}
 	outter.x = min(1, outter.x);
@@ -71,13 +71,6 @@ void main(void)
 		diffuse_color = diffuse;
 	else
 		diffuse_color = texture(textDiffuse, uv).rgb;
-
-	if (pos_color.y / 10 > 0.9)
-		diffuse_color = vec3(0.7, 0.7, 0.7);
-	else if (pos_color.y / 10 > 0.5)
-		diffuse_color = vec3(0.5, 0.4, 0.3);
-	else
-		diffuse_color = vec3(0, 0, 0.6);
 
 	FragColor = vec4(compute_diffuse(pos_color, frag_Normal, diffuse_color).xyz +
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16)
