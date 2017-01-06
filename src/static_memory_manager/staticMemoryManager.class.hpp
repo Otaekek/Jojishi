@@ -37,7 +37,7 @@ public:
 
 	static uint32_t									assign_asset(uint32_t cluster);
 
-	static uint32_t									alloc_asset(uint32_t ref, uint32_t size);
+	static void										*alloc_asset(uint32_t ref, uint32_t size);
 
 private:
 

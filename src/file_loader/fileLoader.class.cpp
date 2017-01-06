@@ -131,7 +131,7 @@ void 			fileLoader::load_obj(void *data)
 		printf("Error when loading %s: %s.\n", path, (importer.GetErrorString()));
 		return ;
 	}
-	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path, ref);
+	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path, loadHeader->ref);
 	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadHeader->ref);
 }
 

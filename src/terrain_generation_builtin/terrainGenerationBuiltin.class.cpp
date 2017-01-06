@@ -166,7 +166,7 @@ void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uin
 	node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);
 	node->has_mesh = 1;
 	node->childNum = 0;
-	node->meshs = staticMemoryManager::create_asset(staticMemoryManager::E_OBJ_FILE, sizeof(t_renderMeshData));
+	node->meshs = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
 	renderDataSys::set_programm(E_DEFAULT, meshDataHandler);
 	biom.renderGoHandler = renderBuiltIn::create();
 	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->assetHandler = meshDataHandler;

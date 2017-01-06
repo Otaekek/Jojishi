@@ -108,6 +108,8 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	uint32_t					indices_size;
 	uint32_t					vertex_size;
 	aiColor4D 					color;
+	uint32_t					vboHandler;
+	uint32_t					indiceHandler;
 	aiString					texturePath;
 	char						completePath[1000];
 	uint32_t					i = 0;
@@ -119,7 +121,8 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	material = scene->mMaterials[mesh->mMaterialIndex];
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
-	indices = (GLuint*)allocator->mem_alloc(indices_size * 3 * sizeof(uint32_t));
+	indiceHandler = staticMemoryManager::create_asset(0, (indices_size * 3 * sizeof(uint32_t)));
+	indices = staticMemoryManager::get_data_ptr(indiceHandler);
 	for (uint32_t i = 0; i < indices_size; i++)
 	{
 		for (uint32_t j = 0; j < 3; j++)
@@ -128,7 +131,8 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 			indices[i * 3 + j] = indice;
 		}
 	}
-	vertices = (float*)allocator->mem_alloc(vertex_size * sizeof(float) * 8);
+	vboHandler = staticMemoryManager::create_asset(0, ((vertex_size * sizeof(float) * 8)));
+	vertices = staticMemoryManager::get_data_ptr(vboHandler);
 	for (uint32_t i = 0; i < vertex_size; i++)
 	{
 		vertices[i * 8] = mesh->mVertices[i].x;
@@ -166,8 +170,8 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
 	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
 	meshData->indiceNum = indices_size * 3;
-	meshData->indices = indices;
-	meshData->vbo = vertices;
+	meshData->indices = indiceHandler;
+	meshData->vbo = vboHandler;
 	meshData->vertexNum = vertex_size;
 }
 
@@ -178,7 +182,7 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 	t_renderMeshData	*mesh;
 	uint32_t			k;
 
-	nodeData = (t_node*)staticMemoryManager::alloc_asset(ref, sizeof(t_node));
+	nodeData = (t_node*)staticMemoryManager::get_data_ptr(ref);
 	nodeData->meshs = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
 	nodeData->program = _programm[0];
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
@@ -199,7 +203,7 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 	for (k = 0; k < node->mNumChildren; k++)
 	{
 		nodeData->child[k] = staticMemoryManager::create_asset(0, sizeof(t_node));
-		node_to_mesh(allocator, node->mChildren[k], trans, scene, path);
+		node_to_mesh(allocator, node->mChildren[k], trans, scene, path, nodeData->child[k]);
 	}
 	nodeData->childNum = k;
 }
@@ -208,6 +212,7 @@ void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const
 {
 	glm::mat4 n;
 
+	staticMemoryManager::alloc_asset(ref, sizeof(t_node));
 	node_to_mesh(allocator, scene->mRootNode, n, scene, path, ref);
 }
 

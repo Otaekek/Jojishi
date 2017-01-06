@@ -62,15 +62,15 @@ typedef struct		s_mesh {
 	GLuint			vboVerticeId;
 	GLuint			indiceNum;
 	GLuint			indiceBufferId;
-	GLuint			*indices;
 	GLuint			diffuseText;
 	GLuint			specularTexts;
 
 	GLuint			child;
 
-	float 			*vbo;
-	glm::mat4		initialTransform;
+	uint32_t		*indices;
+	uint32_t 		*vbo;
 
+	glm::mat4		initialTransform;
 	t_material		material;
 
 }					t_renderMeshData;
@@ -108,7 +108,7 @@ public:
 
 private:
 	static void 			copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path);
-	static uint32_t 		node_to_mesh(stackAllocator *allocator, const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path);
+	static uint32_t 		node_to_mesh(stackAllocator *allocator, const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref);
 	static void				handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text);
 	static uint32_t			_programm[16];
 };
