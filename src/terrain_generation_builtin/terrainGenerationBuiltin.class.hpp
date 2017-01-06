@@ -16,7 +16,7 @@ typedef struct	s_biom {
 	uint32_t			dataRef;
 	uint32_t			numFrag;
 	uint32_t			transformHandler;
-	uint32_t			renderGoHandler[4096];
+	uint32_t			renderGoHandler;
 }						t_biom;
 
 class terrainGenerationBuiltin {
@@ -28,7 +28,7 @@ public:
 
 	static void 		update();
 
-	static void			add_biom(float posx, float posy, uint32_t size);
+	static void			add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl);
 
 private:
 

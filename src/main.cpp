@@ -69,7 +69,7 @@ int main()
 	//basicLightFactory::create(glm::vec3(-200, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 
-	terrainGenerationBuiltin::add_biom(0, 0, 1500);
+	terrainGenerationBuiltin::add_biom(200, 200, -200, 1500, 200, 2000);
 	while (1)
 	{
 		//printf("%d\n", i++);

@@ -94,10 +94,7 @@ void		terrainGenerationBuiltin::init()
 void		terrainGenerationBuiltin::update()
 {
 	for (uint32_t i = 0; i < numBiom; i++)
-		for (uint32_t j = 0; j < bioms[i].numFrag; j++)
-		{
-			renderBuiltIn::render_me(bioms[i].renderGoHandler[j]);
-		}
+			renderBuiltIn::render_me(bioms[i].renderGoHandler);
 }
 
 t_material	handle_material()
@@ -110,84 +107,55 @@ t_material	handle_material()
 	material.ambiant[2] = 0;
 	return (material);
 }
-void create_normal2(uint32_t i, uint32_t j, uint32_t size, float *outvec, float *data)
-{
-	glm::vec3 a, b, c, d;
 
-	a.x = i;
-	a.y = data[i * size + j];
-	a.z = j;
-
-	b.x = i + 1;
-	b.y = data[i * size + j + size];
-	b.z = j;
-
-	c.x = i + 1;
-	c.y = data[i * size + j + 1];
-	c.z = j + 1;
-
-	d.x = b.y * c.z - b.z * c.y;
-	d.y= b.z * c.x - b.x * c.z;
-	d.z = b.x * c.y - b.y * b.x;
-	d = glm::normalize(d);
-	outvec[0] = d.x;
-	outvec[1] = d.y;
-	outvec[2] = d.z;
-}
-
-void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, uint32_t offx, uint32_t offy, uint32_t total_size)
+void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec)
 {
 	glm::vec3 base = glm::vec3(0, 0.01, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
 
+	i1 = (j - 1) + (i + 1) * size;
+	i2 = (j + 0) + (i + 1) * size;
+	i3 = (j + 1) + (i + 1) * size;
+	i4 = (j - 1) + (i + 0) * size;
+	i5 = (j + 1) + (i + 0) * size;
+	i6 = (j - 1) + (i - 1) * size;
+	i7 = (j + 0) + (i - 1) * size;
+	i8 = (j + 1) + (i - 1) * size;
 
-
-	i1 = offx * size + (j - 1) + (i + 1) * total_size + offy * size * total_size;// - 1 + total_size * size;
-	i2 = offx * size + (j + 0) + (i + 1) * total_size + offy * size * total_size;// + total_size * size;
-	i3 = offx * size + (j + 1) + (i + 1) * total_size + offy * size * total_size;// + 1 + total_size * size;
-	i4 = offx * size + (j - 1) + (i + 0) * total_size + offy * size * total_size;// - 1;
-	i5 = offx * size + (j + 1) + (i + 0) * total_size + offy * size * total_size;// + 1;
-	i6 = offx * size + (j - 1) + (i - 1) * total_size + offy * size * total_size;// - total_size * size - 1;
-	i7 = offx * size + (j + 0) + (i - 1) * total_size + offy * size * total_size;// - total_size * size;
-	i8 = offx * size + (j + 1) + (i - 1) * total_size + offy * size * total_size;// - total_size * size + 1;
-
-	if (i1 > 0 && i1 < size * size)
+	if (i1 > 0)
 		a = data[i1];
-	//if (i2 > 0 && i2 < size * size)
+	if (i2 > 0)
 		b = data[i2];
-	if (i3 > 0 && i3 < size * size)
+	if (i3 > 0)
 		c = data[i3];
-	if (i4 > 0 && i4 < size * size)
+	if (i4 > 0)
 		d = data[i4];
-	//if (i5 > 0 && i5 < size * size)
+	if (i5 > 0)
 		e = data[i5];
-	if (i6 > 0 && 6 < size * size)
+	if (i6 > 0)
 		f = data[i6];
 	if (i7 > 0)
 		g = data[i7];
-	if (i8 > 0 && i8 < size * size)
+	if (i8 > 0)
 		h = data[i8];
-//	base.x = -(c - a + 2 * (e - d) + h - f);
-//	base.z = -(f - a + 2 * (g - b) + h - c);
+
 	base.x = (f- e);
 	base.z = (g - b);
 	base = glm::normalize(base);
 	outvec[0] = base.x;
 	outvec[1] = base.y;
 	outvec[2] = base.z;
-	//printf("%f %f %f : %f %f %f %f\n", base.x, base.y, base.z, f, e, g, b);
-	//2v = (f(x−1,y) − f(x+1,y), f(x,y−1) − f(x,y+1), 2)
+
 }
 
-void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, uint32_t offx, uint32_t offy, uint32_t total_size)
+void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl)
 {
 	float		*vertex;
 	uint32_t	*indices;
 	uint32_t	k;
 
-	size = total_size;
 	k = 0;
 	vertex = (float*)malloc(sizeof(float) * size * size * 8);
 	indices = (uint32_t*)malloc(sizeof(uint32_t) * size * size * 6);
@@ -204,12 +172,12 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, uint32_t 
 		for (int32_t j = 0; j < size; j++)
 		{
 			// Set position
-			vertex[i * size * 8 + j * 8] = (float)i - offy;
-			vertex[i * size * 8 + j * 8 + 1] = data[offx * size + j + i * total_size + offy * size * total_size - offy * total_size] * 20;
-			vertex[i * size * 8 + j * 8 + 2] = (float)j - offx;
+			vertex[i * size * 8 + j * 8] = (float)i * scale;
+			vertex[i * size * 8 + j * 8 + 1] = data[j + i * size] * ampl;
+			vertex[i * size * 8 + j * 8 + 2] = (float)j * scale;
 
 			// Set normal
-			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3], offx, offy, total_size);
+			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3]);
 
 			// Set UV
 			vertex[i * size * 8 + j * 8 + 6] = 0;
@@ -236,20 +204,20 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, uint32_t 
 	free(vertex);
 }
 
-void update_object(uint32_t size, float *data, t_renderMeshData *meshData, uint32_t offx, uint32_t offy, uint32_t total_size)
+void update_object(uint32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl)
 {
 	meshData->has_child = false;
 	meshData->child = 0;
-	create_vbo(size, data, meshData, offy, offx, total_size);
+	create_vbo(size, data, meshData, scale, ampl);
 }
 
-void		fill_data(float *data, uint32_t	size, uint32_t res, uint32_t ampl)
+void		fill_data(float *data, uint32_t	size, uint32_t res)
 {
 	for (uint32_t i = 0; i < size * size; i++)
-		data[i] = Get2DPerlinNoiseValue((i) / size , (i) % size, res) * ampl;
+		data[i] = Get2DPerlinNoiseValue((i) / size , (i) % size, res);
 }
 
-void		terrainGenerationBuiltin::add_biom(float posx, float posy, uint32_t size)
+void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl)
 {
 	t_biom				biom;
 	uint32_t			i;
@@ -260,22 +228,18 @@ void		terrainGenerationBuiltin::add_biom(float posx, float posy, uint32_t size)
 	biom.posx = posx;
 	biom.size = size;
 	biom.dataRef = staticMemoryManager::create_asset(1, size * size * sizeof(float));
-	fill_data((float*)staticMemoryManager::get_data_ptr(biom.dataRef), size, 70, 1);
-	for (i = 0; i * FRAGMENT_SIZE * FRAGMENT_SIZE < size * size && FRAGMENT_SIZE < size && i == 0; i++)
-	{
-		meshDataHandler = staticMemoryManager::create_asset(1, sizeof(t_node));
-		node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);
-		node->has_mesh = 1;
-		node->childNum = 0;
-		node->meshs = staticMemoryManager::create_asset(staticMemoryManager::E_OBJ_FILE, sizeof(t_renderMeshData));
-		renderDataSys::set_programm(E_DEFAULT, meshDataHandler);
-		biom.renderGoHandler[i] = renderBuiltIn::create();
-		(renderBuiltIn::get_renderGO(biom.renderGoHandler[i]))->assetHandler = meshDataHandler;
-		(renderBuiltIn::get_renderGO(biom.renderGoHandler[i]))->transformHandler = transformBuiltin::create();
-		transformBuiltin::translate((renderBuiltIn::get_renderGO(biom.renderGoHandler[i]))->transformHandler, (float)((i * (FRAGMENT_SIZE)) % size), 0, (float)(((i * FRAGMENT_SIZE) / size) * FRAGMENT_SIZE));
-		update_object(FRAGMENT_SIZE,
-			(float*)staticMemoryManager::get_data_ptr(biom.dataRef), (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), (uint32_t)(i * FRAGMENT_SIZE) % size / FRAGMENT_SIZE, (uint32_t)((i * FRAGMENT_SIZE) / size), size);
-	}
+	fill_data((float*)staticMemoryManager::get_data_ptr(biom.dataRef), size, 70);
+	meshDataHandler = staticMemoryManager::create_asset(1, sizeof(t_node));
+	node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);
+	node->has_mesh = 1;
+	node->childNum = 0;
+	node->meshs = staticMemoryManager::create_asset(staticMemoryManager::E_OBJ_FILE, sizeof(t_renderMeshData));
+	renderDataSys::set_programm(E_DEFAULT, meshDataHandler);
+	biom.renderGoHandler = renderBuiltIn::create();
+	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->assetHandler = meshDataHandler;
+	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler = transformBuiltin::create();
+	transformBuiltin::translate((renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler, posx, posy, posz);
+	update_object(size, (float*)staticMemoryManager::get_data_ptr(biom.dataRef), (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), scale, ampl);
 	biom.numFrag = i;
 	bioms[numBiom++] = biom;
 }
