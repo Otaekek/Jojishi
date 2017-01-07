@@ -2,8 +2,8 @@
 
 stackAllocator											staticMemoryManager::clusters[NUMCLUSTER];
 staticMemoryManager::e_asset_state						staticMemoryManager::data_status[MAXREF];
-void													*staticMemoryManager::ref_to_ptr[MAXREF];
-uint32_t	 											staticMemoryManager::referencer = 0;
+void													*staticMemoryManager::ref_to_ptr[MAXREF] = {0};
+uint32_t	 											staticMemoryManager::referencer = 1;
 uint32_t												staticMemoryManager::count = 0;
 std::mutex												staticMemoryManager::mutexes[NUMCLUSTER];
 uint32_t												staticMemoryManager::clusters_count = 0;
@@ -46,12 +46,26 @@ bool										staticMemoryManager::all_read()
 uint32_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
 {
 	ref_to_ptr[++referencer] = clusters[cluster_id].mem_alloc(size);
+	ref_to_cluster[referencer] = cluster_id;
 	return (referencer);
 }
 
-void										staticMemoryManager::realloc()
+void										staticMemoryManager::realloc(uint32_t size, uint32_t cluster_id)
 {
+	uint64_t	offsetOld;
+	uint64_t	offsetNew;
+	uint32_t	old_size;
 
+	old_size = clusters[cluster_id].get_size();
+	offsetOld = (uint64_t)clusters[cluster_id].get_data_pointer();
+	clusters[cluster_id].all_mem_free();
+	clusters[cluster_id].init((size + old_size) * 2);
+	offsetNew = (uint64_t)clusters[cluster_id].get_data_pointer();
+	for (uint32_t i = 1; ref_to_ptr[i]; i++)
+	{
+		if (ref_to_cluster[i] == cluster_id)
+			ref_to_ptr[i] += offsetNew - offsetOld;
+	}
 }
 
 uint32_t									staticMemoryManager::assign_asset(uint32_t cluster)

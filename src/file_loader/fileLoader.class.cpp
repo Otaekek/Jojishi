@@ -82,16 +82,17 @@ uint64_t fileLoader::load_fs_asset_assync(std::string path, staticMemoryManager:
 uint32_t fileLoader::load_fs_asset_sync(std::string path, uint32_t cluster)
 {
 	t_job			job;
-	char 			*job_path;
 	uint32_t 		ref;
+	t_loadHeader	*loadheader;
 
 	if (path_as_guid[path] != 0)
 		return (path_as_guid[path]);
-	job_path = job.data + sizeof(t_loadHeader);
-	memcpy(job_path, path.c_str(), strlen(path.c_str()));
-	job_path[strlen(path.c_str())] = 0;
-	job.fptr = load_file;
 	ref = staticMemoryManager::assign_asset(cluster);
+	loadheader = (t_loadHeader*)job.data;
+	memcpy(loadheader->path, path.c_str(), strlen(path.c_str()) + 1);
+	job.fptr = load_file;
+	loadheader->ref = ref;
+	loadheader->cluster = cluster;
 	path_as_guid[path] = ref;
 	job.fptr(job.data);
 	return (ref);
@@ -123,7 +124,7 @@ void 			fileLoader::load_obj(void *data)
 	char 					*path;
 
 	loadHeader = (t_loadHeader*)data;
-	path = (char *)((char*)data + sizeof(t_loadHeader));
+	path = loadHeader->path;
 	scene = assimp_load(path, &importer);
 	if (scene == NULL)
 	{
@@ -131,7 +132,7 @@ void 			fileLoader::load_obj(void *data)
 		printf("Error when loading %s: %s.\n", path, (importer.GetErrorString()));
 		return ;
 	}
-	renderDataSys::obj_scene_to_memory_as_mesh(loadHeader->allocator, scene, path, loadHeader->ref);
+	renderDataSys::obj_scene_to_memory_as_mesh(scene, path, loadHeader->ref, loadHeader->cluster);
 	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadHeader->ref);
 }
 
@@ -143,7 +144,7 @@ void 			fileLoader::load_file(void *data)
 	uint32_t				j;
 
 	loadHeader = (t_loadHeader*)data;
-	path = (char *)((char*)data + sizeof(t_loadHeader));
+	path = loadHeader->path;
 	j = strlen(path);
 	for (uint32_t i = 0; (j - i) > 0 && path[j - i - 1] != '.'; i++)
 		extenstion[i] = path[j - i - 1];

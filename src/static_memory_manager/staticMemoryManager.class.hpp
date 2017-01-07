@@ -48,7 +48,7 @@ private:
 	static uint32_t									count;
 	static uint32_t									clusters_count;
 	static std::mutex								mutexes[NUMCLUSTER];
-	static void										realloc();
+	static void										realloc(uint32_t size, uint32_t cluster_id);
 	static uint32_t									ref_to_cluster[MAXREF];
 };
 

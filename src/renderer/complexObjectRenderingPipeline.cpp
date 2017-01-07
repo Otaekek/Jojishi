@@ -7,6 +7,7 @@ void			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(mesh->vaoId);
+
 	location = glGetUniformLocation(program, "diffuse");
 	glUniform3f(location, mesh->material.diffuse[0], mesh->material.diffuse[1], mesh->material.diffuse[2]);
 	location = glGetUniformLocation(program, "specular");

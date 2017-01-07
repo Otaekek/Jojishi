@@ -21,9 +21,9 @@
 #include <fstream>
 
 typedef struct 			s_loadHeader {
-	stackAllocator 		*allocator;
 	uint32_t 			ref;
 	uint32_t			cluster;
+	char				path[1024];
 }						t_loadHeader;
 
 class fileLoader {

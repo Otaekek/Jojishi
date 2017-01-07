@@ -42,7 +42,6 @@ uint32_t renderDataSys::createVBO_VNT(float *vertices, uint32_t vertex_size, uin
 
 	glGenBuffers(1, &(vertexBufferID));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-
 	glBufferData(GL_ARRAY_BUFFER,  vertex_size * sizeof(float) * 8, &vertices[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
@@ -57,10 +56,8 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 {
 	GLuint indiceBufferId;
 	glBindVertexArray(vaoId);
-
 	glGenBuffers(1, &(indiceBufferId));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBufferId);
-
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,  indice_size * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 	return indiceBufferId;
 }
@@ -81,7 +78,6 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 		format = FreeImage_GetFileType(completePath, 0);
 		image = FreeImage_Load(format, completePath);
 		image = FreeImage_ConvertTo32Bits(image);
-		printf("%s\n", completePath);
 		if (image != NULL)
 		{
 			*has_text = true;
@@ -99,7 +95,7 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 	}
 }
 
-void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData,
+void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
 											const aiScene *scene, char *path)
 {
 	float 						*vertices;
@@ -122,7 +118,7 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	indices_size = mesh->mNumFaces;
 	vertex_size = mesh->mNumVertices;
 	indiceHandler = staticMemoryManager::create_asset(0, (indices_size * 3 * sizeof(uint32_t)));
-	indices = staticMemoryManager::get_data_ptr(indiceHandler);
+	indices = (uint32_t*)staticMemoryManager::get_data_ptr(indiceHandler);
 	for (uint32_t i = 0; i < indices_size; i++)
 	{
 		for (uint32_t j = 0; j < 3; j++)
@@ -132,7 +128,7 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 		}
 	}
 	vboHandler = staticMemoryManager::create_asset(0, ((vertex_size * sizeof(float) * 8)));
-	vertices = staticMemoryManager::get_data_ptr(vboHandler);
+	vertices = (float*)staticMemoryManager::get_data_ptr(vboHandler);
 	for (uint32_t i = 0; i < vertex_size; i++)
 	{
 		vertices[i * 8] = mesh->mVertices[i].x;
@@ -175,23 +171,26 @@ void 		renderDataSys::copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_r
 	meshData->vertexNum = vertex_size;
 }
 
-uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *node,
-				glm::mat4 trans, const aiScene *scene, char *path, uint32_t ref)
+uint32_t 	renderDataSys::node_to_mesh(const aiNode *node,
+				glm::mat4 trans, const aiScene *scene, char *path, uint32_t ref, uint32_t cluster)
 {
 	t_node 				*nodeData;
 	t_renderMeshData	*mesh;
 	uint32_t			k;
+	uint32_t			meshHandler;
 
 	nodeData = (t_node*)staticMemoryManager::get_data_ptr(ref);
-	nodeData->meshs = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
+	nodeData->meshs = staticMemoryManager::create_asset(cluster, sizeof(t_renderMeshData));
 	nodeData->program = _programm[0];
+	meshHandler = nodeData->meshs;
 	for (int indexMesh = 0; indexMesh < node->mNumMeshes; indexMesh++)
 	{
 		nodeData->has_mesh = true;
-		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(nodeData->meshs);
-		copy_vertices(allocator, scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path);
+		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(meshHandler);
+		copy_vertices(scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path);
 		mesh->has_child = true;
-		mesh->child = staticMemoryManager::create_asset(0, sizeof(t_renderMeshData));
+		mesh->child = staticMemoryManager::create_asset(cluster, sizeof(t_renderMeshData));
+		meshHandler = mesh->child;
 	}
 	if (node->mNumMeshes)
 	{
@@ -202,18 +201,18 @@ uint32_t 	renderDataSys::node_to_mesh(stackAllocator *allocator, const aiNode *n
 		nodeData->has_mesh = false;
 	for (k = 0; k < node->mNumChildren; k++)
 	{
-		nodeData->child[k] = staticMemoryManager::create_asset(0, sizeof(t_node));
-		node_to_mesh(allocator, node->mChildren[k], trans, scene, path, nodeData->child[k]);
+		nodeData->child[k] = staticMemoryManager::create_asset(cluster, sizeof(t_node));
+		node_to_mesh(node->mChildren[k], trans, scene, path, nodeData->child[k], cluster);
 	}
 	nodeData->childNum = k;
 }
 
-void	renderDataSys::obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path, uint32_t ref)
+void	renderDataSys::obj_scene_to_memory_as_mesh(const aiScene *scene, char *path, uint32_t ref, uint32_t cluster)
 {
 	glm::mat4 n;
 
 	staticMemoryManager::alloc_asset(ref, sizeof(t_node));
-	node_to_mesh(allocator, scene->mRootNode, n, scene, path, ref);
+	node_to_mesh(scene->mRootNode, n, scene, path, ref, cluster);
 }
 
 std::string 		readfile(std::string path)
@@ -289,18 +288,22 @@ uint32_t renderDataSys::load_programVertexFrag(std::string vertexPath, std::stri
 }
 
 
-void renderDataSys::computeModification(t_renderMeshData*mesh, glm::vec3 translation, float angle, glm::vec3 axis)
+void renderDataSys::computeModification(t_renderMeshData *mesh, glm::vec3 translation, float angle, glm::vec3 axis)
 {
+	float *v;
+
+	v = (float*)staticMemoryManager::get_data_ptr(mesh->vbo);
 	for (uint32_t i = 0; i < mesh->vertexNum; i++)
 	{
 
-		mesh->vbo[i * 8] += translation.x;
-		mesh->vbo[i * 8 + 1] += translation.y;
-		mesh->vbo[i * 8 + 2] += translation.z;
+		v[i * 8] += translation.x;
+		v[i * 8 + 1] += translation.y;
+		v[i * 8 + 2] += translation.z;
 	}
 	mesh->vaoId = renderDataSys::createVAO();
-	mesh->vboVerticeId = renderDataSys::createVBO_VNT(mesh->vbo, mesh->vertexNum, mesh->vaoId);
-	mesh->indiceBufferId = renderDataSys::createVBO_Indice(mesh->indices, mesh->indiceNum, mesh->vaoId);
+	mesh->vboVerticeId = renderDataSys::createVBO_VNT(v, mesh->vertexNum, mesh->vaoId);
+	mesh->indiceBufferId = renderDataSys::createVBO_Indice((uint32_t*)staticMemoryManager::get_data_ptr(mesh->indices),
+		mesh->indiceNum, mesh->vaoId);
 }
 
 void renderDataSys::iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis)

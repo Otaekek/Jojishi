@@ -67,8 +67,8 @@ typedef struct		s_mesh {
 
 	GLuint			child;
 
-	uint32_t		*indices;
-	uint32_t 		*vbo;
+	uint32_t		indices;
+	uint32_t 		vbo;
 
 	glm::mat4		initialTransform;
 	t_material		material;
@@ -99,7 +99,7 @@ public:
 	static uint32_t 		createVAO();
 	static uint32_t 		createVBO_VNT(float *vertices, uint32_t vertex_size, uint32_t vaoId);
 	static uint32_t 		createVBO_Indice(uint32_t *indices, uint32_t indice_size, uint32_t vaoId);
-	static void 			obj_scene_to_memory_as_mesh(stackAllocator *allocator, const aiScene *scene, char *path, uint32_t ref);
+	static void 			obj_scene_to_memory_as_mesh(const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
 	static uint32_t 		load_programVertexFrag(std::string vertexPath, std::string fragPath);
 	static void				computeModification(t_renderMeshData *mesh, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis);
@@ -107,8 +107,8 @@ public:
 	static void				set_programm(E_SHADER shader, uint32_t asset);
 
 private:
-	static void 			copy_vertices(stackAllocator *allocator, aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path);
-	static uint32_t 		node_to_mesh(stackAllocator *allocator, const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref);
+	static void 			copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path);
+	static uint32_t 		node_to_mesh(const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
 	static void				handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text);
 	static uint32_t			_programm[16];
 };

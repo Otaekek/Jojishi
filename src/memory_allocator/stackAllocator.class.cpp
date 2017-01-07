@@ -21,9 +21,21 @@ stackAllocator::~stackAllocator()
 	delete [] data;
 }
 
+void stackAllocator::init(uint32_t _size)
+{
+	data = new char[_size];
+}
+
 void stackAllocator::all_mem_free()
 {
+	delete [] data;
+	size = 0;
 	index = 0;
+}
+
+bool stackAllocator::can_alloc(uint32_t _size)
+{
+	return (_size + index < size);
 }
 
 void *stackAllocator::mem_alloc(uint32_t _size)
