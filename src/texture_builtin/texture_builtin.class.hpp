@@ -1,0 +1,35 @@
+#ifndef TEXTURE_BUILTIN_CLASS_HPP
+#define TEXTURE_BUILTIN_CLASS_HPP
+
+#include <staticMemoryManager.class.hpp>
+#include <renderDataSys.class.hpp>
+#include <dynamicMemoryManager.class.hpp>
+
+typedef struct	s_texture {
+	uint32_t	sizex;
+	uint32_t	sizey;
+	uint32_t	textureData;
+}				t_texture;
+
+typedef struct	s_textureInstance {
+	uint32_t	textureHandler;
+}				t_textureInstance;
+
+class texture_builtin {
+
+public :
+
+	static uint32_t				init();
+	static void					load_texture(void *data);
+	static uint32_t 			create_instance(uint32_t ref);
+	static uint32_t 			destroy_instance(uint32_t ref);
+	static t_textureInstance 	*get_texture(uint32_t textureHandler);
+	static GLuint				convert_to_opengl(uint32_t textureInstanceHandler);
+
+private :
+
+	static uint32_t	cluster_id;
+
+};
+#endif
+

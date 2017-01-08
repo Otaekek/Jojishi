@@ -99,6 +99,11 @@ SRC_SUBDIR += terrain_generation_builtin
 CFLAGS += -Isrc/terrain_generation_builtin
 SOURCES += terrainGenerationBuiltin.class.cpp
 
+# texture Built in
+SRC_SUBDIR += texture_builtin
+CFLAGS += -Isrc/texture_builtin
+SOURCES += texture_builtin.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
