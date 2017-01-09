@@ -13,8 +13,9 @@ typedef struct	s_biom {
 	float				size;
 	float				posx;
 	float				posy;
-	uint32_t			dataRef;
 	uint32_t			numFrag;
+	uint32_t			albedoTextureInstance;
+	uint32_t			heightTextureInstance;
 	uint32_t			transformHandler;
 	uint32_t			renderGoHandler;
 }						t_biom;
@@ -28,7 +29,8 @@ public:
 
 	static void 		update();
 
-	static void			add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl, uint32_t dataref, uint32_t datasize);
+	static void			add_biom(float posx, float posy, float posz, uint32_t size,
+					float scale, float ampl, uint32_t textureInstance, float textScale, uint32_t heitmapTextureInstance);
 
 private:
 

@@ -18,12 +18,14 @@
 #include <renderBuiltIn.class.hpp>
 #include <basicFPSControlBuiltin.class.hpp>
 #include <inputBuiltin.class.hpp>
+#include <texture_builtin.class.hpp>
 #include <basicMeshFactory.class.hpp>
 #include <basicLightFactory.class.hpp>
 #include <terrainGenerationBuiltin.class.hpp>
 
 int main()
 {
+	texture_builtin::init();
 	transformBuiltin::init();
 	renderBuiltIn::init();
 	fileLoader::init();
@@ -62,14 +64,20 @@ int main()
 	int i = 0;
 	t_renderGO *skybox;
 	skybox = renderBuiltIn::get_skyboxGO();
-	staticMeshManager::create(glm::vec3(0, 0, 0), glm::vec3(0, 1.0, 0), 0, glm::vec3(100, 100, 100), "assets/graphic/mesh/castle/castle/castle.obj");
-	staticMeshManager::create(glm::vec3(2000, -100, 2000), glm::vec3(0, 1.0, 0), 1, glm::vec3(20, 20, 20) , "assets/graphic/mesh/IronMan/IronMan.obj");
+	staticMeshManager::create(glm::vec3(10000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
+	staticMeshManager::create(glm::vec3(8000, 400, 10000), glm::vec3(0, 1.0, 0), 1, glm::vec3(2, 2, 2) , "assets/graphic/mesh/IronMan/IronMan.obj");
 	//staticMeshManager::create(glm::vec3(800, 0, 200), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(0.5, 0.3, 0.5) ,"assets/graphic/mesh/land/OBJ/Models_OBJ/Terrain_500000.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
 	basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
-	basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(0, 20, 51200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(-200, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+		terrainGenerationBuiltin::add_biom(-51200, 0, 0,512,
+					100, 2, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 1,
+					texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.jpeg", 1)));
+	terrainGenerationBuiltin::add_biom(0, 0, 0,512,
+					100, 2, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 1,
+					texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.jpeg", 1)));
 	while (1)
 	{
 		//printf("%d\n", i++);

@@ -69,29 +69,16 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 	FREE_IMAGE_FORMAT			format;
 	FIBITMAP*					image;
 	GLuint 						textureID;
-
+	uint32_t					instance;
 	memcpy(completePath, path, strlen(path) + 1);
 	if (material->GetTextureCount(type) > 0)
 	{
 		material->GetTexture(type, 0, &texturePath);
 		strcat(completePath, texturePath.C_Str());
-		format = FreeImage_GetFileType(completePath, 0);
-		image = FreeImage_Load(format, completePath);
-		image = FreeImage_ConvertTo32Bits(image);
-		if (image != NULL)
-		{
-			*has_text = true;
-			glGenTextures(1, &textureID);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0,
-				GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(image));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			*textEmplacement = textureID;
-		}
+		*has_text = true;
+		textureID = fileLoader::load_fs_asset_sync(completePath, 1);
+		instance = texture_builtin::create_instance(textureID);
+		*textEmplacement = texture_builtin::convert_to_opengl(instance);
 	}
 }
 

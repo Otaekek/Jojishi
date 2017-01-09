@@ -11,7 +11,7 @@
 
 #include "../../inc/jojishi.hpp"
 #include "../renderer/renderDataSys.class.hpp"
-
+#include <texture_builtin.class.hpp>
 #include "../job_system/jobSystem.hpp"
 #include "../static_memory_manager/staticMemoryManager.class.hpp"
 #include <map>

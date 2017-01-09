@@ -15,7 +15,7 @@ void		terrainGenerationBuiltin::update()
 			renderBuiltIn::render_me(bioms[i].renderGoHandler);
 }
 
-t_material	handle_material()
+t_material	handle_material(uint32_t albedoTextureInstance)
 {
 	t_material material = {0};
 
@@ -23,12 +23,17 @@ t_material	handle_material()
 	material.ambiant[0] = 0;
 	material.ambiant[1] = 0;
 	material.ambiant[2] = 0;
+	if (albedoTextureInstance != 0)
+	{
+		material.has_diffuse_texture = 1;
+		material.diffuseTexture = texture_builtin::convert_to_opengl(albedoTextureInstance);
+	}
 	return (material);
 }
 
 void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor)
 {
-	glm::vec3 base = glm::vec3(0, 0.01 / divisor, 0);
+	glm::vec3 base = glm::vec3(0, 1 / divisor, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
@@ -59,8 +64,8 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 	if (i8 > 0)
 		h = data[i8];
 
-	base.x = (f- e);
-	base.z = (g - b);
+	base.z = (d - e);
+	base.x = (g - b);
 	base = glm::normalize(base);
 	outvec[0] = base.x;
 	outvec[1] = base.y;
@@ -68,7 +73,7 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 
 }
 
-void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl)
+void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance)
 {
 	float		*vertex;
 	uint32_t	*indices;
@@ -83,7 +88,7 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 
 	meshData->vertexNum = size * size;
 	meshData->indiceNum = size * size;
-	meshData->material = handle_material();
+	meshData->material = handle_material(albedoTextureInstance);
 	bzero(indices, size * size * sizeof(uint32_t) * 6);
 
 	for (int32_t i = 0; i < size; i++)
@@ -136,32 +141,54 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 	free(vertex);
 }
 
-void update_object(uint32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl)
+void update_object(uint32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance)
 {
 	meshData->has_child = false;
 	meshData->child = 0;
-	create_vbo(size, data, meshData, scale, ampl);
+	create_vbo(size, data, meshData, scale, ampl, albedoTextureInstance);
 }
 
-void		fill_data(float *data, uint32_t	size, uint32_t res)
+float		*fill_data(uint32_t textureInstance, uint32_t mapSize, float ampl)
 {
-	for (uint32_t i = 0; i < size * size; i++)
-		data[i] = 0;
+	t_textureInstance	*instance;
+	t_texture			*texture;
+	char				*data;
+	float 				*ret;
+	uint32_t			textSize;
+	float				ratio;
+
+	instance = (t_textureInstance*)dynamicMemoryManager::get_ptr(textureInstance);
+	texture = (t_texture*)staticMemoryManager::get_data_ptr(instance->textureHandler);
+	data = (char*)staticMemoryManager::get_data_ptr(texture->textureData);
+	ret = (float*)malloc(mapSize * mapSize * sizeof(float)* 10);
+	textSize = std::min(texture->sizex, texture->sizey);
+	ratio = (float)mapSize / textSize;
+	for (uint32_t i = 0; i < mapSize * mapSize; i++)
+	{
+		uint32_t index = i / (int)((float)mapSize * ratio) / ratio * mapSize + (i % mapSize) / ratio;
+		printf("%d %d\n", i, (int)ratio);
+		index *= 4;
+		ret[i] = data[index] + data[index + 1] + data[index + 2];
+	}
+	return (ret);
 }
 
-void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uint32_t size, float scale, float ampl, uint32_t dataHandler, uint32_t datasize)
+void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uint32_t size,
+					float scale, float ampl, uint32_t textureInstance, float textScale, uint32_t heitmapTextureInstance)
 {
 	t_biom				biom;
 	uint32_t			i;
 	uint32_t			meshDataHandler;
 	t_node				*node;
+	float 				*data;
 
 	size += 3;
 	biom.posy = posy;
 	biom.posx = posx;
 	biom.size = size;
-	biom.dataRef = dataHandler;
-	fill_data((float*)staticMemoryManager::get_data_ptr(biom.dataRef), size, 70);
+	biom.albedoTextureInstance = textureInstance;
+	biom.heightTextureInstance = heitmapTextureInstance;
+	data = fill_data(heitmapTextureInstance, size, ampl);
 	meshDataHandler = staticMemoryManager::create_asset(1, sizeof(t_node));
 	node = (t_node*)staticMemoryManager::get_data_ptr(meshDataHandler);
 	node->has_mesh = 1;
@@ -172,7 +199,8 @@ void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uin
 	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->assetHandler = meshDataHandler;
 	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler = transformBuiltin::create();
 	transformBuiltin::translate((renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler, posx, posy, posz);
-	update_object(size, (float*)staticMemoryManager::get_data_ptr(biom.dataRef), (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), scale, ampl);
+	update_object(size, data, (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), scale, ampl, textureInstance);
 	biom.numFrag = i;
 	bioms[numBiom++] = biom;
+	free(data);
 }

@@ -7,6 +7,7 @@
 #include "../../assimp/include/assimp/scene.h"
 #include "../file_loader/fileLoader.class.hpp"
 #include "meshData.hpp"
+#include <texture_builtin.class.hpp>
 #include <FreeImage.h>
 #include <glm.hpp>
 #include <cstdlib>

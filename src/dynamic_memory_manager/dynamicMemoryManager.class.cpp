@@ -1,7 +1,7 @@
 #include "dynamicMemoryManager.class.hpp"
 
 poolAllocator 		dynamicMemoryManager::allocator[NUM_CLUSTERS];
-uint32_t			dynamicMemoryManager::referencer = 0;
+uint32_t			dynamicMemoryManager::referencer = 1;
 uint32_t			dynamicMemoryManager::cluster_id = 0;
 void 				*dynamicMemoryManager::ref_to_ptr[MAX_REF] = {nullptr};
 void 				*dynamicMemoryManager::ref_to_bloc[MAX_REF] = {nullptr};
@@ -18,10 +18,9 @@ uint32_t			dynamicMemoryManager::create_slot(uint32_t type_id)
 	void *bloc;
 
 	bloc = allocator[type_id].mem_alloc();
-	referencer++;
 	ref_to_ptr[referencer % MAX_REF] = bloc;
 	ref_to_bloc[referencer % MAX_REF] = bloc;
-	return (referencer);
+	return (referencer++);
 }
 
 void				dynamicMemoryManager::clear_data(uint32_t ref, uint32_t type_id)

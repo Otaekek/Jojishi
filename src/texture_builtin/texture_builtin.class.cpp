@@ -1,10 +1,19 @@
+
 #include "texture_builtin.class.hpp"
 
 uint32_t	texture_builtin::cluster_id;
 
 uint32_t	texture_builtin::init()
 {
-	cluster_id = dynamicMemoryManager::init_cluster(4096, sizeof(t_textureInstance));
+	cluster_id = dynamicMemoryManager::cluster_init(sizeof(t_textureInstance), 4096);
+}
+
+char 		*texture_builtin::get_data_from_instance(uint32_t textureInstance)
+{
+	t_textureInstance *tx;
+
+	tx = get_texture(textureInstance);
+	return (char*)(staticMemoryManager::get_data_ptr(((t_texture*)(staticMemoryManager::get_data_ptr(tx->textureHandler)))->textureData));
 }
 
 void		texture_builtin::load_texture(void *data)
@@ -23,7 +32,7 @@ void		texture_builtin::load_texture(void *data)
 	texture = (t_texture*)staticMemoryManager::get_data_ptr(loadheader->ref);
 	texture->sizex = FreeImage_GetWidth(image);
 	texture->sizey = FreeImage_GetHeight(image);
-	texture->textureData = staticMemoryManager::create_asset(loadheader->ref, loadheader->cluster, texture->sizex * texture->sizey * 4);
+	texture->textureData = staticMemoryManager::create_asset(loadheader->cluster, texture->sizex * texture->sizey * 4);
 	textureData = (char*)staticMemoryManager::get_data_ptr(texture->textureData);
 	memcpy(textureData, FreeImage_GetBits(image), texture->sizex * texture->sizey * 4);
 }
@@ -35,13 +44,13 @@ uint32_t 	texture_builtin::create_instance(uint32_t ref)
 
 	instanceRef = dynamicMemoryManager::create_slot(cluster_id);
 	texture = get_texture(instanceRef);
-	texture->textureData = ref;
+	texture->textureHandler = ref;
 	return (instanceRef);
 }
 
 uint32_t 	texture_builtin::destroy_instance(uint32_t ref)
 {
-	dynamicMemoryManager::clear_slot(ref);
+	dynamicMemoryManager::clear_data(ref, cluster_id);
 }
 
 t_textureInstance 	*texture_builtin::get_texture(uint32_t textureHandler)
@@ -53,8 +62,10 @@ GLuint	texture_builtin::convert_to_opengl(uint32_t textureInstanceHandler)
 {
 	GLuint		textureID;
 	t_texture	*texture;
+	t_textureInstance *tx;
 
-	texture = (t_texture*)(staticMemoryManager::get_data_ptr(((t_textureInstance*)(get_texture(textureInstanceHandler)))->textureHandler));
+	tx = get_texture(textureInstanceHandler);
+	texture = (t_texture*)staticMemoryManager::get_data_ptr(tx->textureHandler);
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->sizex, texture->sizey, 0,

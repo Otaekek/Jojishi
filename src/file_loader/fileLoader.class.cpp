@@ -25,6 +25,11 @@ void fileLoader::init()
 	extension_to_function["max"] = &fileLoader::load_obj;
 	extension_to_function["fbx"] = &fileLoader::load_obj;
 	extension_to_function["ma"] = &fileLoader::load_obj;
+	extension_to_function["jpg"] = &texture_builtin::load_texture;
+	extension_to_function["tga"] = &texture_builtin::load_texture;
+	extension_to_function["bmp"] = &texture_builtin::load_texture;
+	extension_to_function["png"] = &texture_builtin::load_texture;
+	extension_to_function["jpeg"] = &texture_builtin::load_texture;
 }
 
 fileLoader::~fileLoader()

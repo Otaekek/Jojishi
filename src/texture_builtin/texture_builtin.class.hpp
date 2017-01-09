@@ -25,6 +25,7 @@ public :
 	static uint32_t 			destroy_instance(uint32_t ref);
 	static t_textureInstance 	*get_texture(uint32_t textureHandler);
 	static GLuint				convert_to_opengl(uint32_t textureInstanceHandler);
+	static char					*get_data_from_instance(uint32_t textureInstance);
 
 private :
 
