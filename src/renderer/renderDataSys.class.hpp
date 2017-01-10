@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <jojishi.hpp>
 #include <string>
+#include <mutex>
 
 enum E_SHADER {
 	E_DEFAULT,
@@ -23,6 +24,14 @@ enum E_LIGHT {
 	E_UNI = 0,
 	E_OMNI
 };
+
+typedef struct 	s_request {
+	uint32_t	indices_size;
+	uint32_t	vertex_size;
+	float		*vertex;
+	uint32_t	*indices;
+	uint32_t	meshDataHandler;
+}				t_vao_request;
 
 typedef struct s_light {
 
@@ -106,12 +115,16 @@ public:
 	static void				iterNode(t_node node, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				modifyVertices(uint32_t assetHandler, glm::vec3 translation, float angle, glm::vec3 axis);
 	static void				set_programm(E_SHADER shader, uint32_t asset);
-
+	static void				push_request(t_vao_request);
+	static void				execute_vao_request();
+	static std::mutex 		mu;
 private:
-	static void 			copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path);
+	static void 			copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path, uint32_t meshHandler);
 	static uint32_t 		node_to_mesh(const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
 	static void				handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text);
 	static uint32_t			_programm[16];
+	static t_vao_request	_vao_requests[4096];
+	static uint32_t			_vao_request_index;
 };
 
 #endif

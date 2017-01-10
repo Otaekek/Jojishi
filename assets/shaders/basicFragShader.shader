@@ -29,7 +29,7 @@ vec3 compute_diffuse(vec3 pos, vec3 norm, vec3 col)
 	while (i < num_light)
 	{
 		ray = normalize(lights[i * 4] - pos);
-		outter += max(dot(ray, norm), 0.1) * lights[i * 4 + 1];
+		outter += max(dot(ray, norm), 0) * lights[i * 4 + 1];
 		i++;
 	}
 	outter.x = min(1, outter.x);

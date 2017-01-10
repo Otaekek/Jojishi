@@ -33,7 +33,7 @@ public:
 	fileLoader();
 	~fileLoader();
 
-	static uint32_t 	load_fs_asset_assync(std::string path, uint32_t cluster);
+	static uint32_t 	load_fs_asset_async(std::string path, uint32_t cluster);
 	static uint32_t 	load_fs_asset_sync(std::string path, uint32_t cluster);
 	static void 		init();
 	static void 		load_file(void *data);

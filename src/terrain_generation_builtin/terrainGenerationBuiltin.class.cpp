@@ -26,14 +26,15 @@ t_material	handle_material(uint32_t albedoTextureInstance)
 	if (albedoTextureInstance != 0)
 	{
 		material.has_diffuse_texture = 1;
-		material.diffuseTexture = texture_builtin::convert_to_opengl(albedoTextureInstance);
+		material.diffuseTexture = texture_builtin::convert_to_opengl_parametric(albedoTextureInstance, GL_REPEAT,
+			GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	}
 	return (material);
 }
 
-void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor)
+void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor, float ampl)
 {
-	glm::vec3 base = glm::vec3(0, 1 / divisor, 0);
+	glm::vec3 base = glm::vec3(0, 20 / ampl, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
@@ -73,7 +74,7 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 
 }
 
-void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance)
+void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance, float textScale)
 {
 	float		*vertex;
 	uint32_t	*indices;
@@ -114,11 +115,11 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 			vertex[i * size * 8 + j * 8 + 2] = (float)j * scale;
 
 			// Set normal
-			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3], divisor);
+			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3], divisor, ampl);
 
 			// Set UV
-			vertex[i * size * 8 + j * 8 + 6] = (float)i / size;
-			vertex[i * size * 8 + j * 8 + 7] = (float)j / size;
+			vertex[i * size * 8 + j * 8 + 6] = (float)i / size * textScale;
+			vertex[i * size * 8 + j * 8 + 7] = (float)j / size * textScale;
 
 			// Set indices
 			if (j != size - 1 && i != 0 && j != 0 && i != size - 1)
@@ -141,34 +142,36 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 	free(vertex);
 }
 
-void update_object(uint32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance)
+void update_object(uint32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance, float textScale)
 {
 	meshData->has_child = false;
 	meshData->child = 0;
-	create_vbo(size, data, meshData, scale, ampl, albedoTextureInstance);
+	create_vbo(size, data, meshData, scale, ampl, albedoTextureInstance, textScale);
 }
 
 float		*fill_data(uint32_t textureInstance, uint32_t mapSize, float ampl)
 {
 	t_textureInstance	*instance;
 	t_texture			*texture;
-	char				*data;
+	unsigned char				*data;
 	float 				*ret;
 	uint32_t			textSize;
 	float				ratio;
 
 	instance = (t_textureInstance*)dynamicMemoryManager::get_ptr(textureInstance);
 	texture = (t_texture*)staticMemoryManager::get_data_ptr(instance->textureHandler);
-	data = (char*)staticMemoryManager::get_data_ptr(texture->textureData);
+	data = (unsigned char*)staticMemoryManager::get_data_ptr(texture->textureData);
 	ret = (float*)malloc(mapSize * mapSize * sizeof(float)* 10);
 	textSize = std::min(texture->sizex, texture->sizey);
 	ratio = (float)mapSize / textSize;
 	for (uint32_t i = 0; i < mapSize * mapSize; i++)
 	{
 		uint32_t index = i / (int)((float)mapSize * ratio) / ratio * mapSize + (i % mapSize) / ratio;
-		printf("%d %d\n", i, (int)ratio);
 		index *= 4;
-		ret[i] = data[index] + data[index + 1] + data[index + 2];
+		ret[i] = (uint64_t)(data[index + 0]) << 16;
+		ret[i] += (uint64_t)data[index + 1] << 8;
+		ret[i] += data[index + 2];
+		ret[i] /= (UINT32_MAX /1000);
 	}
 	return (ret);
 }
@@ -199,7 +202,7 @@ void		terrainGenerationBuiltin::add_biom(float posx, float posy, float posz, uin
 	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->assetHandler = meshDataHandler;
 	(renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler = transformBuiltin::create();
 	transformBuiltin::translate((renderBuiltIn::get_renderGO(biom.renderGoHandler))->transformHandler, posx, posy, posz);
-	update_object(size, data, (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), scale, ampl, textureInstance);
+	update_object(size, data, (t_renderMeshData*)staticMemoryManager::get_data_ptr(node->meshs), scale, ampl, textureInstance, textScale);
 	biom.numFrag = i;
 	bioms[numBiom++] = biom;
 	free(data);

@@ -30,6 +30,7 @@ void fileLoader::init()
 	extension_to_function["bmp"] = &texture_builtin::load_texture;
 	extension_to_function["png"] = &texture_builtin::load_texture;
 	extension_to_function["jpeg"] = &texture_builtin::load_texture;
+	extension_to_function["JPG"] = &texture_builtin::load_texture;
 }
 
 fileLoader::~fileLoader()
@@ -64,25 +65,24 @@ char 		*fileLoader::readfile(std::string path)
 	return ((char*)file.c_str());
 }
 
-/*
-uint64_t fileLoader::load_fs_asset_assync(std::string path, staticMemoryManager::E_ASSET_TYPE type)
+uint32_t fileLoader::load_fs_asset_async(std::string path, uint32_t cluster)
 {
 	t_job			job;
-	char 			*job_path;
-	uint64_t ref;
+	uint32_t 		ref;
+	t_loadHeader	*loadheader;
 
 	if (path_as_guid[path] != 0)
 		return (path_as_guid[path]);
-	job_path = job.data + sizeof(t_loadHeader);
-	memcpy(job_path, path.c_str(), strlen(path.c_str()));
-	job_path[strlen(path.c_str())] = 0;
+	ref = staticMemoryManager::assign_asset(cluster);
+	loadheader = (t_loadHeader*)job.data;
+	memcpy(loadheader->path, path.c_str(), strlen(path.c_str()) + 1);
 	job.fptr = load_file;
-	ref = (staticMemoryManager::load_asset(job.data, type));
+	loadheader->ref = ref;
+	loadheader->cluster = cluster;
 	path_as_guid[path] = ref;
 	jobHandler::push_job(job);
 	return (ref);
 }
-*/
 
 uint32_t fileLoader::load_fs_asset_sync(std::string path, uint32_t cluster)
 {
@@ -166,6 +166,7 @@ void 			fileLoader::load_file(void *data)
 		return ;
 	}
 	extension_to_function[extenstion](data);
+	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadHeader->ref);
 }
 
 

@@ -77,3 +77,24 @@ GLuint	texture_builtin::convert_to_opengl(uint32_t textureInstanceHandler)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	return (textureID);
 }
+
+
+GLuint	texture_builtin::convert_to_opengl_parametric(uint32_t textureInstanceHandler, uint32_t wraps, uint32_t wrapt, uint32_t min, uint32_t mag)
+{
+	GLuint		textureID;
+	t_texture	*texture;
+	t_textureInstance *tx;
+
+	tx = get_texture(textureInstanceHandler);
+	texture = (t_texture*)staticMemoryManager::get_data_ptr(tx->textureHandler);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->sizex, texture->sizey, 0,
+		GL_BGRA, GL_UNSIGNED_BYTE, (char*)staticMemoryManager::get_data_ptr(texture->textureData));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapt);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wraps);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	return (textureID);
+}

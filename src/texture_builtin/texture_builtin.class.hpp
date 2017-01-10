@@ -26,6 +26,8 @@ public :
 	static t_textureInstance 	*get_texture(uint32_t textureHandler);
 	static GLuint				convert_to_opengl(uint32_t textureInstanceHandler);
 	static char					*get_data_from_instance(uint32_t textureInstance);
+	static GLuint				convert_to_opengl_parametric(uint32_t textureInstanceHandler, uint32_t wraps,
+									uint32_t wrapt, uint32_t min, uint32_t mag);
 
 private :
 

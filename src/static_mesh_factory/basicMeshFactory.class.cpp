@@ -31,7 +31,10 @@ staticMesh::~staticMesh()
 
 void staticMesh::update()
 {
-	renderBuiltIn::render_me(renderGOhandler);
+	if (staticMemoryManager::get_asset_state(assetHandler) == staticMemoryManager::E_LOADED)
+	{
+		renderBuiltIn::render_me(renderGOhandler);
+	}
 }
 
 uint32_t		staticMeshManager::numElem = 0;

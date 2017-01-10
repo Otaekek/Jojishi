@@ -1,6 +1,9 @@
 #include "renderDataSys.class.hpp"
 
-uint32_t renderDataSys::_programm[16];
+uint32_t 		renderDataSys::_programm[16];
+t_vao_request	renderDataSys::_vao_requests[4096];
+uint32_t		renderDataSys::_vao_request_index = 0;
+std::mutex 		renderDataSys::mu;
 
 renderDataSys::renderDataSys()
 {
@@ -12,6 +15,32 @@ renderDataSys::~renderDataSys()
 
 }
 
+void	renderDataSys::push_request(t_vao_request request)
+{
+	mu.lock();
+	_vao_requests[++_vao_request_index] = request;
+	mu.unlock();
+}
+
+void	renderDataSys::execute_vao_request()
+{
+	t_vao_request 		request;
+	uint32_t 			vao;
+	t_renderMeshData 	*meshData;
+
+	mu.lock();
+	while (_vao_request_index > 0)
+	{
+		request =_vao_requests[_vao_request_index];
+		vao = createVAO();
+		meshData = (t_renderMeshData*)staticMemoryManager::get_data_ptr(request.meshDataHandler);
+		meshData->vaoId = vao;
+		meshData->vboVerticeId = createVBO_VNT(request.vertex, request.vertex_size, vao);
+		meshData->indiceBufferId = createVBO_Indice(request.indices, request.indices_size, vao);
+		_vao_request_index--;
+	}
+	mu.unlock();
+}
 
 void 			renderDataSys::init()
 {
@@ -64,6 +93,7 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 
 void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text)
 {
+	return ;
 	aiString					texturePath;
 	char						completePath[1000];
 	FREE_IMAGE_FORMAT			format;
@@ -83,7 +113,7 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 }
 
 void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
-											const aiScene *scene, char *path)
+											const aiScene *scene, char *path, uint32_t meshHandler)
 {
 	float 						*vertices;
 	GLuint						*indices;
@@ -96,6 +126,7 @@ void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
 	aiString					texturePath;
 	char						completePath[1000];
 	uint32_t					i = 0;
+	t_vao_request 				request;
 
 	memcpy(completePath, path, strlen(path) + 1);
 	for (i = 0; completePath[strlen(completePath) - i] != '/'; i++)
@@ -129,7 +160,6 @@ void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
 			vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
 		}
 	}
-
 	aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &color);
 	meshData->material.diffuse[0] = color.r;
 	meshData->material.diffuse[1] = color.g;
@@ -142,16 +172,18 @@ void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
 	meshData->material.ambiant[0] = color.r;
 	meshData->material.ambiant[1] = color.g;
 	meshData->material.ambiant[2] = color.b;
-
 	handle_texture(aiTextureType_NORMALS, completePath, material,
 		&(meshData->material.bumpTexture), &(meshData->material.has_bump_texture));
 	handle_texture(aiTextureType_DIFFUSE, completePath, material,
 		&(meshData->material.diffuseTexture), &(meshData->material.has_diffuse_texture));
 	handle_texture(aiTextureType_SPECULAR, completePath, material,
 		&(meshData->material.specularTexture), &(meshData->material.has_specular_texture));
-	meshData->vaoId = renderDataSys::createVAO();
-	meshData->vboVerticeId = renderDataSys::createVBO_VNT(vertices, vertex_size, meshData->vaoId);
-	meshData->indiceBufferId = renderDataSys::createVBO_Indice(indices, indices_size * 3, meshData->vaoId);
+	request.indices = indices;
+	request.indices_size = indices_size * 3;
+	request.vertex = vertices;
+	request.vertex_size = vertex_size;
+	request.meshDataHandler = meshHandler;
+	push_request(request);
 	meshData->indiceNum = indices_size * 3;
 	meshData->indices = indiceHandler;
 	meshData->vbo = vboHandler;
@@ -174,7 +206,7 @@ uint32_t 	renderDataSys::node_to_mesh(const aiNode *node,
 	{
 		nodeData->has_mesh = true;
 		mesh = (t_renderMeshData*)staticMemoryManager::get_data_ptr(meshHandler);
-		copy_vertices(scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path);
+		copy_vertices(scene->mMeshes[node->mMeshes[indexMesh]], mesh, scene, path, meshHandler);
 		mesh->has_child = true;
 		mesh->child = staticMemoryManager::create_asset(cluster, sizeof(t_renderMeshData));
 		meshHandler = mesh->child;

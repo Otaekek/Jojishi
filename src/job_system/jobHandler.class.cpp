@@ -44,7 +44,7 @@ void 	jobHandler::job_worker(t_job queue[MAXJOB])
 
 	while (!must_leave)
 	{
-		if (q_top == 0)
+		if (q_top < 1)
 		{
 			usleep(1000);
 			continue ;

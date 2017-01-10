@@ -45,9 +45,11 @@ bool										staticMemoryManager::all_read()
 
 uint32_t									staticMemoryManager::create_asset(uint32_t cluster_id, uint32_t size)
 {
+	mutexes[0].lock();
 	referencer++;
 	ref_to_ptr[referencer] = clusters[cluster_id].mem_alloc(size);
 	ref_to_cluster[referencer] = cluster_id;
+	mutexes[0].unlock();
 	return (referencer);
 }
 
@@ -72,13 +74,18 @@ void										staticMemoryManager::realloc(uint32_t size, uint32_t cluster_id)
 
 uint32_t									staticMemoryManager::assign_asset(uint32_t cluster)
 {
+	mutexes[0].lock();
 	referencer++;
-	ref_to_cluster[referencer] = cluster; 
+	data_status[referencer] = E_LOADING;
+	ref_to_cluster[referencer] = cluster;
+	mutexes[0].unlock();
 	return (referencer);
 }
 
 void										*staticMemoryManager::alloc_asset(uint32_t ref, uint32_t size)
 {
+	mutexes[0].lock();
 	ref_to_ptr[ref] = clusters[ref_to_cluster[ref]].mem_alloc(size);
+	mutexes[0].unlock();
 	return (ref_to_ptr[ref]);
 }
