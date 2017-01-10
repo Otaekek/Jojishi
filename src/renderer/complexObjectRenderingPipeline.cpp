@@ -11,7 +11,6 @@ void			renderBuiltIn::render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint
 	location = glGetUniformLocation(program, "specular");
 	glUniform3f(location, mesh->material.specular[0], mesh->material.specular[1], mesh->material.specular[2]);
 	location = glGetUniformLocation(program, "ambiant");
-	mesh->material.has_diffuse_texture = 0;
 	glUniform3f(location, mesh->material.ambiant[0], mesh->material.ambiant[1], mesh->material.ambiant[2]);
 	location = glGetUniformLocation(program, "has_diffuse");
 	glUniform1i(location, (int)mesh->material.has_diffuse_texture);

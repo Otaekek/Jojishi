@@ -1,9 +1,11 @@
 #include "renderDataSys.class.hpp"
 
-uint32_t 		renderDataSys::_programm[16];
-t_vao_request	renderDataSys::_vao_requests[4096];
-uint32_t		renderDataSys::_vao_request_index = 0;
-std::mutex 		renderDataSys::mu;
+uint32_t			renderDataSys::_programm[16];
+t_vao_request		renderDataSys::_vao_requests[4096];
+uint32_t			renderDataSys::_vao_request_index = 0;
+std::mutex			renderDataSys::mu;
+uint32_t			renderDataSys::_texture_request_index = 0;
+t_texture_request	renderDataSys::_texture_requests[4096];
 
 renderDataSys::renderDataSys()
 {
@@ -13,6 +15,32 @@ renderDataSys::renderDataSys()
 renderDataSys::~renderDataSys()
 {
 
+}
+
+void	renderDataSys::push_texture_request(t_texture_request request)
+{
+	mu.lock();	
+	_texture_requests[++_texture_request_index] = request;
+	mu.unlock();
+}
+
+void 	renderDataSys::execute_texture_request()
+{
+	t_renderMeshData 	*meshData;
+	t_texture_request	request;
+
+	mu.lock();
+	while (_texture_request_index > 0)
+	{
+		request = _texture_requests[_texture_request_index];
+		meshData = (t_renderMeshData*)staticMemoryManager::get_data_ptr(request.meshDataHandler);
+		if (request.fieldID == 0)
+			meshData->material.diffuseTexture = texture_builtin::convert_to_opengl_parametric(request.instanceHandler,
+			request.wraps_filter, request.wrapt_filter,
+			request.min_filter, request.mag_filter);
+		_texture_request_index--;
+	}
+	mu.unlock();
 }
 
 void	renderDataSys::push_request(t_vao_request request)
@@ -91,15 +119,17 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 	return indiceBufferId;
 }
 
-void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text)
+void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial *material,
+		uint32_t *textEmplacement, bool *has_text, uint32_t meshDataHandler)
 {
-	return ;
 	aiString					texturePath;
 	char						completePath[1000];
 	FREE_IMAGE_FORMAT			format;
 	FIBITMAP*					image;
 	GLuint 						textureID;
 	uint32_t					instance;
+	t_texture_request			request;
+
 	memcpy(completePath, path, strlen(path) + 1);
 	if (material->GetTextureCount(type) > 0)
 	{
@@ -108,7 +138,15 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 		*has_text = true;
 		textureID = fileLoader::load_fs_asset_sync(completePath, 1);
 		instance = texture_builtin::create_instance(textureID);
-		*textEmplacement = texture_builtin::convert_to_opengl(instance);
+		request.fieldID = 0;
+		request.instanceHandler = instance;
+		request.wrapt_filter = GL_CLAMP_TO_EDGE;
+		request.wraps_filter = GL_CLAMP_TO_EDGE;
+		request.min_filter = GL_LINEAR_MIPMAP_LINEAR;
+		request.mag_filter = GL_LINEAR;
+		request.meshDataHandler = meshDataHandler;
+		renderDataSys::push_texture_request(request);
+//		*textEmplacement = texture_builtin::convert_to_opengl(instance);
 	}
 }
 
@@ -172,12 +210,12 @@ void 		renderDataSys::copy_vertices(aiMesh *mesh, t_renderMeshData *meshData,
 	meshData->material.ambiant[0] = color.r;
 	meshData->material.ambiant[1] = color.g;
 	meshData->material.ambiant[2] = color.b;
-	handle_texture(aiTextureType_NORMALS, completePath, material,
-		&(meshData->material.bumpTexture), &(meshData->material.has_bump_texture));
+	//handle_texture(aiTextureType_NORMALS, completePath, material,
+	//	&(meshData->material.bumpTexture), &(meshData->material.has_bump_texture), meshHandler);
 	handle_texture(aiTextureType_DIFFUSE, completePath, material,
-		&(meshData->material.diffuseTexture), &(meshData->material.has_diffuse_texture));
-	handle_texture(aiTextureType_SPECULAR, completePath, material,
-		&(meshData->material.specularTexture), &(meshData->material.has_specular_texture));
+		&(meshData->material.diffuseTexture), &(meshData->material.has_diffuse_texture), meshHandler);
+	//handle_texture(aiTextureType_SPECULAR, completePath, material,
+	//	&(meshData->material.specularTexture), &(meshData->material.has_specular_texture), meshHandler);
 	request.indices = indices;
 	request.indices_size = indices_size * 3;
 	request.vertex = vertices;

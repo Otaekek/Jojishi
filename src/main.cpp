@@ -79,8 +79,8 @@ int main()
 		//terrainGenerationBuiltin::add_biom(0, 0, 0,256,
 		//			200, 2000, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 10,
 		///			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.png", 1)));
-		terrainGenerationBuiltin::add_biom(0, 0, 0,256,
-				80, 400, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
+		terrainGenerationBuiltin::add_biom(-15000, 0, -15000,256,
+				160, 80, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
 				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hills.jpg", 1)));
 		//terrainGenerationBuiltin::add_biom(51200, 0, 0,256,
 		//			200, 260, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,

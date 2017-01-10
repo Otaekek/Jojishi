@@ -87,6 +87,7 @@ void			renderBuiltIn::update()
 {
 	t_camera			*camera;
 
+	renderDataSys::execute_texture_request();
 	renderDataSys::execute_vao_request();
 	glfwGetWindowSize(window, &(mode->width), &(mode->height));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

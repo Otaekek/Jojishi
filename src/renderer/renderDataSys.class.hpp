@@ -25,6 +25,17 @@ enum E_LIGHT {
 	E_OMNI
 };
 
+typedef	struct s_texture_request
+{
+	uint32_t	instanceHandler;
+	uint32_t	meshDataHandler;
+	uint32_t	mag_filter;
+	uint32_t	min_filter;
+	uint32_t	wraps_filter;
+	uint32_t	fieldID;
+	uint32_t	wrapt_filter;	
+}				t_texture_request;
+
 typedef struct 	s_request {
 	uint32_t	indices_size;
 	uint32_t	vertex_size;
@@ -117,14 +128,18 @@ public:
 	static void				set_programm(E_SHADER shader, uint32_t asset);
 	static void				push_request(t_vao_request);
 	static void				execute_vao_request();
+	static void				push_texture_request(t_texture_request request);
+	static void 			execute_texture_request();
 	static std::mutex 		mu;
 private:
-	static void 			copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path, uint32_t meshHandler);
-	static uint32_t 		node_to_mesh(const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
-	static void				handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text);
-	static uint32_t			_programm[16];
-	static t_vao_request	_vao_requests[4096];
-	static uint32_t			_vao_request_index;
+	static void 				copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path, uint32_t meshHandler);
+	static uint32_t 			node_to_mesh(const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
+	static void					handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text, uint32_t meshDataHandler);
+	static uint32_t				_programm[16];
+	static t_vao_request		_vao_requests[4096];
+	static uint32_t				_vao_request_index;
+	static uint32_t				_texture_request_index;
+	static t_texture_request	_texture_requests[4096];
 };
 
 #endif
