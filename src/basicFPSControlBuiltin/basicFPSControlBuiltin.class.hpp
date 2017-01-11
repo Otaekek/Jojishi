@@ -13,6 +13,7 @@
 		but it is recommanded to architect them this way.
 */
 
+#include <shutdown.class.hpp>
 #include <transform.class.hpp>
 #include <string>
 #include <renderBuiltIn.class.hpp>

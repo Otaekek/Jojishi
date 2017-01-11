@@ -21,6 +21,7 @@ public:
 		E_ERR
 	};
 
+	static void 									shutdown();
 	static uint32_t									init_cluster();
 
 	static uint32_t									create_asset(uint32_t cluster_id, uint32_t size);

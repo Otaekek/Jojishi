@@ -28,7 +28,6 @@ void stackAllocator::init(uint32_t _size)
 
 void stackAllocator::all_mem_free()
 {
-	delete [] data;
 	size = 0;
 	index = 0;
 }

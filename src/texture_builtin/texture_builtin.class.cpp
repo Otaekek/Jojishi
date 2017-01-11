@@ -2,10 +2,22 @@
 #include "texture_builtin.class.hpp"
 
 uint32_t	texture_builtin::cluster_id;
+FIBITMAP*	texture_builtin::garb_collector[65536];
+uint32_t	texture_builtin::numGarb = 0;
+
 
 uint32_t	texture_builtin::init()
 {
 	cluster_id = dynamicMemoryManager::cluster_init(sizeof(t_textureInstance), 4096);
+}
+
+void	texture_builtin::shutdown()
+{
+	while (numGarb > 0)
+	{
+		FreeImage_Unload(garb_collector[numGarb]);
+		numGarb--;
+	}
 }
 
 char 		*texture_builtin::get_data_from_instance(uint32_t textureInstance)
@@ -19,15 +31,17 @@ char 		*texture_builtin::get_data_from_instance(uint32_t textureInstance)
 void		texture_builtin::load_texture(void *data)
 {
 	FREE_IMAGE_FORMAT		format;
-	FIBITMAP*				image;
+	FIBITMAP*				image, *tmp;
 	t_loadHeader 			*loadheader;
 	t_texture				*texture;
 	char					*textureData;
 
 	loadheader = (t_loadHeader*)data;
 	format = FreeImage_GetFileType(loadheader->path, 0);
-	image = FreeImage_Load(format, loadheader->path);
-	image = FreeImage_ConvertTo32Bits(image);
+	tmp = FreeImage_Load(format, loadheader->path);
+	image = FreeImage_ConvertTo32Bits(tmp);
+	FreeImage_Unload(tmp);
+	garb_collector[++numGarb] = image;
 	staticMemoryManager::alloc_asset(loadheader->ref, sizeof(t_texture));
 	texture = (t_texture*)staticMemoryManager::get_data_ptr(loadheader->ref);
 	texture->sizex = FreeImage_GetWidth(image);

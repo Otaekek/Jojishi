@@ -44,7 +44,7 @@ int main()
 	renderDataSys::set_programm(E_SKYBOX, asset);
 	renderBuiltIn::modify_skybox(asset);
 	fileLoader::load_fs_asset_async("assets/graphic/mesh/lamborghini/Avent.obj", cluster);
-	fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", cluster);
+fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", cluster);
 
 	asset = fileLoader::load_fs_asset_async("assets/graphic/mesh/castle/castle/castle.obj", cluster);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/Altair/altair.3ds", staticMemoryManager::E_OBJ_FILE);
@@ -79,9 +79,9 @@ int main()
 		//terrainGenerationBuiltin::add_biom(0, 0, 0,256,
 		//			200, 2000, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 10,
 		///			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.png", 1)));
-		terrainGenerationBuiltin::add_biom(-15000, 0, -15000,256,
-				160, 80, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
-				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hills.jpg", 1)));
+		terrainGenerationBuiltin::add_biom(-15000, 0, -15000,1024,
+				400 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,
+				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
 		//terrainGenerationBuiltin::add_biom(51200, 0, 0,256,
 		//			200, 260, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
 		//			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hills.jpg", 1)));

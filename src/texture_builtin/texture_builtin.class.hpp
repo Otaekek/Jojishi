@@ -4,6 +4,7 @@
 #include <staticMemoryManager.class.hpp>
 #include <renderDataSys.class.hpp>
 #include <dynamicMemoryManager.class.hpp>
+#include <FreeImage.h>
 
 typedef struct	s_texture {
 	uint32_t	sizex;
@@ -18,7 +19,8 @@ typedef struct	s_textureInstance {
 class texture_builtin {
 
 public :
-
+	
+	static void					shutdown();
 	static uint32_t				init();
 	static void					load_texture(void *data);
 	static uint32_t 			create_instance(uint32_t ref);
@@ -31,7 +33,9 @@ public :
 
 private :
 
-	static uint32_t	cluster_id;
+	static FIBITMAP*	garb_collector[65536];
+	static uint32_t		numGarb;
+	static uint32_t		cluster_id;
 
 };
 #endif

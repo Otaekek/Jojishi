@@ -74,7 +74,7 @@ void 		basicFPSControl::behave()
 	if (inputBuiltin::key_pressed[GLFW_KEY_A])
 		transformBuiltin::translate(_transformHandler, -crossDirection.x, -crossDirection.y, -crossDirection.z);
 	if (inputBuiltin::key_pressed[GLFW_KEY_ESCAPE])
-		exit(0);
+		shutdown::exit_jojishi();
 }
 
 basicFPSControl		basicFPSControlManagerBuiltin::elems[MAX_ELEM];

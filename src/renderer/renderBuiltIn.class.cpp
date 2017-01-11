@@ -43,10 +43,6 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
-	//window = glfwCreateWindow(1000, 800, "jojishiGameEngine", NULL, NULL);
-	//mode->height = 800;
-	//mode->width = 1000;
-	//window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glClearColor(0.1, 0, 0, 0);
 	glfwSwapInterval(1);

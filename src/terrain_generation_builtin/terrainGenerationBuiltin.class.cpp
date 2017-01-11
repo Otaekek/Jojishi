@@ -34,7 +34,7 @@ t_material	handle_material(uint32_t albedoTextureInstance)
 
 void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor, float ampl)
 {
-	glm::vec3 base = glm::vec3(0, 20 / ampl, 0);
+	glm::vec3 base = glm::vec3(0, 40 / ampl, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
@@ -67,11 +67,12 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 
 	base.z = (d - e);
 	base.x = (g - b);
+	base.x = -(c - a + 2.0f * (e - d) + h - f);
+	base.z = -(f - a + 2.0f * (g - b) + h - c);
 	base = glm::normalize(base);
 	outvec[0] = base.x;
 	outvec[1] = base.y;
 	outvec[2] = base.z;
-
 }
 
 void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance, float textScale)
@@ -99,7 +100,7 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 			divisor = 1;
 			// Set position
 
-			vertex[i * size * 8 + j * 8] = (float)i * scale;
+			vertex[i * size * 8 + j * 8] = (float)(i - size / 2) * scale;
 			if (size - j < treshOld)
 					divisor = (float)(size - j) / treshOld;
 			if (j < treshOld)
@@ -112,7 +113,7 @@ void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float sca
 				divisor = 0;
 
 			vertex[i * size * 8 + j * 8 + 1] = data[j + i * size] * ampl * divisor;
-			vertex[i * size * 8 + j * 8 + 2] = (float)j * scale;
+			vertex[i * size * 8 + j * 8 + 2] = (float)(j - size / 2) * scale;
 
 			// Set normal
 			create_normal(data, i, j, size, &vertex[i * size * 8 + j * 8 + 3], divisor, ampl);

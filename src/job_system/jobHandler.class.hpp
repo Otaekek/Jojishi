@@ -7,7 +7,7 @@
 #include <thread>
 #include <mutex>
 
-#define NUMTHREAD 1
+#define NUMTHREAD 3
 #define MAXJOB 4096
 
 class jobHandler {

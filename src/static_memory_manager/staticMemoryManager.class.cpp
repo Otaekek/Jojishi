@@ -9,6 +9,12 @@ std::mutex												staticMemoryManager::mutexes[NUMCLUSTER];
 uint32_t												staticMemoryManager::clusters_count = 0;
 uint32_t												staticMemoryManager::ref_to_cluster[MAXREF];
 
+void 										staticMemoryManager::shutdown()
+{
+	for (uint32_t i = 0; i < NUMCLUSTER; i++)
+		clusters[i].all_mem_free();
+}
+
 uint32_t									staticMemoryManager::init_cluster()
 {
 	clusters_count %= NUMCLUSTER;

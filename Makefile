@@ -104,6 +104,10 @@ SRC_SUBDIR += texture_builtin
 CFLAGS += -Isrc/texture_builtin
 SOURCES += texture_builtin.class.cpp
 
+SRC_SUBDIR += shutdown
+CFLAGS += -Isrc/shutdown
+SOURCES += shutdown.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
@@ -132,7 +136,7 @@ CFLAGS += -I$(LIB_GLM_PATH)
 # glfw
 CFLAGS += -I./glfw-3.2.1/include/GLFW/ -DGL_GLEXT_PROTOTYPES
 ifeq ($(UNAME_S),Linux)
-	LDFLAGS +=  -lglfw3 -lrt -lm -ldl -lXrandr \
+	LDFLAGS += -D_GLIBCXX_GTHREAD_USE_WEAK=0  -lglfw3 -lrt -lm -ldl -lXrandr \
 	-lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes \
 	-lX11 -lpthread -lxcb -lXau -lXdmcp -lGL  -DGL_GLEXT_PROTOTYPES
 endif
