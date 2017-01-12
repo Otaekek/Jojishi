@@ -33,6 +33,7 @@ basicLight::~basicLight()
 
 void basicLight::update()
 {
+	transformBuiltin::translate(transformHandler, 1000, 0, 0);
 	renderBuiltIn::add_light(lightHandler);
 }
 

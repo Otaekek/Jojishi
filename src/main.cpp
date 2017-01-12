@@ -43,10 +43,10 @@ int main()
 	asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/cube/cube.obj", cluster);
 	renderDataSys::set_programm(E_SKYBOX, asset);
 	renderBuiltIn::modify_skybox(asset);
-	fileLoader::load_fs_asset_async("assets/graphic/mesh/lamborghini/Avent.obj", cluster);
-fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", cluster);
+//	fileLoader::load_fs_asset_async("assets/graphic/mesh/lamborghini/Avent.obj", cluster);
+//fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", cluster);
 
-	asset = fileLoader::load_fs_asset_async("assets/graphic/mesh/castle/castle/castle.obj", cluster);
+	//asset = fileLoader::load_fs_asset_async("assets/graphic/mesh/castle/castle/castle.obj", cluster);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/Altair/altair.3ds", staticMemoryManager::E_OBJ_FILE);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/maiden/crystal_maiden_econ1.fbx", staticMemoryManager::E_OBJ_FILE);
 	//fileLoader::load_fs_asset_sync("assets/graphic/mesh/land/OBJ/Models_OBJ/Terrain_500000.obj", staticMemoryManager::E_OBJ_FILE);
@@ -87,9 +87,12 @@ fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", clust
 
 
 	terrainGenerationBuiltin::add_biom(0, 0, 0, size,
-		mul, 5900 * 64, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/la.jpeg", 1)), 60,
+		mul, 5900 * 64, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 60,
 			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hi.jpeg", 1)));
 
+	terrainGenerationBuiltin::add_biom(size * mul, 0, 0, size,
+		mul, 5900 * 64, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/snow.jpeg", 1)), 60,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/tl.jpeg", 1)));
 	//	terrainGenerationBuiltin::add_biom(-15000, 0, -15000,1024,
 	//			800 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,
 	//q			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
