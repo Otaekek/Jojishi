@@ -64,31 +64,45 @@ fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", clust
 	int i = 0;
 	t_renderGO *skybox;
 	skybox = renderBuiltIn::get_skyboxGO();
-	staticMeshManager::create(glm::vec3(10000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
-	staticMeshManager::create(glm::vec3(10000, 1000, 12000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
-	staticMeshManager::create(glm::vec3(9000, 0, 9000), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(800.5, 800.3, 800.5) ,"assets/graphic/mesh/lamborghini/Avent.obj");
+	//staticMeshManager::create(glm::vec3(10000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
+	//staticMeshManager::create(glm::vec3(10000, 1000, 8000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
+	//staticMeshManager::create(glm::vec3(9000, 0, 9000), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(800.5, 800.3, 800.5) ,"assets/graphic/mesh/lamborghini/Avent.obj");
 	
-	staticMeshManager::create(glm::vec3(8000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
-	staticMeshManager::create(glm::vec3(8000, 400, 1000), glm::vec3(0, 1.0, 0), 1, glm::vec3(200, 200, 200) , "assets/graphic/mesh/IronMan/IronMan.obj");
-	staticMeshManager::create(glm::vec3(800, 0, 200), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(1000.5, 1000.3, 1000.5) ,"assets/graphic/mesh/lamborghini/Avent.obj");
+	//staticMeshManager::create(glm::vec3(8000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
+	//staticMeshManager::create(glm::vec3(8000, 800, 1000), glm::vec3(0, 1.0, 0), 1, glm::vec3(20000, 20000, 20000) , "assets/graphic/mesh/IronMan/IronMan.obj");
+	//staticMeshManager::create(glm::vec3(800, 0, 200), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(1000.5, 1000.3, 1000.5) ,"assets/graphic/mesh/lamborghini/Avent.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
-	basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
-	basicLightFactory::create(glm::vec3(0, 80000, 51200), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(0, 80000, 12500), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(-200, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
-		//terrainGenerationBuiltin::add_biom(0, 0, 0,256,
-		//			200, 2000, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 10,
-		///			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.png", 1)));
-		terrainGenerationBuiltin::add_biom(-15000, 0, -15000,1024,
-				400 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,
-				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
-		//terrainGenerationBuiltin::add_biom(51200, 0, 0,256,
+
+	terrainGenerationBuiltin::add_biom(0, 0, 0, 125,
+		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+	
+	terrainGenerationBuiltin::add_biom(125 * 800, 0, 0, 125,
+		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+
+	terrainGenerationBuiltin::add_biom(0, 0, 125 * 800, 125,
+		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+
+	terrainGenerationBuiltin::add_biom(125 * 800, 0, 125 * 800, 125,
+		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+
+	//	terrainGenerationBuiltin::add_biom(-15000, 0, -15000,1024,
+	//			800 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,
+	//q			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
+		//terrainGenerationBuiltin::add_biom(12500, 0, 0,256,
 		//			200, 260, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
 		//			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hills.jpg", 1)));
 	
 	while (1)
 	{
-		//printf("%d\n", i++);
+		printf("%d\n", i++);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		staticMeshManager::update();

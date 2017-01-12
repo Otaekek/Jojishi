@@ -63,8 +63,8 @@ void 		basicFPSControl::behave()
 	glm::vec3 direction = transformBuiltin::get_direction(_transformHandler);
 	glm::vec3 crossDirection = -cross(up, direction);
 
-	crossDirection *= 200;
-	direction *= 200;
+	crossDirection *= 20000;
+	direction *= 20000;
 	if (inputBuiltin::key_pressed[GLFW_KEY_W])
 		transformBuiltin::translate(_transformHandler, direction.x, direction.y, direction.z);
 	if (inputBuiltin::key_pressed[GLFW_KEY_S])

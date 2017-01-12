@@ -65,6 +65,7 @@ void										staticMemoryManager::realloc(uint32_t size, uint32_t cluster_id)
 	uint64_t	offsetNew;
 	uint32_t	old_size;
 
+	/*
 	return ;
 	old_size = clusters[cluster_id].get_size();
 	offsetOld = (uint64_t)clusters[cluster_id].get_data_pointer();
@@ -76,6 +77,7 @@ void										staticMemoryManager::realloc(uint32_t size, uint32_t cluster_id)
 		if (ref_to_cluster[i] == cluster_id)
 			ref_to_ptr[i] += offsetNew - offsetOld;
 	}
+	*/
 }
 
 uint32_t									staticMemoryManager::assign_asset(uint32_t cluster)

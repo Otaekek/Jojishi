@@ -32,6 +32,4 @@ void main(void)
 	pos_color = gl_Position.xyz;
 	gl_Position *= V;
 	gl_Position *= P;
-	gl_Position.z = 1.0 * log(gl_Position.w) / log(10000000000.0f); 
-	gl_Position.z *= gl_Position.w;
 }

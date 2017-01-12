@@ -116,7 +116,7 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 	modelMat = transformBuiltin::to_mat(elem->transformHandler);
 	viewMat = transformBuiltin::to_mat_cam(camera->transformHandler);
-	projMat = transformBuiltin::projection_matrix(60.0f, 10.0f, 100000.0f,
+	projMat = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000000000.0f,
 		(float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 
 	glUseProgram(node->program);
