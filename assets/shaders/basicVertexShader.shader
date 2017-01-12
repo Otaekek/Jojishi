@@ -28,7 +28,7 @@ void main(void)
 	camPos = tmpcamPos.xyz;
 	gl_Position = vec4(in_Position.x, in_Position.y, in_Position.z, 1.0);
 	gl_Position *= M;
-	normal = (vec4(in_Normal.xyz, 0) * M).xyz;
+	normal = (M * vec4(in_Normal.xyz, 0)).xyz;
 	pos_color = gl_Position.xyz;
 	gl_Position *= V;
 	gl_Position *= P;

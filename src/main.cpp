@@ -73,25 +73,22 @@ fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", clust
 	//staticMeshManager::create(glm::vec3(800, 0, 200), glm::vec3(1.0, 0.0, 0), 0, glm::vec3(1000.5, 1000.3, 1000.5) ,"assets/graphic/mesh/lamborghini/Avent.obj");
 	renderBuiltIn::modify_skybox_light(1.2);
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
-	basicLightFactory::create(glm::vec3(0, 80000, 12500), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	basicLightFactory::create(glm::vec3(0, 10000, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+		//basicLightFactory::create(glm::vec3(0, 5900 * 320, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	//basicLightFactory::create(glm::vec3(0, 80000, 59000 * 40), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+//	basicLightFactory::create(glm::vec3(59000 * 40, 80000, 59000 * 40), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
+	//basicLightFactory::create(glm::vec3(0, 80000, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(-200, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 	//basicLightFactory::create(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
 
-	terrainGenerationBuiltin::add_biom(0, 0, 0, 125,
-		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
-			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
-	
-	terrainGenerationBuiltin::add_biom(125 * 800, 0, 0, 125,
-		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
-			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+	int size = 256;
+	int mul = 40000;
 
-	terrainGenerationBuiltin::add_biom(0, 0, 125 * 800, 125,
-		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
-			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
 
-	terrainGenerationBuiltin::add_biom(125 * 800, 0, 125 * 800, 125,
-		800, 1500, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpeg", 1)), 20,
-			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
+
+	terrainGenerationBuiltin::add_biom(0, 0, 0, size,
+		mul, 5900 * 64, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/la.jpeg", 1)), 60,
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hi.jpeg", 1)));
 
 	//	terrainGenerationBuiltin::add_biom(-15000, 0, -15000,1024,
 	//			800 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,

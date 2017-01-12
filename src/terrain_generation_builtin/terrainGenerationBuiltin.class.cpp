@@ -34,7 +34,7 @@ t_material	handle_material(uint32_t albedoTextureInstance)
 
 void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *outvec, float divisor, float ampl)
 {
-	glm::vec3 base = glm::vec3(0, 800 / ampl, 0);
+	glm::vec3 base = glm::vec3(0,-1000 / ampl, 0);
 
 	float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 	int32_t i1, i2,i3,i4,i5,i6,i7,i8;
@@ -67,8 +67,8 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 
 	base.z = (d - e);
 	base.x = (g - b);
-	base.x = -(c - a + 2.0f * (e - d) + h - f);
-	base.z = -(f - a + 2.0f * (g - b) + h - c);
+	base.x = -(c - a + 2.0f * (e - d) + h - f) / size;
+	base.z = -(f - a + 2.0f * (g - b) + h - c) / size;
 	base = glm::normalize(base);
 	outvec[0] = base.x;
 	outvec[1] = base.y;

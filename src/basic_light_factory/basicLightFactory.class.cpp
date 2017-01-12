@@ -22,7 +22,7 @@ basicLight::basicLight(glm::vec3 position, glm::vec3 direction, glm::vec3 scale,
 	light->attenuation = 1;
 	light->linearAttenuation = 1;
 	light->quadraticAttenuation = 1;
-	light->constantEuristicOcclusion = 200000;
+	light->constantEuristicOcclusion = 20000000;
 	light->transformHandler = transformHandler;
 }
 
