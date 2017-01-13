@@ -51,7 +51,7 @@ int main()
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/maiden/crystal_maiden_econ1.fbx", staticMemoryManager::E_OBJ_FILE);
 	//fileLoader::load_fs_asset_sync("assets/graphic/mesh/land/OBJ/Models_OBJ/Terrain_500000.obj", staticMemoryManager::E_OBJ_FILE);
 	//fileLoader::load_fs_asset_sync("./assets/graphic/mesh/witcher/Geralt/Geralt.obj", staticMemoryManager::E_OBJ_FILE);
-	basicFPSControlManagerBuiltin::create(0, 0, 0, 0, 0, 1, 1);
+	basicFPSControlManagerBuiltin::create(256 * 1300 * -5, -20000, -256 * 1300 * 5, 0, 0, 1, 1);
 
 /*	basicFPSControlManagerBuiltin::create(-200, 0, 0, 0.5, 0.5, 0.5, 0.5);
 	basicFPSControlManagerBuiltin::create(0, 0, 200, 0, 0.5, 0.25, 0.5);
@@ -80,16 +80,36 @@ int main()
 		//terrainGenerationBuiltin::add_biom(0, 0, 0,256,
 		//			200, 2000, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 10,
 		///			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.png", 1)));
-		terrainGenerationBuiltin::add_biom(0, 0, 0,512,
-				800 , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 100,
+	int size = 256; int mul = 2600;
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			if (!((i<<7) * j % 3))
+			{
+				terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i,size,
+				mul , 10502, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 50,
 				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
-		terrainGenerationBuiltin::add_biom(800 * 512, 0, 0,512,
-					800, 7690, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
+			}
+			else if (!(((i<<5) * j + 1) % 3))
+			{
+				terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i, size,
+					mul, 7690, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
 					texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/hills.jpg", 1)));
+			}
+			else
+			{
+				terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i, size,
+					mul, 7690, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,
+					texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/big.jpeg", 1)));
+			}
+		}
+	}
+	
 	
 	while (1)
 	{
-		//printf("%d\n", i++);
+		printf("%d\n", i++);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		staticMeshManager::update();
