@@ -21,6 +21,9 @@
 
 #define MAX_SUBSCRIBE 65536
 
+#define E_CONIC 0
+#define E_ORTH 1
+
 typedef struct	s_render {
 	uint32_t	assetHandler;
 	uint32_t	transformHandler;
@@ -29,12 +32,15 @@ typedef struct	s_render {
 }				t_renderGO;
 
 typedef struct	s_camera {
-	uint32_t	effect;
 	uint32_t	transformHandler;
 	float		posx;
 	float		posy;
 	float		sizex;
 	float		sizey;
+	uint64_t	project
+	uint64_t 	layerBits;
+	uint64_t	effectBits;
+	
 }				t_camera;
 
 class renderBuiltIn {
