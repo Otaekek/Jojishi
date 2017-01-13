@@ -42,11 +42,10 @@ void			renderBuiltIn::push_light(t_renderGO *elem, GLuint program)
 	{
 		light = get_light(_lightsHandlers[i]);
 		transform = transformBuiltin::get_transform(light->transformHandler);
-		if (!cull_light(light, transformBuiltin::get_transform(elem->transformHandler)))
-			continue ;
+		//if (!cull_light(light, transformBuiltin::get_transform(elem->transformHandler)))
+		//	continue ;
 		direction = transformBuiltin::get_direction(light->transformHandler);
 		array[i * 12] = transform->position.x;
-
 		array[i * 12 + 1] = transform->position.y;
 		array[i * 12 + 2] = transform->position.z;
 		array[i * 12 + 3] = light->color.x;
