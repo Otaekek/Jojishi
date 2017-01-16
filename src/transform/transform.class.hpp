@@ -45,6 +45,10 @@ public:
 	static glm::mat4 to_mat_cam(uint32_t handler);
 	static glm::mat4	projection_matrix(float fov, float near, float far, float aspect);
 
+	static void			init_rotation(uint32_t handler);
+
+	static void CreateFromAxisAngle(uint32_t handler, float angle);
+
 private:
 	static uint32_t 	cluster_id;
 };

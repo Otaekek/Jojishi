@@ -14,6 +14,7 @@ public:
 
 	staticMesh();
 	staticMesh(glm::vec3 pos, glm::vec3 rot, float angle, glm::vec3 scale, std::string meshName);
+	staticMesh(uint32_t meshHandler, uint32_t _transformHandler);
 	~staticMesh();
 
 	void update();
@@ -34,7 +35,7 @@ public:
 	static void		shutdown();
 
 	static void		create(glm::vec3 pos, glm::vec3 rot, float angle, glm::vec3 scale, std::string meshName);
-
+	static void		create_from_handler(uint32_t meshHandler, uint32_t transformHandler);
 	static void		update();
 
 private:

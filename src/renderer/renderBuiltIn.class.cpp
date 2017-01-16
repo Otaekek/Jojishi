@@ -99,6 +99,7 @@ void			renderBuiltIn::update()
 		camera = renderBuiltIn::get_camera(_cameras[i]);
 		glViewport(camera->posx * mode->width, camera->posy * mode->height, camera->sizex * mode->width, camera->sizey * mode->height);
 		renderBuiltIn::render(camera);
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 	numCamera = 0;
 	sizeList = 0;
@@ -143,7 +144,9 @@ GLFWwindow*				renderBuiltIn::get_window()
 
 uint32_t	renderBuiltIn::create_camera()
 {
-	return (dynamicMemoryManager::create_slot(camCluster_id));
+	uint32_t ref = (dynamicMemoryManager::create_slot(camCluster_id));
+	dynamicMemoryManager::zerofy(ref, sizeof(t_camera));
+	return (ref);
 }
 
 void		renderBuiltIn::destroy_camera(uint32_t ref)

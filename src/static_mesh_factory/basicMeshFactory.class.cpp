@@ -24,6 +24,24 @@ staticMesh::staticMesh(glm::vec3 pos, glm::vec3 rot, float angle, glm::vec3 scal
 	transformBuiltin::scale(transformHandler, scale.x, scale.y, scale.z);
 }
 
+staticMesh::staticMesh(uint32_t meshHandler, uint32_t _transformHandler)
+{
+	t_transform *transform;
+	t_renderGO *renderGO;
+
+	transformHandler = transformBuiltin::create();
+	assetHandler = meshHandler;
+	renderGOhandler = renderBuiltIn::create();
+
+	transform = transformBuiltin::get_transform(transformHandler);
+	renderGO = renderBuiltIn::get_renderGO(renderGOhandler);
+	renderGO->transformHandler = transformHandler;
+	renderGO->assetHandler = assetHandler;
+	renderGO->cullOnMe = true;
+	renderGO->cullMode = GL_BACK;
+	*transform = *transformBuiltin::get_transform(_transformHandler);
+}
+
 staticMesh::~staticMesh()
 {
 
@@ -53,6 +71,11 @@ void		staticMeshManager::shutdown()
 void		staticMeshManager::create(glm::vec3 pos, glm::vec3 rot, float angle, glm::vec3 scale, std::string meshName)
 {
 	elems[numElem++] = staticMesh(pos, rot, angle, scale, meshName);
+}
+
+void		staticMeshManager::create_from_handler(uint32_t meshHandler, uint32_t transformHandler)
+{
+	elems[numElem++] = staticMesh(meshHandler, transformHandler);
 }
 
 void		staticMeshManager::update()

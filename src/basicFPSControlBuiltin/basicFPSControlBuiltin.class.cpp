@@ -63,8 +63,13 @@ void 		basicFPSControl::behave()
 	glm::vec3 direction = transformBuiltin::get_direction(_transformHandler);
 	glm::vec3 crossDirection = -cross(up, direction);
 
-	crossDirection *= 200;
-	direction *= 200;
+	crossDirection *= 2;
+	direction *= 2;
+	if (inputBuiltin::key_pressed[GLFW_KEY_LEFT_SHIFT])
+	{
+		crossDirection *= 20;
+		direction *= 20;
+	}
 	if (inputBuiltin::key_pressed[GLFW_KEY_W])
 		transformBuiltin::translate(_transformHandler, direction.x, direction.y, direction.z);
 	if (inputBuiltin::key_pressed[GLFW_KEY_S])
@@ -110,7 +115,10 @@ void 		basicFPSControlManagerBuiltin::init()
 	inputBuiltin::add_mouse_move_callback(basicFPSControlManagerBuiltin::mouse_move_callback);
 }
 
-
+uint32_t	basicFPSControlManagerBuiltin::get_main_handler()
+{
+	return (elems[0]._transformHandler);
+}
 
 
 

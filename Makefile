@@ -104,9 +104,15 @@ SRC_SUBDIR += texture_builtin
 CFLAGS += -Isrc/texture_builtin
 SOURCES += texture_builtin.class.cpp
 
+#shutdown Builtin
 SRC_SUBDIR += shutdown
 CFLAGS += -Isrc/shutdown
 SOURCES += shutdown.class.cpp
+
+#map editor
+SRC_SUBDIR += map_editor_builtin
+CFLAGS += -Isrc/map_editor_builtin
+SOURCES += mapEditorBuiltin.class.cpp
 
 # Generation
 INC_PATH = inc

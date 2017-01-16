@@ -27,6 +27,7 @@
 typedef struct	s_render {
 	uint32_t	assetHandler;
 	uint32_t	transformHandler;
+	uint64_t	cameraLayer;
 	bool		cullOnMe;
 	GLenum		cullMode;
 }				t_renderGO;
@@ -37,8 +38,8 @@ typedef struct	s_camera {
 	float		posy;
 	float		sizex;
 	float		sizey;
-	uint64_t	project
-	uint64_t 	layerBits;
+	uint64_t	project;
+	uint64_t 	cameraLayer;
 	uint64_t	effectBits;
 	
 }				t_camera;

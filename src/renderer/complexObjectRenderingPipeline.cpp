@@ -112,10 +112,12 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	glm::mat4 			modelMat, projMat, viewMat;
 
 	elem = (t_renderGO*)renderBuiltIn::get_renderGO(index);
+	if (!(elem->cameraLayer & camera->cameraLayer) && !((elem->cameraLayer + camera->cameraLayer) == 0))
+		return ;
 	node = (t_node*)staticMemoryManager::get_data_ptr(elem->assetHandler);
 	modelMat = transformBuiltin::to_mat(elem->transformHandler);
 	viewMat = transformBuiltin::to_mat_cam(camera->transformHandler);
-	projMat = transformBuiltin::projection_matrix(60.0f, 1.0f, 10000000000.0f,
+	projMat = transformBuiltin::projection_matrix(60.0f, 0.1f, 10000000000.0f,
 		(float)(mode->width * camera->sizex) / (mode->height * camera->sizey));
 
 	glUseProgram(node->program);

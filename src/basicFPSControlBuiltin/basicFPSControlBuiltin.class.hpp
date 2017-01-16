@@ -32,11 +32,11 @@ public:
 
 	void		mouse_update(float posX, float posY);
 	void 		update();
+	uint32_t	_transformHandler;
 
 private:
 
 	uint32_t	_cameraHandler;
-	uint32_t	_transformHandler;
 
 	void 		render();
 	void 		behave();
@@ -56,6 +56,7 @@ public:
 	static void 		update();
 	static void 		create(float posx, float posy, float posz, float camxpos, float camypos, float camxsize, float camysize);
 	static void 		mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
+	static uint32_t		get_main_handler();
 
 private:
 

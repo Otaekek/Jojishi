@@ -148,3 +148,22 @@ void transformBuiltin::euler_angle(uint32_t handler, float x, float y)
 	up = up * transform->rotation;
 	transform->rotation = glm::rotate(transform->rotation, x, up);
 }
+
+void		transformBuiltin::init_rotation(uint32_t handler)
+{
+	t_transform *transform = get_transform(handler);
+	transform->rotation = glm::angleAxis(0.0f, glm::vec3{0.0f, 1.0f, 0.0f});
+}
+
+void 	transformBuiltin::CreateFromAxisAngle(uint32_t handler, float angle)
+{
+	t_transform *transform;
+
+	transform = get_transform(handler);
+    float halfAngle = angle * .5f;
+    float s = sin(halfAngle);
+    transform->rotation.x = 0 * s;
+    transform->rotation.y = 1 * s;
+    transform->rotation.z = 0 * s;
+    transform->rotation.w = cos(halfAngle);
+}
