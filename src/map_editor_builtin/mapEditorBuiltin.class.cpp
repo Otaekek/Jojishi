@@ -125,8 +125,13 @@ void mapEditorBuiltin::update_active()
 		dir = glm::normalize(dir);
 		transformBuiltin::translate(renderGO->transformHandler, dir.x * -700, dir.y * -700, dir.z * -700);
 		transformBuiltin::init_rotation(renderGO->transformHandler);
-		transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), acos((glm::dot(glm::vec3(0, 0, -1), -dir))));
-		printf("%f %f %f\n", dir.x, dir.y, dir.z);
+		dir.y = 0;
+		dir = glm::normalize(dir);
+		float rot = acos((glm::dot(glm::vec3(0, 0, 1), dir)));
+		if (dot(dir, glm::vec3(-1, 0, 0)) < 0)
+			rot = -rot;
+		transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), rot);
+		printf("%f\n", acos((glm::dot(glm::vec3(0, 0, -1), -dir))) * 360 / (2 * 3.14));
 		renderBuiltIn::render_me(activeRenderGo);
 	}
 }

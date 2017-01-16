@@ -107,7 +107,7 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 	
 	while (1)
 	{
-		printf("%d\n", i++);
+		//printf("%d\n", i++);
 		inputBuiltin::update();
 		basicFPSControlManagerBuiltin::update();
 		staticMeshManager::update();
