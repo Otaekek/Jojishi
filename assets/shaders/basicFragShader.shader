@@ -1,5 +1,8 @@
 #version 400
 
+
+#extension GL_ARB_conservative_depth : enable 
+
 in vec3 			pos_color;
 in vec3				camPos;
 in vec2 			uv;

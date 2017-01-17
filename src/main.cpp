@@ -91,7 +91,7 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 		for (int j = 0; j < 1; j++)
 		{
 			terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i,size,
-			mul , 550, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 200,
+			mul , 550, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 100,
 			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
 			
 		//	terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i, size,
