@@ -40,6 +40,8 @@ public:
 	static void scale(uint32_t handler, float x, float y, float  z);
 	static void euler_angle(uint32_t handler, float x, float y);
 
+	static void grow(uint32_t handler, float factor);
+
 	static glm::mat4 to_mat(uint32_t handler);
 	static t_transform *get_transform(uint32_t h);
 	static glm::mat4 to_mat_cam(uint32_t handler);

@@ -33,14 +33,18 @@ void mapEditorBuiltin::update_keyboard()
 {
 	t_renderGO *renderGO;
 
+	if (is_active)
+		renderGO = renderBuiltIn::get_renderGO(activeRenderGo);
 	if (inputBuiltin::key_pressed[GLFW_KEY_C])
 	{
 		position = (position + 1) > asset_size - 1 ? asset_size - 1: position + 1;
+		renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
 		inputBuiltin::key_pressed[GLFW_KEY_C] = 0;
 	}
 	if (inputBuiltin::key_pressed[GLFW_KEY_X])
 	{
 		position = (int)position - 1 > 0 ? position -1 : 0;
+		renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
 		inputBuiltin::key_pressed[GLFW_KEY_X] = 0;
 	}
 	if (inputBuiltin::key_pressed[GLFW_MOUSE_BUTTON_1])
@@ -53,7 +57,6 @@ void mapEditorBuiltin::update_keyboard()
 		else
 		{
 			is_active = false;
-			renderGO = renderBuiltIn::get_renderGO(activeRenderGo);
 			staticMeshManager::create_from_handler(renderGO->assetHandler, renderGO->transformHandler);
 		}
 		inputBuiltin::key_pressed[GLFW_MOUSE_BUTTON_1] = 0;
@@ -62,7 +65,45 @@ void mapEditorBuiltin::update_keyboard()
 	{
 		is_active = false;
 	}
-
+	if (is_active)
+	{
+		if (inputBuiltin::key_pressed[GLFW_KEY_F])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(1, 0, 0), 0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_G])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(0, 1, 0), 0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_H])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(0, 0, 1), 0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_R])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(1, 0, 0), -0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_T])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(0, 1, 0), -0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_Y])
+		{
+			transformBuiltin::rotate_model(renderGO->transformHandler, glm::vec3(0, 0, 1), -0.01);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_U])
+		{
+			transformBuiltin::init_rotation(renderGO->transformHandler);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_I])
+		{
+			transformBuiltin::grow(renderGO->transformHandler, 0.1);
+		}
+		if (inputBuiltin::key_pressed[GLFW_KEY_K])
+		{
+			transformBuiltin::grow(renderGO->transformHandler, -0.1);
+		}
+	}
 }
 
 void mapEditorBuiltin::update_ui()
@@ -124,7 +165,7 @@ void mapEditorBuiltin::update_active()
 		transform->position.z = -camTransform->position.z;
 		dir = glm::normalize(dir);
 		transformBuiltin::translate(renderGO->transformHandler, dir.x * -700, dir.y * -700, dir.z * -700);
-		transformBuiltin::init_rotation(renderGO->transformHandler);
+		/*transformBuiltin::init_rotation(renderGO->transformHandler);
 		dir.y = 0;
 		dir = glm::normalize(dir);
 		float rot = acos((glm::dot(glm::vec3(0, 0, 1), dir)));
@@ -132,6 +173,7 @@ void mapEditorBuiltin::update_active()
 			rot = -rot;
 		transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), rot);
 		printf("%f\n", acos((glm::dot(glm::vec3(0, 0, -1), -dir))) * 360 / (2 * 3.14));
+		*/
 		renderBuiltIn::render_me(activeRenderGo);
 	}
 }

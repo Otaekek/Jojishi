@@ -49,7 +49,7 @@ int main()
 //fileLoader::load_fs_asset_async("assets/graphic/mesh/IronMan/IronMan.obj", cluster);
 
 	asset = fileLoader::load_fs_asset_sync("assets/graphic/mesh/castle/castle/castle.obj", cluster);
-	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/Altair/altair.3ds", staticMemoryManager::E_OBJ_FILE);
+	int asset1 = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/Altair/altair.3ds", cluster);
 	//asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/maiden/crystal_maiden_econ1.fbx", staticMemoryManager::E_OBJ_FILE);
 	//fileLoader::load_fs_asset_sync("assets/graphic/mesh/land/OBJ/Models_OBJ/Terrain_500000.obj", staticMemoryManager::E_OBJ_FILE);
 	//fileLoader::load_fs_asset_sync("./assets/graphic/mesh/witcher/Geralt/Geralt.obj", staticMemoryManager::E_OBJ_FILE);
@@ -104,7 +104,8 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 	}
 	for (int i = 0; i < 10; i++)
 		mapEditorBuiltin::push_elem(asset);
-	
+		for (int i = 0; i < 10; i++)
+		mapEditorBuiltin::push_elem(asset1);
 	while (1)
 	{
 		//printf("%d\n", i++);
