@@ -135,8 +135,11 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 	{
 		material->GetTexture(type, 0, &texturePath);
 		strcat(completePath, texturePath.C_Str());
-		*has_text = true;
 		textureID = fileLoader::load_fs_asset_sync(completePath, 1);
+		*has_text = false;
+		if (staticMemoryManager::get_asset_state(textureID) != staticMemoryManager::E_LOADED)
+			return ;
+		*has_text = true;
 		instance = texture_builtin::create_instance(textureID);
 		request.fieldID = 0;
 		request.instanceHandler = instance;

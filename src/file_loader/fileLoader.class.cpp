@@ -7,6 +7,7 @@
 
 std::map<std::string, void (*)(void*)>  	fileLoader::extension_to_function;
 std::map<std::string, uint32_t> 			fileLoader::path_as_guid;
+std::map<std::string, e_asset_type> 		fileLoader::ext_to_type;
 
 fileLoader::fileLoader()
 {
@@ -16,7 +17,6 @@ fileLoader::fileLoader()
 void fileLoader::init()
 {
 	extension_to_function["obj"] = &fileLoader::load_obj;
-	extension_to_function["blend"] = &fileLoader::load_obj;
 	extension_to_function["C4D"] = &fileLoader::load_obj;
 	extension_to_function["c4d"] = &fileLoader::load_obj;
 	extension_to_function["3ds"] = &fileLoader::load_obj;
@@ -31,6 +31,27 @@ void fileLoader::init()
 	extension_to_function["png"] = &texture_builtin::load_texture;
 	extension_to_function["jpeg"] = &texture_builtin::load_texture;
 	extension_to_function["JPG"] = &texture_builtin::load_texture;
+	extension_to_function["TGA"] = &texture_builtin::load_texture;
+	extension_to_function["dds"] = &texture_builtin::load_texture;
+
+	ext_to_type["obj"] = E_3D;
+	ext_to_type["C4D"] = E_3D;
+	ext_to_type["c4d"] = E_3D;
+	ext_to_type["3ds"] = E_3D;
+	ext_to_type["3DS"] = E_3D;
+	ext_to_type["dae"] = E_3D;
+	ext_to_type["max"] = E_3D;
+	ext_to_type["fbx"] = E_3D;
+	ext_to_type["ma"] = E_3D;
+	ext_to_type["jpg"] = E_TEXTURE;
+	ext_to_type["tga"] = E_TEXTURE;
+	ext_to_type["bmp"] = E_TEXTURE;
+	ext_to_type["png"] = E_TEXTURE;
+	ext_to_type["jpeg"] = E_TEXTURE;
+	ext_to_type["JPG"] = E_TEXTURE;
+	ext_to_type["TGA"] = E_TEXTURE;
+	ext_to_type["dds"] = E_TEXTURE;
+
 }
 
 fileLoader::~fileLoader()
@@ -65,7 +86,32 @@ char 		*fileLoader::readfile(std::string path)
 	return ((char*)file.c_str());
 }
 
-uint32_t fileLoader::load_fs_asset_async(std::string path, uint32_t cluster)
+void			get_extension(char *str, char *out)
+{
+	uint32_t i = strlen(str) - 1;
+	while (i > 0 && str[i] != '.')
+	{
+		i--;
+	}
+	i++;
+	int k = i;
+	while (i < strlen(str))
+	{
+		out[i - k] = str[i];
+ 		i++;
+	}
+	out[i - k] = 0;
+}
+
+bool			fileLoader::is_loadable_as_3d_asset(char *str)
+{
+	char ext[256];
+
+	get_extension(str, ext);
+	return (ext_to_type[ext] == E_3D);
+}
+
+uint32_t 		fileLoader::load_fs_asset_async(std::string path, uint32_t cluster)
 {
 	t_job			job;
 	uint32_t 		ref;
@@ -84,7 +130,7 @@ uint32_t fileLoader::load_fs_asset_async(std::string path, uint32_t cluster)
 	return (ref);
 }
 
-uint32_t fileLoader::load_fs_asset_sync(std::string path, uint32_t cluster)
+uint32_t 		fileLoader::load_fs_asset_sync(std::string path, uint32_t cluster)
 {
 	t_job			job;
 	uint32_t 		ref;
@@ -166,7 +212,6 @@ void 			fileLoader::load_file(void *data)
 		return ;
 	}
 	extension_to_function[extenstion](data);
-	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadHeader->ref);
 }
 
 

@@ -77,6 +77,6 @@ void main(void)
 
 	FragColor = vec4(compute_diffuse(pos_color, frag_Normal, diffuse_color).xyz +
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16)
-		+ ambiant,
+		+ 0,
 		1);
 }

@@ -49,6 +49,7 @@ void		texture_builtin::load_texture(void *data)
 	texture->textureData = staticMemoryManager::create_asset(loadheader->cluster, texture->sizex * texture->sizey * 4);
 	textureData = (char*)staticMemoryManager::get_data_ptr(texture->textureData);
 	memcpy(textureData, FreeImage_GetBits(image), texture->sizex * texture->sizey * 4);
+	staticMemoryManager::set_asset_state(staticMemoryManager::E_LOADED, loadheader->ref);
 }
 
 uint32_t 	texture_builtin::create_instance(uint32_t ref)

@@ -4,12 +4,13 @@
 #include <mapEditorBuiltin.class.hpp>
 #include <sys/types.h>
 #include <dirent.h>
+#include <fileLoader.class.hpp>
 
 class directorySmartLoader {
 
 public:
 
-	void execute();
+	static void execute();
 
 private:
 

@@ -34,7 +34,7 @@ void transformBuiltin::grow(uint32_t handler, float factor)
 	t_transform *transform;
 
 	transform = get_transform(handler);
-	transform->scale += factor;
+	transform->scale *= factor;
 }
 
 glm::vec3 transformBuiltin::get_direction(uint32_t handler)

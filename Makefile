@@ -114,6 +114,11 @@ SRC_SUBDIR += map_editor_builtin
 CFLAGS += -Isrc/map_editor_builtin
 SOURCES += mapEditorBuiltin.class.cpp
 
+# directory smart loader
+SRC_SUBDIR += directory_smart_loader
+CFLAGS += -Isrc/directory_smart_loader
+SOURCES += directorySmartLoader.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include

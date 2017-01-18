@@ -38,21 +38,27 @@ void mapEditorBuiltin::update_keyboard()
 	if (inputBuiltin::key_pressed[GLFW_KEY_C])
 	{
 		position = (position + 1) > asset_size - 1 ? asset_size - 1: position + 1;
-		renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
+		if (is_active && staticMemoryManager::get_asset_state(renderBuiltIn::get_renderGO(assets[position])->assetHandler) == staticMemoryManager::E_LOADED)
+			renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
 		inputBuiltin::key_pressed[GLFW_KEY_C] = 0;
 	}
 	if (inputBuiltin::key_pressed[GLFW_KEY_X])
 	{
 		position = (int)position - 1 > 0 ? position -1 : 0;
-		renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
+		if (is_active &&
+			staticMemoryManager::get_asset_state(renderBuiltIn::get_renderGO(assets[position])->assetHandler) == staticMemoryManager::E_LOADED)
+			renderGO->assetHandler = renderBuiltIn::get_renderGO(assets[position])->assetHandler;
 		inputBuiltin::key_pressed[GLFW_KEY_X] = 0;
 	}
 	if (inputBuiltin::key_pressed[GLFW_MOUSE_BUTTON_1])
 	{
 		if (!is_active)
 		{
-			is_active = true;
-			set_active_render_go(activeRenderGo, assets[position]);
+			if (asset_size > 0 && staticMemoryManager::get_asset_state(renderBuiltIn::get_renderGO(assets[position])->assetHandler) == staticMemoryManager::E_LOADED)
+			{
+				is_active = true;
+				set_active_render_go(activeRenderGo, assets[position]);
+			}
 		}
 		else
 		{
@@ -97,11 +103,11 @@ void mapEditorBuiltin::update_keyboard()
 		}
 		if (inputBuiltin::key_pressed[GLFW_KEY_I])
 		{
-			transformBuiltin::grow(renderGO->transformHandler, 0.1);
+			transformBuiltin::grow(renderGO->transformHandler, 1.1);
 		}
 		if (inputBuiltin::key_pressed[GLFW_KEY_K])
 		{
-			transformBuiltin::grow(renderGO->transformHandler, -0.1);
+			transformBuiltin::grow(renderGO->transformHandler, 1.0f / 1.1);
 		}
 	}
 }
@@ -125,8 +131,7 @@ void mapEditorBuiltin::update_ui()
 		camera->posy = 0.8;
 		renderGO = renderBuiltIn::get_renderGO(assets[(int)i]);
 		if ((int)i == position)
-			transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), 0.01);
-
+			transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), 0.01);	
 		if (staticMemoryManager::get_asset_state(renderGO->assetHandler) == staticMemoryManager::E_LOADED)
 			renderBuiltIn::render_me(assets[(int)i]);
 		renderBuiltIn::add_camera(cameras[(int)i]);
@@ -196,11 +201,10 @@ void mapEditorBuiltin::push_elem(uint32_t assetHandler)
 	t_transform 	*camTransform;
 	t_camera		*camera;
 
-	assets[asset_size++] = renderBuiltIn::create();
-	cameras[asset_size - 1] = renderBuiltIn::create_camera();
-
-	renderGO = (t_renderGO*)dynamicMemoryManager::get_ptr(assets[asset_size - 1]);
-	camera = (t_camera*)dynamicMemoryManager::get_ptr(cameras[asset_size - 1]);
+	assets[asset_size] = renderBuiltIn::create();
+	cameras[asset_size] = renderBuiltIn::create_camera();
+	renderGO = renderBuiltIn::get_renderGO(assets[asset_size]);
+	camera = (t_camera*)dynamicMemoryManager::get_ptr(cameras[asset_size]);
 	camera->transformHandler = transformBuiltin::create();
 	camTransform = (t_transform*)dynamicMemoryManager::get_ptr(camera->transformHandler);
 	renderGO->assetHandler = assetHandler;
@@ -208,4 +212,5 @@ void mapEditorBuiltin::push_elem(uint32_t assetHandler)
 	renderGO->cameraLayer = 2 << asset_size;
 	renderGO->transformHandler = transformBuiltin::create();
 	transformBuiltin::translate(camera->transformHandler, 0, 0, -800);
+	asset_size++;
 }

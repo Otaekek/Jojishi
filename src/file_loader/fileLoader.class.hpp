@@ -26,6 +26,13 @@ typedef struct 			s_loadHeader {
 	char				path[1024];
 }						t_loadHeader;
 
+enum e_asset_type {
+	E_NONE = 0,
+	E_3D,
+	E_SOUND,
+	E_TEXTURE
+};
+
 class fileLoader {
 
 public:
@@ -39,7 +46,10 @@ public:
 	static void 		load_file(void *data);
 	static uint32_t		get_fs(std::string path);
 
+	static bool			is_loadable_as_3d_asset(char *str);
 	static char 		*readfile(std::string path);
+	static std::map<std::string, e_asset_type> 		ext_to_type;
+
 private :
 	
 	static std::map<std::string, void (*)(void*)> 	extension_to_function;

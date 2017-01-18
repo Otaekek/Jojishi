@@ -23,6 +23,7 @@
 #include <basicLightFactory.class.hpp>
 #include <terrainGenerationBuiltin.class.hpp>
 #include <mapEditorBuiltin.class.hpp>
+#include <directorySmartLoader.class.hpp>
 
 int main()
 {
@@ -102,10 +103,8 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 //				texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/big.jpeg", 1)));
 		}
 	}
-	for (int i = 0; i < 10; i++)
-		mapEditorBuiltin::push_elem(asset);
-		for (int i = 0; i < 10; i++)
-		mapEditorBuiltin::push_elem(asset1);
+	fileLoader::load_fs_asset_sync("./assets/jojishiAssets/ak12/viewmodel_ak12/sf2arms.blend", 0);
+	directorySmartLoader::execute();
 	while (1)
 	{
 		//printf("%d\n", i++);
