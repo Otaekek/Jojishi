@@ -1,9 +1,5 @@
 #include "runtimeLibrary.hpp"
 
-class staticMemoryManager {
-
-public:
-
 void staticMemoryManager::init()
 {
 
@@ -19,12 +15,12 @@ void staticMemoryManager::create_lib(char *sourcesPath)
 
 }
 
-void staticMemoryManager::compile()
+void staticMemoryManager::compile(char *sourcesPath)
 {
 
 }
 
-void staticMemoryManager::link()
+void staticMemoryManager::link(char *sourcesLib)
 {
-	
+
 }
