@@ -24,7 +24,7 @@
 #include <terrainGenerationBuiltin.class.hpp>
 #include <mapEditorBuiltin.class.hpp>
 #include <directorySmartLoader.class.hpp>
-
+#include <runtimeLibrary.class.hpp>
 int main()
 {
 	texture_builtin::init();
@@ -67,6 +67,7 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 	float count = 0;
 	int i = 0;
 	t_renderGO *skybox;
+	runtimeLibrary::create_lib("bonjour je suis une autruche");
 	skybox = renderBuiltIn::get_skyboxGO();
 //	staticMeshManager::create(glm::vec3(10000, 1000, 10000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
 //	staticMeshManager::create(glm::vec3(10000, 1000, 12000), glm::vec3(0, 1.0, 0), 0, glm::vec3(10, 10, 10), "assets/graphic/mesh/castle/castle/castle.obj");
@@ -86,14 +87,14 @@ basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0,
 		//terrainGenerationBuiltin::add_biom(0, 0, 0,256,
 		//			200, 2000, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/rock.jpeg", 1)), 10,
 		///			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/mountain.png", 1)));
-	int size = 512; int mul = 66 * 1.5;
+	int size = 256; int mul = 66 * 1.5 * 2;
 	for (int i = 0; i < 1; i++)
 	{
 		for (int j = 0; j < 1; j++)
 		{
 			terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i,size,
 			mul , 550, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 100,
-			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/ouais.png", 1)));
+			texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/aa.jpeg", 1)));
 			
 		//	terrainGenerationBuiltin::add_biom(size * mul * j, 0, size * mul * i, size,
 		//		mul, 1690, texture_builtin::create_instance(fileLoader::load_fs_asset_sync("assets/graphic/texture/grass.jpg", 1)), 10,

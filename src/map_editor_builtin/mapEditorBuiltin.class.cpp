@@ -112,6 +112,12 @@ void mapEditorBuiltin::update_keyboard()
 	}
 }
 
+static void shift_elems(uint32_t *assets, uint32_t index, uint32_t size)
+{
+	for (; index < size; index++)
+		assets[index] = assets[index + 1];
+}
+
 void mapEditorBuiltin::update_ui()
 {
 	t_camera		*camera;
@@ -134,6 +140,12 @@ void mapEditorBuiltin::update_ui()
 			transformBuiltin::rotate(renderGO->transformHandler, glm::vec3(0, 1, 0), 0.01);	
 		if (staticMemoryManager::get_asset_state(renderGO->assetHandler) == staticMemoryManager::E_LOADED)
 			renderBuiltIn::render_me(assets[(int)i]);
+		else if (staticMemoryManager::get_asset_state(renderGO->assetHandler) == staticMemoryManager::E_ERR)
+		{
+			shift_elems(cameras, (int)i, asset_size);
+			shift_elems(assets, (int)i, asset_size--);
+			continue ;
+		}
 		renderBuiltIn::add_camera(cameras[(int)i]);
 	}
 	float dir = 0;

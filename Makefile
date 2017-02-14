@@ -119,6 +119,11 @@ SRC_SUBDIR += directory_smart_loader
 CFLAGS += -Isrc/directory_smart_loader
 SOURCES += directorySmartLoader.class.cpp
 
+# runTime library
+SRC_SUBDIR += runtime_library
+CFLAGS += -Isrc/runtime_library
+SOURCES += runtimeLibrary.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include
