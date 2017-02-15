@@ -45,7 +45,7 @@ void 			renderBuiltIn::init()
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
 	glClearColor(0.1, 0, 0, 0);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

@@ -6,7 +6,10 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <stdlib.h>
+#include <stdint.h> 
 #include <stdio.h>
+#include <unistd.h>
+
 
 class runtimeLibrary {
 
@@ -19,9 +22,11 @@ public:
 	static void close_lib(void *handle);
 
 private:
+	static char *get_lib_path();
 	static void compile(char *sourcepath);
 	static void *link(char *sourcepath);
-	static char *get_string_from_source(char *sourcepath);
+	static char *get_object_from_source(char *sourcepath);
+	static char *get_lib_from_source();
 	static int count;
 };
 

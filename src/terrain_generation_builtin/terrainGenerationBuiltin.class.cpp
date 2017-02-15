@@ -70,9 +70,9 @@ void	create_normal(float *data, uint32_t i, uint32_t j, uint32_t size, float *ou
 	base.x = -(c - a + 2.0f * (e - d) + h - f) / (size * scale);
 	base.z = -(f - a + 2.0f * (g - b) + h - c) / (size * scale);
 	base = glm::normalize(base);
-	outvec[0] = base.x;
-	outvec[1] = base.y;
-	outvec[2] = base.z;
+	outvec[0] = -base.x;
+	outvec[1] = -base.y;
+	outvec[2] = -base.z;
 }
 
 void	create_vbo(int32_t size, float *data, t_renderMeshData *meshData, float scale, float ampl, uint32_t albedoTextureInstance, float textScale)

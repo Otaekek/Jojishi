@@ -12,19 +12,6 @@ void runtimeLibrary::shutdown()
 
 }
 
-/*
-void runtimeLibrary::create_lib_from_dir(char *sourcesDir)
-{
-
-}
-
-
-void runtimeLibrary::compile_dir(char *sourcesDir)
-{
-	count++;
-}
-*/
-
 void utoa(int n, char *s)
 {
     int len = log10(n) + 1;
@@ -45,7 +32,7 @@ void utoa(int n, char *s)
     }
 }
 
-char *runtimeLibrary::get_string_from_source(char *sourcepath)
+char *runtimeLibrary::get_lib_from_source()
 {
 	char		*str;
 	char		tmp[4096];
@@ -57,16 +44,46 @@ char *runtimeLibrary::get_string_from_source(char *sourcepath)
 	output[0] = 0;
 	len = log10(count) + 1;
 	str = (char*)malloc(19 + len + 1 + 5 + 400);
-	memcpy(str, "g++ -dynamiclib -o dylib", 24);
+	str[0] = 0;
+	strcat(str, "g++ -shared -o .rtlib/dylib");
 	utoa(count, tmp);
-	memcpy(str + 24, tmp, len);
-	memcpy(str + 24 + len, ".so \0", 5);
-	strcat(output, "dylib");
-	strcat(output, tmp);
-	strcat(output, ".so");
-	strcat(str, "dylib");
 	strcat(str, tmp);
-	strcat(str, ".cpp");
+	strcat(str, ".so ");
+	strcat(str, " .rtlib/dylib");
+	strcat(str, tmp);
+	strcat(str, ".o");
+	return (str);
+}
+
+char *runtimeLibrary::get_object_from_source(char *sourcePath)
+{
+	char		*str;
+	char		tmp[4096];
+	uint32_t 	len;
+
+	if (count > 4096)
+		count = 0;
+	len = log10(count) + 1;
+	str = (char*)malloc(19 + len + 1 + 5 + 400);
+	str[0] = 0;
+	strcat(str, "g++ -fpic -o .rtlib/dylib");
+	utoa(count, tmp);
+	strcat(str, tmp);
+	strcat(str, ".o ");
+	strcat(str, " -c ");
+	strcat(str, sourcePath);
+	return (str);
+}
+
+char *runtimeLibrary::get_lib_path()
+{
+	char *str;
+
+	str = (char*)malloc(30);
+	*str = 0;
+	strcat(str, ".rtlib/dylib");
+	utoa(count, str + 12);
+	strcat(str, ".so");
 	return (str);
 }
 
@@ -77,12 +94,30 @@ void runtimeLibrary::create_lib(char *sourcesPath)
 
 void runtimeLibrary::compile(char *sourcePath)
 {
-	char *str;
+	char 	*str;
+	int		id;
+	void (*f)(void);
 
-	count++;
-	str = get_string_from_source(sourcePath);
-	system(str);
-	//link(ouais);
+	id = vfork();
+	if (id == 0)
+	{
+		count++;
+		str = get_object_from_source(sourcePath);
+		execl("/bin/sh", "sh", "-c", str, (char *) 0);
+		free(str);
+		_exit(2);
+	}
+	id = vfork();
+	if (id == 0)
+	{
+		str = get_lib_from_source();
+		execl("/bin/sh", "sh", "-c", str, (char *) 0);
+		free(str);
+		_exit(2);
+	}
+	str = get_lib_path();
+	f = (void(*)())dlsym(link(str), "_Z4initv");
+	f();
 }
 
 void *runtimeLibrary::link(char *sourcesLib)
