@@ -182,7 +182,12 @@ BUILD_DIR = $(OBJ_PATH) $(DEP_PATH)
 
 .SECONDARY: $(OBJECTS)
 
-all: sound $(LIB42) $(DEPS) $(NAME)
+all: sound script $(LIB42) $(DEPS) $(NAME)
+
+script:
+	@export LD_LIBRARY_PATH=./assimp/lib
+	@echo -n $(CFLAGS) > .tmpheader
+	@python3 genHeader.py > headerList.hpp
 
 $(NAME): $(OBJECTS) | $(LIB42)
 	g++ -o $@ $^ $(LDFLAGS)
