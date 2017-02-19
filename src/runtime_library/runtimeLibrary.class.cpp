@@ -80,10 +80,9 @@ void create_stm_line(char *str, char *head, char *sources)
 
 void link_library(char *stmline, char sources[][1024], char *srcdir)
 {
-	char head[] = "g++ -std=c++11 -shared ";
+	char head[] = "g++ -fPIC -shared ";
 
 	strcat(stmline, head);
-	strcat(stmline, headerList);
 	strcat(stmline, " -o ");
 	strcat(stmline, srcdir);
 	strcat(stmline, "/");
@@ -93,6 +92,7 @@ void link_library(char *stmline, char sources[][1024], char *srcdir)
 		strcat(stmline, sources[i]);
 		strcat(stmline, ".o ");
 	}
+//	strcat(stmline, " .obj/main.o  .obj/stackAllocator.class.o  .obj/poolAllocator.class.o  .obj/staticMemoryManager.class.o  .obj/dynamicMemoryManager.class.o  .obj/fileLoader.class.o  .obj/renderDataSys.class.o  .obj/complexObjectRenderingPipeline.o  .obj/renderBuiltIn.class.o  .obj/jobHandler.class.o  .obj/transform.class.o  .obj/basicFPSControlBuiltin.class.o  .obj/inputBuiltin.class.o  .obj/basicMeshFactory.class.o  .obj/basicLightFactory.class.o  .obj/terrainGenerationBuiltin.class.o  .obj/texture_builtin.class.o  .obj/shutdown.class.o  .obj/mapEditorBuiltin.class.o  .obj/directorySmartLoader.class.o  .obj/runtimeLibrary.class.o");
 }
 
 int	run_sys(char *str)
@@ -112,7 +112,7 @@ int	run_sys(char *str)
 
 void *runtimeLibrary::compile_object(char sources[64][1024], char *srcdir)
 {
-	char 		stmLineHead[65536] = "g++ -std=c++11 -fpic ";
+	char 		stmLineHead[65536] = "g++ -std=c++11 -fPIC ";
 	char 		stmLine[65536] = {0};
 	void 		*handle;
 
@@ -143,8 +143,11 @@ void *runtimeLibrary::compile_object(char sources[64][1024], char *srcdir)
 	strcat(stmLine,  "0xdeadd00d.so");
 	handle = link(stmLine);
 	if (!handle)
+	{
+		printf("%s\n", dlerror());
 		return (NULL);
-	f = (void(*)())dlsym(handle, "_Z4initv");
+	}
+	f = (void(*)())dlsym(handle, "_Z5debutv");
 	if (f)
 		f();
 	return (handle);
@@ -152,7 +155,7 @@ void *runtimeLibrary::compile_object(char sources[64][1024], char *srcdir)
 
 void *runtimeLibrary::link(char *sourcesLib)
 {
-	return (dlopen(sourcesLib, RTLD_NOW));
+	return (dlopen(sourcesLib, RTLD_LAZY));
 }
 
 void runtimeLibrary::close_lib(void *handle)
