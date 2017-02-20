@@ -80,7 +80,7 @@ void create_stm_line(char *str, char *head, char *sources)
 
 void link_library(char *stmline, char sources[][1024], char *srcdir)
 {
-	char head[] = "g++ -fPIC -shared ";
+	char head[] = "g++ -fPIC -Wl,-undefined -Wl,dynamic_lookup -shared ";
 
 	strcat(stmline, head);
 	strcat(stmline, " -o ");
@@ -97,13 +97,13 @@ void link_library(char *stmline, char sources[][1024], char *srcdir)
 
 int	run_sys(char *str)
 {
-	int pid = vfork();
 	int ret;
 
 	write(1, "\x1B[34m", 6);
 	write(1, str, strlen(str));
 	write(1, "\n", 1);
 	write(1, "\x1B[37m", 6);
+	int pid = vfork();
 	if (pid == 0)
 		execl("/bin/sh", "sh","-c", str, (char*)0);
 	while ((ret = waitpid(pid, NULL, 0)) > 0);
@@ -155,7 +155,7 @@ void *runtimeLibrary::compile_object(char sources[64][1024], char *srcdir)
 
 void *runtimeLibrary::link(char *sourcesLib)
 {
-	return (dlopen(sourcesLib, RTLD_LAZY));
+	return (dlopen(sourcesLib, RTLD_NOW | RTLD_GLOBAL));
 }
 
 void runtimeLibrary::close_lib(void *handle)

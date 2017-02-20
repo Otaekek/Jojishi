@@ -28,8 +28,8 @@ ifeq ($(SAN),yes)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 endif
 
-CFLAGS += -fPIC
-LDFLAGS += -pthread -fPIC -W
+CFLAGS += -fPIC -Wl
+LDFLAGS += -pthread -fPIC -Wl
 # Input
 #SRC_SUBDIR += input
 #SOURCES += readline.c
@@ -187,7 +187,7 @@ all: sound script $(LIB42) $(DEPS) $(NAME)
 
 script:
 	@export LD_LIBRARY_PATH=./assimp/lib
-	@echo -n $(CFLAGS) > .tmpheader
+	@echo  $(CFLAGS) "\c" > .tmpheader
 	@echo -n $(LDFLAGS) > .tmpobject
 	@python3 genHeader.py > headerList.hpp
 
