@@ -58,36 +58,10 @@ void update()
 
 int main()
 {
-	uint32_t 	transform;
-	uint32_t 	asset;
-	uint32_t 	go;
-	t_renderGO 	*elem;
-	t_renderGO 	*skybox;
-
 	init();
-
-	transform = transformBuiltin::create();
-	go = renderBuiltIn::create();
-	uint32_t cluster = staticMemoryManager::init_cluster();
-	asset = fileLoader::load_fs_asset_sync("./assets/graphic/mesh/cube/cube.obj", E_3D);
-	renderDataSys::set_programm(E_SKYBOX, asset);
-	renderBuiltIn::modify_skybox(asset);
-
-	basicFPSControlManagerBuiltin::create(256 * 1300 * -0, 0000, -256 * 1300 * 0, 0, 0, 1, 1);
-
-
-	renderBuiltIn::modify_skybox_light(1.2);
-	basicLightFactory::create(glm::vec3(0, 10000, 0), glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), E_UNI, glm::vec3(1, 1, 1));
-
-	directorySmartLoader::execute();
-
-
-	runtimeLibrary::create_lib("assets/levelBuilder/level01");
-	
-	while (1)
-	{
+	runtimeLibrary::create_lib("assets/levelBuilder/startEngine");
+	while (42)
 		update();
-	}
 	shutdown();
 	return (0);
 }

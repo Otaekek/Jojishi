@@ -37,7 +37,9 @@ void fill_sources(char ret[64][1024], char *sourceDir)
 	uint32_t			i;
 	struct dirent		*dirent;
 
+
 	i = 0;
+	ret[0][0] = 0;
 	dir = opendir(sourceDir);
 	if (dir == NULL)
 	{
@@ -46,6 +48,7 @@ void fill_sources(char ret[64][1024], char *sourceDir)
 	}
 	while ((dirent = readdir(dir)))
 	{
+
 		if (dirent->d_type == DT_REG && !strcmp(dirent->d_name + strlen(dirent->d_name) - 4, ".cpp")
 			&& strlen(dirent->d_name) + strlen(sourceDir) < 1022 && i < 64)
 		{
@@ -65,17 +68,26 @@ void *runtimeLibrary::create_lib(char *sourceDir)
 	return (compile_object(sources, sourceDir));
 }
 
-void create_stm_line(char *str, char *head, char *sources)
+bool create_stm_line(char *str, char *head, char *sources, struct stat libstat, int statret)
 {
- 	uint32_t i = 0;
- 	
+ 	uint32_t 		i = 0;
+ 	struct stat 	filestat;
+ 	char 			pathstat[65536] = {0};
+
  	*str = 0;
+	if (statret == 0 && stat(strcat(strcat(pathstat, sources), ".cpp"), &filestat) == 0)
+	{
+		printf("%s %ld %ld\n", pathstat, filestat.st_mtimespec.tv_sec, libstat.st_mtimespec.tv_sec);
+		if (filestat.st_mtimespec.tv_sec < libstat.st_mtimespec.tv_sec)
+			return (false);
+ 	}
 	strcat(str, head);
 	strcat(str, sources);
 	strcat(str, ".o");
 	strcat(str, " -c ");
 	strcat(str, sources);
 	strcat(str, ".cpp");
+	return (true);
 }
 
 void link_library(char *stmline, char sources[][1024], char *srcdir)
@@ -92,7 +104,6 @@ void link_library(char *stmline, char sources[][1024], char *srcdir)
 		strcat(stmline, sources[i]);
 		strcat(stmline, ".o ");
 	}
-//	strcat(stmline, " .obj/main.o  .obj/stackAllocator.class.o  .obj/poolAllocator.class.o  .obj/staticMemoryManager.class.o  .obj/dynamicMemoryManager.class.o  .obj/fileLoader.class.o  .obj/renderDataSys.class.o  .obj/complexObjectRenderingPipeline.o  .obj/renderBuiltIn.class.o  .obj/jobHandler.class.o  .obj/transform.class.o  .obj/basicFPSControlBuiltin.class.o  .obj/inputBuiltin.class.o  .obj/basicMeshFactory.class.o  .obj/basicLightFactory.class.o  .obj/terrainGenerationBuiltin.class.o  .obj/texture_builtin.class.o  .obj/shutdown.class.o  .obj/mapEditorBuiltin.class.o  .obj/directorySmartLoader.class.o  .obj/runtimeLibrary.class.o");
 }
 
 int	run_sys(char *str)
@@ -116,13 +127,22 @@ void *runtimeLibrary::compile_object(char sources[64][1024], char *srcdir)
 	char 		stmLine[65536] = {0};
 	void 		*handle;
 
+	struct stat 		libstat;
+	int 				statret;
+
+	statret = stat(strcat(strcat(strcat(stmLine, srcdir),  "/"), "0xdeadd00d.so"), &libstat);
+	stmLine[0] = 0;
 	strcat(stmLineHead, headerList);
 	strcat(stmLineHead, " -o ");
 	uint32_t	i = 0;
 	void (*f)(void);
 	while (sources[i][0])
 	{
-		create_stm_line(stmLine, stmLineHead, sources[i]);
+		if (create_stm_line(stmLine, stmLineHead, sources[i], libstat, statret) == false)
+		{
+			i++;
+			continue ;
+		}
 		if (run_sys(stmLine) < 0)
 		{
 			printf("Script cannot be compiled\n");

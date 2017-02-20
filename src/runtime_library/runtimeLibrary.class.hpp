@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 class runtimeLibrary {
 
