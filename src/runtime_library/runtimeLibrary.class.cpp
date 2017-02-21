@@ -1,6 +1,12 @@
 #include "runtimeLibrary.class.hpp"
 #include "../../headerList.hpp"
 
+#ifdef  __APPLE_
+# define FILE_AGE(F)(F.st_mtimespec.tv_sec)
+#else
+# define FILE_AGE(F)(F.st_mtim.tv_sec)
+#endif
+
 void runtimeLibrary::init()
 {
 
@@ -77,8 +83,7 @@ bool create_stm_line(char *str, char *head, char *sources, struct stat libstat, 
  	*str = 0;
 	if (statret == 0 && stat(strcat(strcat(pathstat, sources), ".cpp"), &filestat) == 0)
 	{
-		printf("%s %ld %ld\n", pathstat, filestat.st_mtimespec.tv_sec, libstat.st_mtimespec.tv_sec);
-		if (filestat.st_mtimespec.tv_sec < libstat.st_mtimespec.tv_sec)
+		if (FILE_AGE(filestat) < FILE_AGE(libstat))
 			return (false);
  	}
 	strcat(str, head);

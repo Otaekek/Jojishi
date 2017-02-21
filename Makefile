@@ -28,8 +28,8 @@ ifeq ($(SAN),yes)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 endif
 
-CFLAGS += -fPIC -Wl
-LDFLAGS += -pthread -fPIC -Wl
+CFLAGS += -fPIC
+LDFLAGS += -pthread -fPIC -rdynamic
 # Input
 #SRC_SUBDIR += input
 #SOURCES += readline.c

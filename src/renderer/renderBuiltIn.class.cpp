@@ -49,8 +49,8 @@ void 			renderBuiltIn::init()
 
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//glfwWindowHint(GLFW_SAMPLES, 4);
-	//glEnable(GL_MULTISAMPLE);
+	glEnable(GL_MULTISAMPLE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwSwapBuffers(window);
 	glEnable(GL_BLEND);
 	skyboxGO = renderBuiltIn::create();
