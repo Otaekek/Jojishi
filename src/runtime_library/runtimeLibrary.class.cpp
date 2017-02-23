@@ -1,7 +1,7 @@
 #include "runtimeLibrary.class.hpp"
 #include "../../headerList.hpp"
 
-#ifdef  __APPLE_
+#ifdef  __APPLE__
 # define FILE_AGE(F)(F.st_mtimespec.tv_sec)
 #else
 # define FILE_AGE(F)(F.st_mtim.tv_sec)
