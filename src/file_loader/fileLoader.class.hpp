@@ -48,8 +48,8 @@ public:
 
 	static bool			is_loadable_as_3d_asset(char *str);
 	static char 		*readfile(std::string path);
+	static bool 		is_valid(char *path);
 	static std::map<std::string, e_asset_type> 		ext_to_type;
-
 private :
 	
 	static std::map<std::string, void (*)(void*)> 	extension_to_function;

@@ -102,6 +102,13 @@ void			get_extension(char *str, char *out)
 	}
 	out[i - k] = 0;
 }
+bool 			fileLoader::is_valid(char *path)
+{
+	char ext[256];
+	
+	get_extension(path, ext);
+	return (extension_to_function[ext] != NULL);	
+}
 
 bool			fileLoader::is_loadable_as_3d_asset(char *str)
 {
