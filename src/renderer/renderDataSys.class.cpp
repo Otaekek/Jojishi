@@ -119,6 +119,29 @@ uint32_t renderDataSys::createVBO_Indice(uint32_t *indices, uint32_t indice_size
 	return indiceBufferId;
 }
 
+static void back_slash(char *s)
+{
+	for (uint32_t i = 0; s[i]; i++)
+		if (s[i] == '\\')
+			s[i] = '/';	
+}
+
+static void try_path(char *complete_path)
+{
+	static const char listext[12][12] = {".jpg", "\0"};
+	if (fileLoader::is_valid(complete_path))
+		return ;
+	for (uint32_t i = 0; listext[i][0];i++)
+	{
+		strcat(complete_path, listext[i]);
+		if (access(complete_path, R_OK))
+		{
+			return ;
+		}
+		complete_path[strlen(complete_path) - strlen(listext[i])] = 0;
+	}
+}
+
 void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial *material,
 		uint32_t *textEmplacement, bool *has_text, uint32_t meshDataHandler)
 {
@@ -135,6 +158,8 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 	{
 		material->GetTexture(type, 0, &texturePath);
 		strcat(completePath, texturePath.C_Str());
+		try_path(completePath);
+		back_slash(completePath);
 		textureID = fileLoader::load_fs_asset_sync(completePath, 1);
 		*has_text = false;
 		if (staticMemoryManager::get_asset_state(textureID) != staticMemoryManager::E_LOADED)
@@ -143,8 +168,8 @@ void 		renderDataSys::handle_texture(aiTextureType type, char *path, aiMaterial 
 		instance = texture_builtin::create_instance(textureID);
 		request.fieldID = 0;
 		request.instanceHandler = instance;
-		request.wrapt_filter = GL_CLAMP_TO_EDGE;
-		request.wraps_filter = GL_CLAMP_TO_EDGE;
+		request.wrapt_filter = GL_REPEAT;
+		request.wraps_filter = GL_REPEAT;
 		request.min_filter = GL_LINEAR_MIPMAP_LINEAR;
 		request.mag_filter = GL_LINEAR;
 		request.meshDataHandler = meshDataHandler;

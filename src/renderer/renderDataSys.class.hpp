@@ -14,6 +14,7 @@
 #include <jojishi.hpp>
 #include <string>
 #include <mutex>
+#include <fcntl.h>
 
 enum E_SHADER {
 	E_DEFAULT,
