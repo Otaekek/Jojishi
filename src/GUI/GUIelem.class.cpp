@@ -8,6 +8,7 @@ GUIelem::GUIelem(float posx, float posy, float sizex, float sizey, float collide
 	_sizey = sizey;
 	set_collider(colliders, numcollider);
 	_textHandler = textHandler;
+	_layer = 0;
 }
 
 GUIelem::~GUIelem()
