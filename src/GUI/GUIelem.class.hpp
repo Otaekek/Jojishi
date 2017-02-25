@@ -8,7 +8,6 @@ public:
 	GUIelem(float posx, float posy, float sizex, float sizey, float colliders[], uint32_t numcollider, uint32_t textHandler);
 	~GUIelem();
 
-	virtual	void		*operator new();
 	virtual void		update();
 	virtual void		render_spec();
 	virtual void		on_mouse_hoover();
@@ -20,10 +19,12 @@ public:
 	void				set_collider(float colliders[], uint32_t numc);
 	void				set_pos(float x, float y);
 	void				render(float aposx, float aposy, float asizex, float asizey);
+	void				on_mouse_leave();
 
 	uint32_t			_layer;
-	float				_colliders[256];
+	float				_colliders[256 * 4];
 	float				_collidernum;
+	bool				_deleteMe;
 
 protected:
 
@@ -36,6 +37,6 @@ protected:
 	float		_sizey;
 
 	GUIelem();
-}
+};
 
 #endif

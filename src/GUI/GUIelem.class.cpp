@@ -27,11 +27,8 @@ void				GUIelem::set_size(float x, float y)
 
 void				GUIelem::set_collider(float colliders[], uint32_t numc)
 {
-	for (uint32_t i = 0; i < numc; i++)
-	{
-		_colliders[i * 2] = colliders[i * 2];
-		_colliders[i * 2 + 1] = colliders[i * 2 + 1];
-	}
+	for (uint32_t i = 0; i < numc * 4 && i < 255 * 4; i++)
+		_colliders[i] = colliders[i];
 	_collidernum = numc;
 }
 
@@ -45,36 +42,39 @@ void				GUIelem::render(float aposx, float aposy, float asizex, float asizey)
 {
 	render_spec();
 	for (uint32_t i = 0; i < _childnum; i++)
-		(GUIelem*)dynamicMemoryManager::get_ptr(_childs[i]).render();
-	//billboard::push(text, apox + _posx * asizex * _sizex, aposy + _posy * asizey * _sizey, asizex * _sizey, asizey * _sizey);
+		(GUIelem*)dynamicMemoryManager::get_ptr(_childs[i]).render(apox + _posx * asizex * _sizex, aposy + _posy * asizey * _sizey, asizex * _sizey, asizey * _sizey);
 }
 
 void				GUIelem::update()
 {
-
 }
 
 uint32_t			GUIelem::render_spec()
 {
-
+	//billboard::push(text, apox + _posx * asizex * _sizex, aposy + _posy * asizey * _sizey, asizex * _sizey, asizey * _sizey);
 }
 
 void				GUIelem::on_mouse_hoover()
 {
+	printf("HOOVER !!!\n");
+}
 
+void				GUIelem::on_mouse_leave()
+{
+	printf("LEAVE !!!\n");
 }
 
 void				GUIelem::on_mouse_rclick(float rposx, float rposy)
 {
-
+	printf("RCLICKZZZ\n");
 }
 
 void				GUIelem::on_mouse_lclick(float rposx, float rposy)
 {
-
+	printf("LEFTCLIKZZZ\n");
 }
 
 void				GUIelem::on_keyboard_event(int key)
 {
-
+	printf("KEYZZZ:::: %d\n", key);
 }

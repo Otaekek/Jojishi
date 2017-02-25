@@ -14,9 +14,11 @@ public:
 	static void update();
 
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	static void hide_cursor();
+	static void add_mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	static void add_mouse_move_callback(void (*f)(GLFWwindow *w, double x, double y));
+	static void add_keyboard_callback(void (*f)(GLFWwindow *w, int button, int scancode, int action, int mods));
+
 	static void disable_cursor();
 
 	static bool		key_pressed[4096];
