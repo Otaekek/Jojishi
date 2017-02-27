@@ -41,11 +41,13 @@ void GUIEventSystem::check_mouse()
 {
 	int posx = inputBuiltin::_mouseXPos;
 	int posy = inputBuiltin::_mouseYPos;
-	// if (renderer::)
+
+	// if (!renderer::has_gui_ref(_GUIidposx, posy))
+	//
 	for (uint32_t i = _mouseEventIndex; i != inputBuiltin::_mouseEventNum; i = (i + 1) % inputBuiltin::_mouseEventSize)
 		onMouseEvent(inputBuiltin::_mouseEvents[i]);
 	_mouseEventIndex = inputBuiltin::_mouseEventNum;
-	onMouseMoveEvent(posxm posy);
+	onMouseMoveEvent(posx, posy);
 }
 
 void GUIEventSystem::check_event()
@@ -61,7 +63,7 @@ void GUIEventSystem::onMouseEvent(t_mouseEvent event)
 
 void GUIEventSystem::onMouseMoveEvent(int posx, int posy)
 {
-	//printf("Mouse moved\n");
+	printf("Mouse moved\n");
 }
 
 void GUIEventSystem::onMouseHooverEvent(int posx, int posy)
