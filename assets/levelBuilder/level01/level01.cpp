@@ -5,6 +5,7 @@
 #include <runtimeLibrary.class.hpp>
 #include <basicLightFactory.class.hpp>
 #include <directorySmartLoader.class.hpp>
+#include <GUIEventSystem.class.hpp>
 
 void debut()
 {

@@ -4,6 +4,21 @@
 #include <glfw3.h>
 #include <renderBuiltIn.class.hpp>
 
+typedef struct s_keyboardEvent
+{
+	int			key;
+	int			scancode;
+	int			action;
+	int			mod;
+}				t_keyboardEvent;
+
+typedef struct  s_mouseEvent
+{
+	int			button;
+	int			action;
+	int			mod;
+}				t_mouseEvent;
+
 class inputBuiltin {
 
 public:
@@ -23,11 +38,20 @@ public:
 	
 	static void disable_cursor();
 
-	static bool		key_pressed[4096];
-	static float	_mouseYPos;
-	static float	_mouseXPos;
-	static float	_relMouseYPos;
-	static float	_relMouseXPos;
+	static bool					key_pressed[4096];
+	static float				_mouseYPos;
+	static float				_mouseXPos;
+	static float				_relMouseYPos;
+	static float				_relMouseXPos;
+
+	static t_keyboardEvent		_keyboardEvents[4096];
+	static uint32_t				_keyboardEventNum;
+	static uint32_t				_keyboardEventSize;
+
+	static t_mouseEvent		_mouseEvents[4096];
+	static uint32_t				_mouseEventNum;
+	static uint32_t				_mouseEventSize;
+
 };
 
 #endif

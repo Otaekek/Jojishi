@@ -1,6 +1,15 @@
 
 #include "inputBuiltin.class.hpp"
 
+
+t_keyboardEvent		inputBuiltin::_keyboardEvents[4096];
+uint32_t			inputBuiltin::_keyboardEventNum = 0;
+uint32_t			inputBuiltin::_keyboardEventSize = 4096;
+
+t_mouseEvent		inputBuiltin::_mouseEvents[4096];
+uint32_t			inputBuiltin::_mouseEventNum = 0;
+uint32_t			inputBuiltin::_mouseEventSize = 4096;
+
 bool inputBuiltin::key_pressed[4096] = {false};
 
 float inputBuiltin::_mouseXPos = 0;
@@ -19,6 +28,11 @@ void inputBuiltin::init()
 
 void inputBuiltin::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	t_mouseEvent event;
+
+	event.action = action;
+	event.button = button;
+	event.mod = mods;
 	if (action == GLFW_PRESS)
 	{
 		key_pressed[button] = true;
@@ -27,11 +41,15 @@ void inputBuiltin::mouse_button_callback(GLFWwindow* window, int button, int act
 	{
 		key_pressed[button] = false;
 	}
+	_mouseEvents[_mouseEventNum] = event;
+	_mouseEventNum = (_mouseEventNum + 1) % _mouseEventSize;
 }
 
 
 void inputBuiltin::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	t_keyboardEvent event;
+
 	if (action == GLFW_PRESS)
 	{
 		key_pressed[key] = true;
@@ -40,6 +58,12 @@ void inputBuiltin::key_callback(GLFWwindow* window, int key, int scancode, int a
 	{
 		key_pressed[key] = false;
 	}
+	event.key = key;
+	event.scancode = scancode;
+	event.action = action;
+	event.mod = mods;
+	_keyboardEvents[_keyboardEventNum] = event;
+	_keyboardEventNum = (_keyboardEventNum + 1) % _keyboardEventSize;
 }
 
 void inputBuiltin::shutdown()

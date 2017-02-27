@@ -125,6 +125,11 @@ SRC_SUBDIR += runtime_library
 CFLAGS += -Isrc/runtime_library
 SOURCES += runtimeLibrary.class.cpp
 
+# GUI Event System
+SRC_SUBDIR += GUI
+CFLAGS += -Isrc/GUI
+SOURCES += GUIEventSystem.class.cpp
+
 # Generation
 INC_PATH = inc
 INC_PATH += assimp/include

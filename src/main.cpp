@@ -25,6 +25,7 @@
 #include <mapEditorBuiltin.class.hpp>
 #include <directorySmartLoader.class.hpp>
 #include <runtimeLibrary.class.hpp>
+#include <GUIEventSystem.class.hpp>
 
 void init()
 {
@@ -58,10 +59,14 @@ void update()
 
 int main()
 {
+	GUIEventSystem elem(3);
 	init();
 	runtimeLibrary::create_lib("assets/levelBuilder/startEngine");
 	while (42)
+	{
 		update();
+		elem.update();
+	}
 	shutdown();
 	return (0);
 }
