@@ -9,5 +9,5 @@ void renderBuiltIn::renderOnScreen()
 	glUseProgram(renderDataSys::_programm[E_ONSCREEN]);
 	glBindVertexArray(_quadVertexbuffer);
 	glBindTexture(GL_TEXTURE_2D, _colorTextureid);
-	glDrawArrays(GL_TRIANGLES, 0, 6);	
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

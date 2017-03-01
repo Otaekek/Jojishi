@@ -167,6 +167,14 @@ void			renderBuiltIn::create_framebuffer()
 	_idsTextureid = idsTexture;
 	GLenum attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
 	glDrawBuffers(2, attachments);
+
+	GLuint depthrenderbuffer;
+
+	glGenRenderbuffers(1, &depthrenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mode->width, mode->height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	create_onScreenRendering_data();
 }
@@ -184,7 +192,6 @@ void 			renderBuiltIn::init()
 	lightClusterId = dynamicMemoryManager::cluster_init(sizeof(t_light), 65536);
 
 	glfwInit();
-
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -196,6 +203,7 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
+	create_framebuffer();
 	glClearColor(1, 1, 1, 0);
 	glfwSwapInterval(1);
 	glEnable(GL_DEPTH_TEST);
@@ -204,12 +212,13 @@ void 			renderBuiltIn::init()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwSwapBuffers(window);
 	glEnable(GL_BLEND);
+	glDepthFunc(GL_LESS); 
 	skyboxGO = renderBuiltIn::create();
 	skybox = get_renderGO(skyboxGO);
 	skybox->transformHandler = transformBuiltin::create();
 	transformBuiltin::scale(skybox->transformHandler, 10000000000, 10000000000, 10000000000);
 	glFrontFace(GL_CCW);
-	create_framebuffer();
+
 }
 
 void			renderBuiltIn::face_culling(t_renderGO *go)
@@ -235,12 +244,12 @@ void			renderBuiltIn::update()
 {
 	t_camera			*camera;
 
+	glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferid);
 	renderDataSys::execute_texture_request();
 	renderDataSys::execute_vao_request();
 	glfwGetWindowSize(window, &(mode->width), &(mode->height));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
-	glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferid);
 	for (uint32_t i = 0; i < numCamera; i++)
 	{
 		camera = renderBuiltIn::get_camera(_cameras[i]);
@@ -259,8 +268,8 @@ void			renderBuiltIn::update()
 	_numLight = 0;
 	glFinish();
 	renderOnScreen();
-	glFinish();
 	glfwSwapBuffers(window);
+	glFinish();
 }
 
 GLFWvidmode				*renderBuiltIn::get_mode()
