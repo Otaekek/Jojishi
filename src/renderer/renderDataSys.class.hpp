@@ -18,7 +18,8 @@
 
 enum E_SHADER {
 	E_DEFAULT,
-	E_SKYBOX
+	E_SKYBOX,
+	E_ONSCREEN
 };
 
 enum E_LIGHT {
@@ -131,12 +132,12 @@ public:
 	static void				execute_vao_request();
 	static void				push_texture_request(t_texture_request request);
 	static void 			execute_texture_request();
+	static uint32_t				_programm[16];
 	static std::mutex 		mu;
 private:
 	static void 				copy_vertices(aiMesh *mesh, t_renderMeshData *meshData, const aiScene *scene, char *path, uint32_t meshHandler);
 	static uint32_t 			node_to_mesh(const aiNode *node,  glm::mat4 trans,const aiScene *scene, char *path, uint32_t ref, uint32_t cluster);
 	static void					handle_texture(aiTextureType type, char *path, aiMaterial *material, uint32_t *textEmplacement, bool *has_text, uint32_t meshDataHandler);
-	static uint32_t				_programm[16];
 	static t_vao_request		_vao_requests[4096];
 	static uint32_t				_vao_request_index;
 	static uint32_t				_texture_request_index;

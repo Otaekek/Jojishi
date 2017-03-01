@@ -19,8 +19,8 @@ uniform sampler2D	textDiffuse;
 
 uniform int 		has_diffuse;
 
-out vec4 FragColor;
-
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 cu;
 
 vec3 compute_diffuse(vec3 pos, vec3 norm, vec3 col)
 {
@@ -79,4 +79,5 @@ void main(void)
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16)
 		+ 0,
 		1);
+	cu.z = 1;
 }

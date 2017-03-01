@@ -61,6 +61,7 @@ SOURCES += fileLoader.class.cpp
 #	renderer
 SRC_SUBDIR += renderer
 CFLAGS += -Isrc/renderer
+SOURCES += onScreenRenderPass.cpp
 SOURCES += renderDataSys.class.cpp
 SOURCES += complexObjectRenderingPipeline.cpp
 SOURCES += renderBuiltIn.class.cpp

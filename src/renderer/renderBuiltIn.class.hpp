@@ -97,6 +97,10 @@ private :
 	static uint32_t					_numLight;
 	static uint32_t					_lightsHandlers[4096];
 
+	static GLuint					_idsTextureid;
+	static GLuint					_colorTextureid;
+	static GLuint					_frameBufferid;
+	static GLuint					_quadVertexbuffer;
 	static void						render(t_camera *camera);
 	static void						render_node(t_node node, t_renderGO *elem, uint32_t program);
 	static void						render_mesh(t_renderMeshData *mesh, t_renderGO *elem, uint32_t program);
@@ -107,6 +111,12 @@ private :
 	static void						push_light(t_renderGO *elem, GLuint program);
 
 	static void						face_culling(t_renderGO *go);
+
+	static void						create_framebuffer();
+	static void						read_ids_from_frame_buffer();
+	static void						create_onScreenRendering_data();
+	static void						renderOnScreen();
+
 };
 
 #endif

@@ -74,6 +74,7 @@ void 			renderDataSys::init()
 {
 	_programm[0] = load_programVertexFrag("assets/shaders/basicVertexShader.shader", "assets/shaders/basicFragShader.shader");
 	_programm[1] = load_programVertexFrag("assets/shaders/skyboxVertexShader.shader", "assets/shaders/skyboxFragShader.shader");
+	_programm[2] = load_programVertexFrag("assets/shaders/onScreenVertexShader.shader", "assets/shaders/onScreenFragShader.shader");
 }
 
 void 			renderDataSys::shutdown()
