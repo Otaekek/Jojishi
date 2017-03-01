@@ -116,6 +116,7 @@ E
 	printf("\n");
 }
 */
+
 void			renderBuiltIn::create_onScreenRendering_data()
 {
 
@@ -130,6 +131,21 @@ void			renderBuiltIn::create_onScreenRendering_data()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);	
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_quad_vertex_buffer_data), g_quad_vertex_buffer_data, GL_STATIC_DRAW);
 	_quadVertexbuffer = quad_VertexArrayID;
+}
+
+void			renderBuiltIn::readIdsTexture()
+{
+	static GLubyte *data = NULL;
+
+	if (data == NULL)
+	data = (GLubyte*)malloc(mode->height * mode->width * 4);
+	glBindTexture(GL_TEXTURE_2D, _idsTextureid);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	//for(int i = 0; i < 10000; i++)
+//	{
+	//	printf("%d\n", data[i]);
+//	}
+	//free(data);
 }
 
 void			renderBuiltIn::create_framebuffer()
@@ -270,6 +286,7 @@ void			renderBuiltIn::update()
 	renderOnScreen();
 	glfwSwapBuffers(window);
 	glFinish();
+	//readIdsTexture();
 }
 
 GLFWvidmode				*renderBuiltIn::get_mode()

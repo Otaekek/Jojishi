@@ -11,5 +11,4 @@ uniform sampler2D renderedTexture;
 void main(void)
 {
 	color = vec4(texture(renderedTexture, uv).rgb, 1);
-	//color = vec4(uv.y, uv.x, 0, 1);
 }

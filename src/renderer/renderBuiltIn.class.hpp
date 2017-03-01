@@ -112,6 +112,7 @@ private :
 
 	static void						face_culling(t_renderGO *go);
 
+	static void						readIdsTexture();
 	static void						create_framebuffer();
 	static void						read_ids_from_frame_buffer();
 	static void						create_onScreenRendering_data();
