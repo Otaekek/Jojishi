@@ -19,8 +19,11 @@ uniform sampler2D	textDiffuse;
 
 uniform int 		has_diffuse;
 
+uniform int		id;
+uniform int		meshName;
+
 layout(location = 0) out vec4 FragColor;
-layout(location = 1) out vec4 cu;
+layout(location = 1) out vec4 ids;
 
 vec3 compute_diffuse(vec3 pos, vec3 norm, vec3 col)
 {
@@ -79,5 +82,6 @@ void main(void)
 		compute_specular(specular, normalize(camPos + pos_color), pos_color, frag_Normal, 16)
 		+ 0,
 		1);
-	cu.z = 1;
+	ids.x = 42;
+	ids.y = meshName;
 }

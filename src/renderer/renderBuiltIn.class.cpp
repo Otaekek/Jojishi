@@ -24,6 +24,9 @@ GLuint					renderBuiltIn::_colorTextureid;
 GLuint					renderBuiltIn::_frameBufferid;
 GLuint					renderBuiltIn::_quadVertexbuffer;
 
+GLuint					renderBuiltIn::pbos[2];
+GLubyte					*renderBuiltIn::ids_texture_datas;
+
 static const GLfloat g_quad_vertex_buffer_data[] = {
     -1.0f, -1.0f, 0.0f,
     1.0f, -1.0f, 0.0f,
@@ -38,84 +41,6 @@ int				sort(uint32_t a, uint32_t b)
 	return (0);
 }
 
-/*
-bool initBuffers = false;
-GLuint *pbo;
-int writeIndex = 1, readIndex = 0;
-void *data;
-float *myBuffer;
-
-#define E printf("%d\n", glGetError());
-void FastCaptureBackBuffer(int width, int height)
-{
-	//Create PBOs:
-	E
-	E
-
-	GLuint tex;
-	if (!initBuffers)
-	{
-		myBuffer = (float*)malloc(width * height * 4);
-		pbo = (uint*)malloc(100);
-		initBuffers = true;
-E
-		 glGenTextures(1, &tex);
-        glBindTexture(GL_TEXTURE_2D, tex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		
-		glGenBuffers(2, pbo);
-		GLuint mdr;
-		glGenFramebuffers(1, &mdr);
-				glBindFramebuffer(GL_FRAMEBUFFER, mdr);
-
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[0]);
-		glBufferData(GL_PIXEL_PACK_BUFFER, width * height * 4.0f, 0, GL_STREAM_READ);
-E
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0);
-E
-	GLenum ouais[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
-	glDrawBuffers(2, ouais);
-E
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[1]);
-
-		glBufferData(GL_PIXEL_PACK_BUFFER, width * height * 4.0f, 0, GL_STREAM_READ);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex, 0);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex, 0);
-	glDrawBuffers(2, ouais);
-
-	}
-	//swap read and write.
-	writeIndex = (writeIndex + 1) % 2;
-	readIndex = (writeIndex + 1) % 2;
-
-	//read back-buffer.
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[readIndex]);
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, nullptr);
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[writeIndex]);
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	void* data = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
-
-	//if (data)
-	{
-		memcpy(myBuffer, data, width * height * 4);
-		printf("mdr\n");
-		//data = nullptr;
-		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-	}
-
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	for (int i = 0; i < 10000; i++)
-	{
-		printf("%d %d %d\n", ((int*)myBuffer)[i] & 0X0000FF, (((int*)myBuffer)[i] & 0X00FF00) >> 8, (((int*)myBuffer)[i] & 0xFF0000) >> 16);
-	}
-	//exit(0);
-	printf("\n");
-}
-*/
 
 void			renderBuiltIn::create_onScreenRendering_data()
 {
@@ -131,21 +56,6 @@ void			renderBuiltIn::create_onScreenRendering_data()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);	
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_quad_vertex_buffer_data), g_quad_vertex_buffer_data, GL_STATIC_DRAW);
 	_quadVertexbuffer = quad_VertexArrayID;
-}
-
-void			renderBuiltIn::readIdsTexture()
-{
-	static GLubyte *data = NULL;
-
-	if (data == NULL)
-	data = (GLubyte*)malloc(mode->height * mode->width * 4);
-	glBindTexture(GL_TEXTURE_2D, _idsTextureid);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	//for(int i = 0; i < 10000; i++)
-//	{
-	//	printf("%d\n", data[i]);
-//	}
-	//free(data);
 }
 
 void			renderBuiltIn::create_framebuffer()
@@ -193,11 +103,37 @@ void			renderBuiltIn::create_framebuffer()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	create_onScreenRendering_data();
+	
+	
+	glGenBuffers(2, pbos);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[0]);
+	glBufferData(GL_PIXEL_PACK_BUFFER, mode->width * mode->height * 4.0f, 0, GL_STREAM_READ);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[1]);
+	glBufferData(GL_PIXEL_PACK_BUFFER, mode->width * mode->height * 4.0f, 0, GL_STREAM_READ);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		
+	ids_texture_datas = (GLubyte*)malloc(mode->height * mode->width * 4);
 }
 
 void			renderBuiltIn::read_ids_from_frame_buffer()
 {
+	static uint32_t index = 0;
 
+	glReadBuffer(GL_COLOR_ATTACHMENT1);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[index]);
+	glReadPixels(0, 0, mode->width, mode->height, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[!index]);
+
+	void* data = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+	index = !index;
+	if (data)
+	{
+		memcpy(ids_texture_datas, data, mode->width * mode->height * 4);
+		data = nullptr;
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+	}
+	for (int i = 0; i < 10; i++)
+		printf("%d\n", ids_texture_datas[i]);
 }
 
 void 			renderBuiltIn::init()
@@ -220,7 +156,7 @@ void 			renderBuiltIn::init()
 	window = glfwCreateWindow(mode->width, mode->height, "jojishiGameEngine", glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
 	create_framebuffer();
-	glClearColor(1, 1, 1, 0);
+	glClearColor(0, 0, 0.1, 0);
 	glfwSwapInterval(1);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -234,7 +170,6 @@ void 			renderBuiltIn::init()
 	skybox->transformHandler = transformBuiltin::create();
 	transformBuiltin::scale(skybox->transformHandler, 10000000000, 10000000000, 10000000000);
 	glFrontFace(GL_CCW);
-
 }
 
 void			renderBuiltIn::face_culling(t_renderGO *go)
@@ -282,11 +217,10 @@ void			renderBuiltIn::update()
 	numCamera = 0;
 	sizeList = 0;
 	_numLight = 0;
-	glFinish();
+	glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferid);
+	read_ids_from_frame_buffer();
 	renderOnScreen();
 	glfwSwapBuffers(window);
-	glFinish();
-	//readIdsTexture();
 }
 
 GLFWvidmode				*renderBuiltIn::get_mode()
@@ -377,7 +311,7 @@ t_renderGO					*renderBuiltIn::get_skyboxGO()
 
 void						renderBuiltIn::modify_skybox_light(float f)
 {
-	skybox_light = f;
+	skybox_light = f;	
 }
 
 uint32_t					renderBuiltIn::create_light()

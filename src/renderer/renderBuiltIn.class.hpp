@@ -30,6 +30,7 @@ typedef struct	s_render {
 	uint64_t	cameraLayer;
 	bool		cullOnMe;
 	GLenum		cullMode;
+	uint32_t	UIid;
 }				t_renderGO;
 
 typedef struct	s_camera {
@@ -117,7 +118,10 @@ private :
 	static void						read_ids_from_frame_buffer();
 	static void						create_onScreenRendering_data();
 	static void						renderOnScreen();
-
+	
+	static GLuint					pbos[2];
+	
+	static GLubyte					*ids_texture_datas;
 };
 
 #endif
