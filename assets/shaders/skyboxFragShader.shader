@@ -11,7 +11,6 @@ uniform int		id;
 uniform int		meshName;
 
 layout(location = 0) out vec4 FragColor;
-layout(location = 1) out vec4 ids;
 
 void main(void)
 {
@@ -19,6 +18,4 @@ void main(void)
 		FragColor = vec4(diffuse.xyz * sunlight, 1);
 	else
 		FragColor = vec4(texture(textDiffuse, uv).rgb * sunlight, 1);
-	ids.x = 40000;
-	ids.y = meshName;
 }

@@ -137,11 +137,6 @@ void 			renderBuiltIn::render_object(uint32_t index, t_camera *camera)
 	/* Set model */
 	GLint model = glGetUniformLocation(node->program, "M");
 	glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(modelMat));
-	
-	/* Set GUIID */
-	elem->UIid = 42;
-	GLint id = glGetUniformLocation(node->program, "id");
-	glUniform1i(id, elem->UIid);
 
 	//if (cull_mesh(modelMat, viewMat, 500, projMat))
 		render_node(*node, elem, node->program);
